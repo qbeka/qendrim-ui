@@ -1,3 +1,4 @@
+import { copyFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
@@ -6,7 +7,14 @@ import { defineConfig } from 'vite';
 // The clean consumers in consumers/ are what prove the packed tarball works.
 export default defineConfig({
   base: process.env['DOCS_BASE'] ?? '/',
-  plugins: [react()],
+  plugins: [
+    react(),
+    {
+      // Static hosts serve 404.html for unknown paths, so deep links work with no server config.
+      name: 'spa-fallback',
+      closeBundle: () => copyFileSync(resolve(__dirname, 'dist/index.html'), resolve(__dirname, 'dist/404.html')),
+    },
+  ],
   resolve: {
     alias: [
       { find: /^@qbeka\/react\/css\/(.*)$/, replacement: resolve(__dirname, '../../packages/react/src/css/$1') },

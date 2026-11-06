@@ -18,13 +18,14 @@ const label = labelIndex >= 0 ? args[labelIndex + 1] : smoke ? 'smoke' : 'baseli
 const PORT = 5181;
 const BASE = `http://127.0.0.1:${PORT}`;
 
-const RUNS = smoke ? 1 : 7;
+const value = (flag, fallback) => (args.includes(flag) ? Number(args[args.indexOf(flag) + 1]) : fallback);
+const RUNS = smoke ? 1 : value('--runs', 7);
 const WARMUP_RUNS = smoke ? 0 : 1; // Dropped whole, before any result is read.
 const IMPLS = ['surface', 'motion-height', 'motion-layout', 'native-grid'];
 const FOUNDATION = ['dialog', 'popover', 'select'];
 const FOUNDATION_ROUNDS = smoke ? 5 : 20;
-const LEAK_CYCLES = smoke ? 50 : 500;
-const LEAK_RUNS = smoke ? 1 : 5;
+const LEAK_CYCLES = smoke ? 50 : value('--leak-cycles', 500);
+const LEAK_RUNS = smoke ? 1 : value('--leak-runs', 5);
 const LEAK_IMPLS = ['surface', 'motion-height', 'broken-leak'];
 
 const outDir = join(ROOT, 'results', label);
@@ -75,22 +76,40 @@ writeFileSync(join(outDir, 'sizes.json'), `${JSON.stringify({ ...sizes, motion: 
 
 const timing = {};
 const foundation = {};
+const lostAttempts = [];
+
+/**
+ * One fresh browser per attempt. If the browser goes away mid-run, for example because
+ * something else on the machine stopped it, the attempt is logged and repeated. A slow run
+ * is never repeated, so this cannot select for good numbers.
+ */
+async function measure(label, action) {
+  for (let attempt = 1; ; attempt += 1) {
+    const browser = await chromium.launch();
+    try {
+      return await action(browser);
+    } catch (error) {
+      const message = String(error.message).split('\n')[0];
+      if (!/closed|crash/i.test(message) || attempt >= 4) throw error;
+      lostAttempts.push({ label, attempt, message, at: new Date().toISOString() });
+      console.log(`Lost attempt ${attempt} of ${label}: ${message}`);
+    } finally {
+      await browser.close().catch(() => undefined);
+    }
+  }
+}
 
 // Round robin, so slow drift on a shared machine lands on every implementation alike.
 for (let run = 0; run < RUNS; run += 1) {
   for (const impl of IMPLS) {
     console.log(`Run ${run + 1} of ${RUNS}: ${impl}`);
-    const browser = await chromium.launch();
-    const result = await measureImplementation(browser, BASE, impl);
-    await browser.close();
+    const result = await measure(`${impl} run ${run}`, (browser) => measureImplementation(browser, BASE, impl));
     (timing[impl] ??= []).push({ run, warmup: run < WARMUP_RUNS, loadAverage: loadavg()[0], ...result });
   }
   for (const name of FOUNDATION) {
     for (const variant of ['q', 'base']) {
       const key = `${name}-${variant}`;
-      const browser = await chromium.launch();
-      const result = await measureFoundationCase(browser, BASE, key, FOUNDATION_ROUNDS);
-      await browser.close();
+      const result = await measure(`${key} run ${run}`, (browser) => measureFoundationCase(browser, BASE, key, FOUNDATION_ROUNDS));
       (foundation[key] ??= []).push({ run, warmup: run < WARMUP_RUNS, ...result });
     }
   }
@@ -102,9 +121,7 @@ const leaks = {};
 for (const impl of LEAK_IMPLS) {
   for (let run = 0; run < LEAK_RUNS; run += 1) {
     console.log(`Leak run ${run + 1} of ${LEAK_RUNS}: ${impl}`);
-    const browser = await chromium.launch();
-    const result = await measureLeak(browser, BASE, impl, LEAK_CYCLES);
-    await browser.close();
+    const result = await measure(`leak ${impl} run ${run}`, (browser) => measureLeak(browser, BASE, impl, LEAK_CYCLES));
     (leaks[impl] ??= []).push(result);
   }
 }
@@ -133,6 +150,7 @@ for (const [impl, runs] of Object.entries(leaks)) {
   };
 }
 manifest.loadAverageAtEnd = loadavg();
+manifest.lostAttempts = lostAttempts;
 
 writeFileSync(join(outDir, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
 writeFileSync(join(outDir, 'summary.json'), `${JSON.stringify(summary, null, 2)}\n`);
