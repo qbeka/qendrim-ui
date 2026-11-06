@@ -1,4 +1,5 @@
 import { COMPONENTS, type ComponentDoc } from '../docs/components';
+import { Gallery } from '../gallery/Gallery';
 import { GUIDES } from '../docs/guides';
 import { Code } from '../lib/Copy';
 import { LiveExample } from '../lib/LiveExample';
@@ -10,8 +11,8 @@ export function ComponentIndex() {
     <div className="d-page">
       <h1>Components</h1>
       <h2>Signature</h2>
-      <p>These four are what this library adds.</p>
-      <ul className="d-links">{group('Signature').map((c) => <li key={c.slug}><Link to={`/components/${c.slug}`}>{c.name}</Link>: {c.summary}</li>)}</ul>
+      <p>These four are what this library adds. Each one here works, and sits next to the code that makes it.</p>
+      <Gallery docsLink={(slug, name) => <Link to={`/components/${slug}`}>{name} API and keyboard map</Link>} />
       <h2>Foundation</h2>
       <p>These eight are Base UI primitives with styles. Accessible behavior comes from Base UI, which is the right place for it.</p>
       <ul className="d-links">{group('Foundation').map((c) => <li key={c.slug}><Link to={`/components/${c.slug}`}>{c.name}</Link>: {c.summary}</li>)}</ul>
