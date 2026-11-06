@@ -51,6 +51,7 @@ const MUTANTS = [
   ['reopen-after-settle-skips-initial', 'packages/react/src/inspector/Inspector.tsx', 'const remembered = settledClosed.current ? null : lastFocused.current;', 'const remembered = lastFocused.current;'],
   ['modal-panel-not-inert', 'packages/react/src/inspector/Inspector.tsx', "    // Set last. Inert on the element holding focus would drop focus to <body>.\n    panel.setAttribute('inert', '');", "    if (managesFocus) panel.setAttribute('inert', '');"],
   ['backdrop-stays-opaque-closed', 'packages/react/src/inspector/ModalInspector.tsx', "data-open={open ? '' : undefined}", 'data-open=""'],
+  ['closing-modal-catches-presses', 'packages/react/src/css/inspector.css', "    /* It shrinks onto the row, and a press there must reach the row, so a close can reverse. */\n    pointer-events: none;", ''],
   ['no-backdrop-dismissal', 'packages/react/src/inspector/ModalInspector.tsx', '<Dialog.Backdrop className="q-inspector-hit-area" />', ''],
   ['timeline-overruns-max', 'packages/react/src/timeline/Timeline.tsx', 'emitted = position >= max ? max : Math.min(snapped, max);', 'emitted = snapped;'],
   ['timeline-ignores-seek', 'packages/react/src/timeline/Timeline.tsx', 'if (latest.current.value !== emitted) position = latest.current.value;', ''],

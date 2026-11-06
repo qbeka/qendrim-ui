@@ -320,7 +320,7 @@ test.describe('modal closing', () => {
   test('a press on the row during a close reopens it', async ({ page }) => {
     await openModal(page);
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(40);
+    await page.waitForTimeout(120);
     await page.getByTestId('ms-trigger').click({ force: true });
     await page.waitForTimeout(700);
     await expect(page.getByTestId('ms-input')).toBeVisible();
@@ -330,7 +330,7 @@ test.describe('modal closing', () => {
     await openModal(page);
     await page.getByTestId('ms-second').focus();
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(40);
+    await page.waitForTimeout(120);
     await page.getByTestId('ms-trigger').click({ force: true });
     await expect(page.getByTestId('ms-second')).toBeFocused();
   });
