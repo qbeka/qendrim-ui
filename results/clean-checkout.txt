@@ -1,0 +1,5 @@
+Commit: 2bde084fd2c3636ad53aa0a87296f5625074e48a
+Date: Fri Nov  6 04:27:20 CST 2026
+Node: v22.16.0, pnpm: 12.10.1
+== pnpm install --frozen-lockfile
+Failed. Clone kept at /var/folders/nw/4qt8jmj578l1nb4zy5j0mccr0000gn/T/qendrim-clean.m1JIuHgBuH

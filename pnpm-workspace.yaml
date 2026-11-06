@@ -5,3 +5,7 @@ minimumReleaseAgeExclude:
   - '@playwright/test@1.65.0'
   - playwright-core@1.65.0
   - playwright@1.65.0
+
+# esbuild needs its install script to fetch its binary. It is the only build allowed.
+allowBuilds:
+  esbuild: true
