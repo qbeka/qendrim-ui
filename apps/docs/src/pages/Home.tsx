@@ -6,7 +6,7 @@ import { Code } from '../lib/Copy';
 import { Link } from '../lib/router';
 import { Trajectory } from '../lib/Trajectory';
 
-const INSTALL = 'npm install @qbeka/react';
+const INSTALL = 'pnpm add ./qbeka-react-0.1.0.tgz';
 
 const USAGE = `import { Inspector } from '@qbeka/react/inspector';
 import '@qbeka/react/styles.css';
@@ -105,6 +105,7 @@ export function Home() {
       </div>
 
       <h2>Install</h2>
+      <p>The package is not on npm yet, so build the tarball from this repository and install that file.</p>
       <Code>{INSTALL}</Code>
       <Code>{USAGE}</Code>
       <p className="d-note">The package is not on npm yet. The <Link to="/guide/install">install guide</Link> shows how to use the tarball.</p>
