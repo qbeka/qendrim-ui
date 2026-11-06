@@ -1,0 +1,116 @@
+/*
+ * The gallery runs on the project page and in the docs, in every recipe and theme of the
+ * docs, so it uses the library's tokens and nothing else. Every control state is written
+ * out, including selected with hover.
+ */
+.g-gallery {
+  --g-accent-hover: color-mix(in srgb, var(--q-color-accent) 86%, var(--q-color-surface));
+  --g-accent-pressed: color-mix(in srgb, var(--q-color-accent) 86%, var(--q-color-ink));
+  --g-wash-strong: color-mix(in srgb, var(--q-color-ink) 9%, transparent);
+  --g-wash: color-mix(in srgb, var(--q-color-ink) 4%, transparent);
+  container-type: inline-size;
+  border-block-start: 1px solid var(--q-color-rule);
+  color: var(--q-color-ink);
+  font: 400 14px/20px var(--q-font-control);
+}
+.g-gallery :is(h3, p) { margin: 0; }
+
+.g-entry {
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px;
+  padding-block: 24px; border-block-end: 1px solid var(--q-color-rule);
+}
+.g-side { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.g-side header h3 { font: 500 14px/20px var(--q-font-control); color: var(--q-color-ink); }
+.g-side header p { color: var(--q-color-body); }
+@container (min-width: 760px) {
+  .g-entry { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; }
+}
+
+.g-specimen { position: relative; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.g-muted { color: var(--q-color-muted); }
+
+/* Controls */
+.g-control {
+  appearance: none; display: inline-grid; align-items: center; justify-items: center;
+  min-height: var(--q-control-height); padding: 0 11px; margin: 0;
+  border: 1px solid transparent; border-radius: var(--q-radius-control);
+  background: transparent; color: var(--q-color-ink);
+  font: 400 13px/16px var(--q-font-control); white-space: nowrap;
+  cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  transition: background-color .12s, color .12s, border-color .12s;
+}
+.g-control:active { background: var(--g-wash-strong); }
+.g-control[aria-pressed='true'] { background: var(--q-color-accent); color: var(--q-color-on-accent); font-weight: 500; }
+.g-control[aria-pressed='true']:active { background: var(--g-accent-pressed); color: var(--q-color-on-accent); }
+.g-primary { background: var(--q-color-accent); color: var(--q-color-on-accent); font-weight: 500; }
+.g-primary:active { background: var(--g-accent-pressed); }
+.g-primary[aria-busy='true'], .g-primary[aria-busy='true']:active { background: var(--g-accent-hover); cursor: progress; }
+@media (hover: hover) {
+  .g-control:hover { background: var(--g-wash); }
+  .g-control:active { background: var(--g-wash-strong); }
+  .g-control[aria-pressed='true']:hover { background: var(--g-accent-hover); color: var(--q-color-on-accent); }
+  .g-control[aria-pressed='true']:active { background: var(--g-accent-pressed); color: var(--q-color-on-accent); }
+  .g-primary:hover { background: var(--g-accent-hover); color: var(--q-color-on-accent); }
+  .g-primary:active { background: var(--g-accent-pressed); }
+  .g-primary[aria-busy='true']:hover, .g-primary[aria-busy='true']:active { background: var(--g-accent-hover); }
+}
+.g-control:focus-visible { outline: 2px solid var(--q-color-focus); outline-offset: 2px; }
+.g-switch { display: flex; gap: 2px; }
+
+/* Surface: three layouts that differ in position, size and corners. */
+.g-shapes {
+  position: relative; display: flex; align-items: flex-start; justify-content: flex-start;
+  height: 132px; padding: 12px; border: 1px solid var(--q-color-rule); border-radius: var(--q-radius-panel);
+}
+.g-shape {
+  display: grid; place-items: center; overflow: hidden; color: var(--q-color-on-accent);
+  background: var(--q-color-accent); font: 500 13px/16px var(--q-font-control); white-space: nowrap;
+}
+.g-shape[data-shape='chip'] { width: 104px; height: 32px; border-radius: 16px; }
+.g-shape[data-shape='bar'] { width: 100%; height: 44px; margin-block-start: 52px; border-radius: 6px; }
+.g-shape[data-shape='card'] { width: 46%; height: 106px; margin-inline-start: auto; border-radius: 14px; }
+
+/* Inspector */
+.g-row { background: var(--q-color-surface); }
+.g-row .q-inspector-trigger { justify-content: space-between; }
+.g-note { display: flex; flex-direction: column; gap: 10px; }
+.g-field { display: grid; gap: 4px; color: var(--q-color-muted); font-size: 13px; line-height: 16px; }
+.g-note-end { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.g-note-end p { flex: 1 1 200px; color: var(--q-color-muted); font-size: 13px; line-height: 18px; }
+
+/* Timeline */
+.g-event { min-height: 40px; color: var(--q-color-body); font-size: 15px; line-height: 20px; }
+.q-timeline-button:active { background: var(--g-wash-strong); }
+.q-timeline-button[aria-pressed='true'] { background: var(--q-color-accent); color: var(--q-color-on-accent); }
+.q-timeline-button[aria-pressed='true']:active { background: var(--g-accent-pressed); }
+@media (hover: hover) {
+  .q-timeline-button[aria-pressed='true']:hover { background: var(--g-accent-hover); color: var(--q-color-on-accent); }
+}
+
+/* ActionBar */
+.g-receipts { padding-block-end: 52px; }
+.g-receipts ul { margin: 0; padding: 0; list-style: none; border-block-start: 1px solid var(--q-color-rule); }
+.g-receipts li { border-block-end: 1px solid var(--q-color-rule); }
+.g-receipts label { display: flex; align-items: center; gap: 10px; min-height: 40px; cursor: pointer; }
+.g-receipts label span:nth-child(2) { flex: 1 1 auto; }
+.g-receipts input { flex: none; inline-size: 16px; block-size: 16px; margin: 0; accent-color: var(--q-color-accent); }
+.q-actionbar-action:active { background: var(--g-wash-strong); }
+
+/* Usage */
+.g-usage { position: relative; min-width: 0; }
+.g-usage pre {
+  margin: 0; padding: 12px; overflow-x: auto;
+  border: 1px solid var(--q-color-rule); border-radius: var(--q-radius-panel);
+  color: var(--q-color-ink); font: 12.5px/19px var(--q-font-mono); tab-size: 2;
+}
+.g-usage pre:focus-visible { outline: 2px solid var(--q-color-focus); outline-offset: 2px; }
+.g-usage-end { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-block-start: 6px; }
+.g-copy { flex: none; border-color: var(--q-color-rule-strong); }
+.g-copy > span { grid-area: 1 / 1; visibility: hidden; }
+.g-copy > span[data-on] { visibility: visible; }
+.g-more { color: var(--q-color-muted); font-size: 13px; line-height: 20px; }
+.g-more a { color: inherit; text-underline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .g-control { transition: none; }
+}
