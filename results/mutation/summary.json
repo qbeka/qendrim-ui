@@ -1,0 +1,380 @@
+{
+  "commit": "8b9e5a17f0382ef9705c9dfe9f4c0aea12b8f3a1",
+  "date": "2026-11-06T07:45:12.723Z",
+  "controlClean": true,
+  "control": {
+    "unitStatus": 0,
+    "e2eStatus": 0,
+    "failedUnit": [],
+    "failedE2e": []
+  },
+  "total": 32,
+  "caught": 15,
+  "survived": [
+    "stale-completion-commits",
+    "repeat-request-advances",
+    "destroy-does-not-stop-requests",
+    "retarget-drops-velocity",
+    "position-not-held",
+    "destroy-leaves-loop-running",
+    "destroy-leaves-inline-styles",
+    "no-end-correction",
+    "viewport-change-ignored",
+    "growth-in-flight-ignored",
+    "rotation-ignored",
+    "ancestor-scale-ignored",
+    "content-width-not-locked",
+    "focus-ignores-inert",
+    "reopen-forgets-field",
+    "modal-never-unmounts",
+    "actionbar-takes-space"
+  ],
+  "notApplied": [],
+  "results": [
+    {
+      "id": "stale-completion-commits",
+      "file": "packages/react/src/core/machine.ts",
+      "outcome": "survived",
+      "unitStatus": 1,
+      "e2eStatus": 0,
+      "failedUnit": [],
+      "failedE2e": []
+    },
+    {
+      "id": "repeat-request-advances",
+      "file": "packages/react/src/core/machine.ts",
+      "outcome": "survived",
+      "unitStatus": 1,
+      "e2eStatus": 0,
+      "failedUnit": [],
+      "failedE2e": []
+    },
+    {
+      "id": "destroy-does-not-stop-requests",
+      "file": "packages/react/src/core/machine.ts",
+      "outcome": "survived",
+      "unitStatus": 1,
+      "e2eStatus": 0,
+      "failedUnit": [],
+      "failedE2e": []
+    },
+    {
+      "id": "token-ignores-newer-intent",
+      "file": "packages/react/src/core/machine.ts",
+      "outcome": "caught",
+      "unitStatus": 1,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/interruption.spec.ts:6:3 › surface: a deferred close cannot close a reopened surface"
+      ]
+    },
+    {
+      "id": "retarget-drops-velocity",
+      "file": "packages/react/src/core/engine.ts",
+      "outcome": "survived",
+      "unitStatus": 1,
+      "e2eStatus": 0,
+      "failedUnit": [],
+      "failedE2e": []
+    },
+    {
+      "id": "retarget-starts-from-target",
+      "file": "packages/react/src/core/engine.ts",
+      "outcome": "caught",
+      "unitStatus": 1,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/geometry.spec.ts:25:1 › under a scaled ancestor, the move starts from the visible box and ends on the natural one",
+        "e2e/geometry.spec.ts:47:1 › in a nested scroller, a shape change keeps the scroll position",
+        "e2e/inspector.spec.ts:7:1 › focus moves at the request, so typing during the move lands in the field",
+        "e2e/inspector.spec.ts:38:1 › a closing panel cannot be tabbed into",
+        "e2e/interruption.spec.ts:6:3 › surface: reverse twice, then type",
+        "e2e/interruption.spec.ts:6:3 › surface: a deferred close cannot close a reopened surface",
+        "e2e/interruption.spec.ts:6:3 › surface: many fast reversals end on the last request",
+        "e2e/interruption.spec.ts:6:3 › surface: closing during a move with focus inside keeps focus valid",
+        "e2e/interruption.spec.ts:6:3 › surface: content grows during a move",
+        "e2e/interruption.spec.ts:6:3 › surface: viewport changes during a move, then typing continues"
+      ]
+    },
+    {
+      "id": "position-not-held",
+      "file": "packages/react/src/core/engine.ts",
+      "outcome": "survived",
+      "unitStatus": 0,
+      "e2eStatus": 0,
+      "failedUnit": [],
+      "failedE2e": []
+    },
+    {
+      "id": "destroy-leaves-loop-running",
+      "file": "packages/react/src/core/engine.ts",
+      "outcome": "survived",
+      "unitStatus": 1,
+      "e2eStatus": 0,
+      "failedUnit": [],
+      "failedE2e": []
+    },
+    {
+      "id": "destroy-leaves-inline-styles",
+      "file": "packages/react/src/core/engine.ts",
+      "outcome": "survived",
+      "unitStatus": 1,
+      "e2eStatus": 0,
+      "failedUnit": [],
+      "failedE2e": []
+    },
+    {
+      "id": "no-end-correction",
+      "file": "packages/react/src/core/engine.ts",
+      "outcome": "survived",
+      "unitStatus": 1,
+      "e2eStatus": 0,
+      "failedUnit": [],
+      "failedE2e": []
+    },
+    {
+      "id": "viewport-change-ignored",
+      "file": "packages/react/src/core/engine.ts",
+      "outcome": "survived",
+      "unitStatus": 1,
+      "e2eStatus": 0,
+      "failedUnit": [],
+      "failedE2e": []
+    },
+    {
+      "id": "content-growth-not-animated",
+      "file": "packages/react/src/core/engine.ts",
+      "outcome": "caught",
+      "unitStatus": 1,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/interruption.spec.ts:6:3 › surface: content grows at rest"
+      ]
+    },
+    {
+      "id": "growth-in-flight-ignored",
+      "file": "packages/react/src/core/engine.ts",
+      "outcome": "survived",
+      "unitStatus": 0,
+      "e2eStatus": 0,
+      "failedUnit": [],
+      "failedE2e": []
+    },
+    {
+      "id": "reduced-motion-ignored",
+      "file": "packages/react/src/core/engine.ts",
+      "outcome": "caught",
+      "unitStatus": 1,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/inspector.spec.ts:114:1 › reduced motion: same states and focus, no moving phase"
+      ]
+    },
+    {
+      "id": "rotation-ignored",
+      "file": "packages/react/src/core/engine.ts",
+      "outcome": "survived",
+      "unitStatus": 1,
+      "e2eStatus": 0,
+      "failedUnit": [],
+      "failedE2e": []
+    },
+    {
+      "id": "stale-action-runs",
+      "file": "packages/react/src/core/engine.ts",
+      "outcome": "caught",
+      "unitStatus": 1,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/interruption.spec.ts:6:3 › surface: a deferred close cannot close a reopened surface"
+      ]
+    },
+    {
+      "id": "scroll-not-restored",
+      "file": "packages/react/src/core/dom-port.ts",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/geometry.spec.ts:47:1 › in a nested scroller, a shape change keeps the scroll position"
+      ]
+    },
+    {
+      "id": "ancestor-scale-ignored",
+      "file": "packages/react/src/core/dom-port.ts",
+      "outcome": "survived",
+      "unitStatus": 0,
+      "e2eStatus": 0,
+      "failedUnit": [],
+      "failedE2e": []
+    },
+    {
+      "id": "content-width-not-locked",
+      "file": "packages/react/src/core/dom-port.ts",
+      "outcome": "survived",
+      "unitStatus": 0,
+      "e2eStatus": 0,
+      "failedUnit": [],
+      "failedE2e": []
+    },
+    {
+      "id": "focus-ignores-inert",
+      "file": "packages/react/src/core/focus.ts",
+      "outcome": "survived",
+      "unitStatus": 0,
+      "e2eStatus": 0,
+      "failedUnit": [],
+      "failedE2e": []
+    },
+    {
+      "id": "capture-skipped",
+      "file": "packages/react/src/surface/Surface.tsx",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/geometry.spec.ts:25:1 › under a scaled ancestor, the move starts from the visible box and ends on the natural one",
+        "e2e/geometry.spec.ts:47:1 › in a nested scroller, a shape change keeps the scroll position",
+        "e2e/inspector.spec.ts:7:1 › focus moves at the request, so typing during the move lands in the field",
+        "e2e/inspector.spec.ts:38:1 › a closing panel cannot be tabbed into",
+        "e2e/interruption.spec.ts:6:3 › surface: reverse twice, then type",
+        "e2e/interruption.spec.ts:6:3 › surface: a deferred close cannot close a reopened surface",
+        "e2e/interruption.spec.ts:6:3 › surface: many fast reversals end on the last request",
+        "e2e/interruption.spec.ts:6:3 › surface: closing during a move with focus inside keeps focus valid",
+        "e2e/interruption.spec.ts:6:3 › surface: content grows during a move",
+        "e2e/interruption.spec.ts:6:3 › surface: viewport changes during a move, then typing continues"
+      ]
+    },
+    {
+      "id": "observer-not-disconnected",
+      "file": "packages/react/src/surface/Surface.tsx",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/inspector.spec.ts:177:1 › removing and restoring repeatedly returns every counted resource"
+      ]
+    },
+    {
+      "id": "resize-listener-not-removed",
+      "file": "packages/react/src/surface/Surface.tsx",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/inspector.spec.ts:177:1 › removing and restoring repeatedly returns every counted resource"
+      ]
+    },
+    {
+      "id": "close-does-not-move-focus",
+      "file": "packages/react/src/inspector/Inspector.tsx",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/inspector.spec.ts:19:1 › Escape closes and returns focus to the trigger",
+        "e2e/inspector.spec.ts:27:1 › reopening during a close returns focus and the caret to the field",
+        "e2e/inspector.spec.ts:114:1 › reduced motion: same states and focus, no moving phase",
+        "e2e/interruption.spec.ts:6:3 › surface: reverse twice, then type",
+        "e2e/interruption.spec.ts:6:3 › surface: many fast reversals end on the last request",
+        "e2e/interruption.spec.ts:6:3 › surface: closing during a move with focus inside keeps focus valid",
+        "e2e/interruption.spec.ts:6:3 › surface: viewport changes during a move, then typing continues"
+      ]
+    },
+    {
+      "id": "closing-panel-not-inert",
+      "file": "packages/react/src/inspector/Inspector.tsx",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/inspector.spec.ts:38:1 › a closing panel cannot be tabbed into"
+      ]
+    },
+    {
+      "id": "reopen-forgets-field",
+      "file": "packages/react/src/inspector/Inspector.tsx",
+      "outcome": "survived",
+      "unitStatus": 0,
+      "e2eStatus": 0,
+      "failedUnit": [],
+      "failedE2e": []
+    },
+    {
+      "id": "typing-does-not-cancel-close",
+      "file": "packages/react/src/inspector/Inspector.tsx",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/inspector.spec.ts:128:1 › typing during a deferred close cancels the close"
+      ]
+    },
+    {
+      "id": "removal-does-not-recover-focus",
+      "file": "packages/react/src/inspector/Inspector.tsx",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/inspector.spec.ts:170:1 › removal with focus inside moves focus to the fallback",
+        "e2e/interruption.spec.ts:6:3 › surface: removal during a move with focus inside"
+      ]
+    },
+    {
+      "id": "modal-never-unmounts",
+      "file": "packages/react/src/inspector/ModalInspector.tsx",
+      "outcome": "survived",
+      "unitStatus": 0,
+      "e2eStatus": 0,
+      "failedUnit": [],
+      "failedE2e": []
+    },
+    {
+      "id": "actionbar-keeps-focus",
+      "file": "packages/react/src/actionbar/ActionBar.tsx",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/components.spec.ts:203:3 › ActionBar › closing with focus inside moves focus to the fallback"
+      ]
+    },
+    {
+      "id": "actionbar-takes-space",
+      "file": "packages/react/src/css/actionbar.css",
+      "outcome": "survived",
+      "unitStatus": 0,
+      "e2eStatus": 0,
+      "failedUnit": [],
+      "failedE2e": []
+    },
+    {
+      "id": "closed-panel-reachable",
+      "file": "packages/react/src/css/inspector.css",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/inspector.spec.ts:47:1 › a settled closed panel is out of the tab order and the accessibility tree",
+        "e2e/inspector.spec.ts:114:1 › reduced motion: same states and focus, no moving phase",
+        "e2e/inspector.spec.ts:139:1 › a deferred close with no newer intent closes"
+      ]
+    }
+  ]
+}

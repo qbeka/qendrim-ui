@@ -10,7 +10,8 @@ import { join } from 'node:path';
 
 const ROOT = join(import.meta.dirname, '..');
 const SANDBOX = process.env.MUTATE_DIR ?? join(tmpdir(), 'qendrim-mutants');
-const only = process.argv.includes('--only') ? process.argv[process.argv.indexOf('--only') + 1] : null;
+const only = process.argv.includes('--only') ? process.argv[process.argv.indexOf('--only') + 1].split(',') : null;
+const outName = only ? 'partial.json' : 'summary.json';
 const PORT = '5187';
 
 const CORE = 'packages/react/src/core';
@@ -68,7 +69,9 @@ function suite() {
   const build = sh('pnpm', ['--filter', 'docs', 'build'], SANDBOX);
   if (build.status !== 0) return { outcome: 'build-failed', reason: build.stdout.slice(-400) };
   const e2e = sh('pnpm', ['exec', 'playwright', 'test', '--project=chromium', '--reporter=line', '--workers=3', ...SPECS], SANDBOX, { E2E_PORT: PORT });
-  const failedUnit = [...unit.stdout.matchAll(/FAIL\s+(.+)/g)].map((m) => m[1].trim());
+  // Vitest writes failures to stderr, and the output has color codes in it.
+  const unitText = `${unit.stdout}\n${unit.stderr}`.replace(/\x1b\[[0-9;]*m/g, '');
+  const failedUnit = [...unitText.matchAll(/FAIL\s+(.+)/g)].map((m) => m[1].trim());
   const failedE2e = [...e2e.stdout.matchAll(/^\s+\d+\) \[chromium\] › (.+?)\s*─*\s*$/gm)].map((m) => m[1].trim());
   return { unitStatus: unit.status, e2eStatus: e2e.status, failedUnit: [...new Set(failedUnit)], failedE2e: [...new Set(failedE2e)] };
 }
@@ -82,7 +85,7 @@ const controlClean = control.unitStatus === 0 && control.e2eStatus === 0;
 
 const results = [];
 for (const [id, file, find, replace] of MUTANTS) {
-  if (only && id !== only) continue;
+  if (only && !only.includes(id)) continue;
   const path = join(SANDBOX, file);
   const original = readFileSync(path, 'utf8');
   if (!original.includes(find)) {
@@ -93,7 +96,9 @@ for (const [id, file, find, replace] of MUTANTS) {
   writeFileSync(path, original.replace(find, replace));
   const result = suite();
   writeFileSync(path, original);
+  // Exit codes decide. A nonzero exit with no parsed test name is reported, not assumed.
   const caught = (result.failedUnit?.length ?? 0) + (result.failedE2e?.length ?? 0) > 0;
+  if (!caught && (result.unitStatus !== 0 || result.e2eStatus !== 0)) result.outcome = 'failed-without-a-named-test';
   results.push({ id, file, outcome: result.outcome ?? (caught ? 'caught' : 'survived'), ...result });
   console.log(`${id}: ${caught ? 'caught' : 'SURVIVED'} (${result.failedUnit?.length ?? 0} unit, ${result.failedE2e?.length ?? 0} browser)`);
 }
@@ -110,5 +115,5 @@ const summary = {
   results,
 };
 mkdirSync(join(ROOT, 'results/mutation'), { recursive: true });
-writeFileSync(join(ROOT, 'results/mutation/summary.json'), `${JSON.stringify(summary, null, 2)}\n`);
+writeFileSync(join(ROOT, 'results/mutation', outName), `${JSON.stringify(summary, null, 2)}\n`);
 console.log(`${summary.caught} of ${summary.total} caught. Control clean: ${controlClean}. Survived: ${summary.survived.join(', ') || 'none'}.`);
