@@ -79,7 +79,7 @@ function prepare() {
   } else {
     execFileSync('git', ['fetch', '-q', 'origin'], { cwd: SANDBOX });
   }
-  execFileSync('git', ['checkout', '-q', execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim()], { cwd: SANDBOX });
+  execFileSync('git', ['checkout', '-q', '--force', execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim()], { cwd: SANDBOX });
   sh('pnpm', ['install', '--frozen-lockfile', '--prefer-offline'], SANDBOX);
 }
 
