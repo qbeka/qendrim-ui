@@ -34,14 +34,14 @@ addEventListener('DOMContentLoaded', () => {
 
 const browser = await chromium.launch();
 
-async function session(name, run) {
+async function session(name, run, { captions = true } = {}) {
   const dir = join(out, `.raw-${name}`);
   const context = await browser.newContext({ viewport: SIZE, deviceScaleFactor: 1, colorScheme: 'light', recordVideo: { dir, size: SIZE } });
   const page = await context.newPage();
   await page.addInitScript(OVERLAY);
   await page.addInitScript(() => localStorage.setItem('q-docs-theme', 'light'));
   const say = async (text, ms = 2600) => {
-    await page.evaluate((t) => {
+    if (captions) await page.evaluate((t) => {
       const el = document.getElementById('rec-caption');
       el.textContent = t;
       el.style.display = t ? 'block' : 'none';
@@ -105,7 +105,7 @@ await session('demo', async (page, say, glide) => {
   await page.waitForTimeout(1800);
   await say('', 0);
   await page.waitForTimeout(300);
-});
+}, { captions: false });
 
 await session('walkthrough', async (page, say, glide) => {
   await page.goto(`${BASE}/examples/projects`);
