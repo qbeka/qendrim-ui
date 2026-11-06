@@ -1,0 +1,32 @@
+{
+  "name": "@qbeka/react",
+  "version": "0.1.0",
+  "description": "React components for interfaces that keep their continuity when content, layout and user intent change.",
+  "license": "MIT",
+  "author": "Qendrim Beka",
+  "type": "module",
+  "sideEffects": ["*.css"],
+  "files": ["dist", "LICENSE", "THIRD_PARTY_NOTICES.md", "README.md"],
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" },
+    "./surface": { "types": "./dist/surface/index.d.ts", "default": "./dist/surface/index.js" },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0"
+  },
+  "dependencies": {
+    "@base-ui/react": "1.9.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.2.3",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  }
+}
