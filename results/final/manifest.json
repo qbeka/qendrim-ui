@@ -1,0 +1,64 @@
+{
+  "commit": "f3a4d2425f6f5af5172ea3526aa7f53a60f3b4d2",
+  "dirty": true,
+  "date": "2026-11-06T08:29:58.490Z",
+  "node": "v22.16.0",
+  "browser": "158.0.8127.18",
+  "os": "Darwin 25.6.0",
+  "hardware": {
+    "cpu": "Apple M5 Pro",
+    "logicalCores": 18,
+    "memoryGiB": 48
+  },
+  "power": "Now drawing from 'AC Power'",
+  "loadAverageAtStart": [
+    5.9169921875,
+    8.32177734375,
+    7.91357421875
+  ],
+  "dependencies": {
+    "base": "1.9.0",
+    "react": "19.3.1",
+    "motion": "14.9.1",
+    "playwright": "1.65.0"
+  },
+  "inputHashes": {
+    "docsDist": "23e2b11e2c55cf83d86ad9f714184038f0e4de5a5200032d13adfaf27180cb19",
+    "packageDist": "42dd009aad96efcbf021ea8c882b1495e4266add071c8b872ac554e060904ddf"
+  },
+  "label": "final",
+  "command": "node bench/run.mjs --label final",
+  "seed": "none: the workload is a fixed script",
+  "viewport": {
+    "width": 1280,
+    "height": 800
+  },
+  "deviceScaleFactor": 2,
+  "headless": true,
+  "warmup": {
+    "perRunToggles": 4,
+    "droppedRuns": 1
+  },
+  "repetitions": {
+    "timingRuns": 6,
+    "foundationRoundsPerRun": 20,
+    "leakRuns": 5,
+    "leakCycles": 500
+  },
+  "workload": {
+    "warmupToggles": 4,
+    "reversals": 12,
+    "reversalGapMs": 110,
+    "typedDuringMove": 6,
+    "fullMoves": 6,
+    "fullMoveGapMs": 900
+  },
+  "exclusions": "The first run of each implementation is dropped as a warmup. No other run is excluded.",
+  "sampleUnit": "One fresh browser process is one observation. Samples inside a run are not independent.",
+  "loadAverageAtEnd": [
+    2.52978515625,
+    5.40087890625,
+    6.73095703125
+  ],
+  "lostAttempts": []
+}

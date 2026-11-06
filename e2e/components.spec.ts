@@ -156,6 +156,11 @@ test.describe('Timeline', () => {
 });
 
 test.describe('ActionBar', () => {
+  test('it takes no layout space', async ({ page }) => {
+    await special(page, 'actionbar');
+    expect((await page.locator('.q-actionbar-anchor').boundingBox())?.height).toBe(0);
+  });
+
   test('appearing moves nothing', async ({ page }) => {
     await special(page, 'actionbar');
     const before = await page.getByTestId('bar-content').boundingBox();

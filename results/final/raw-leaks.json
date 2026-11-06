@@ -1,0 +1,623 @@
+{
+ "surface": [
+  {
+   "impl": "surface",
+   "cycles": 500,
+   "start": {
+    "heapBytes": 3366560,
+    "nodes": 288,
+    "listeners": 174,
+    "observers": 1,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 200
+   },
+   "middle": {
+    "heapBytes": 3701888,
+    "nodes": 288,
+    "listeners": 174,
+    "observers": 1,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 1200
+   },
+   "end": {
+    "heapBytes": 3882012,
+    "nodes": 288,
+    "listeners": 174,
+    "observers": 1,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 2200
+   },
+   "removed": {
+    "heapBytes": 3691268,
+    "nodes": 169,
+    "listeners": 168,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 0,
+    "rafCalls": 2200
+   },
+   "rafCallsWhileRemoved": 0
+  },
+  {
+   "impl": "surface",
+   "cycles": 500,
+   "start": {
+    "heapBytes": 3366560,
+    "nodes": 288,
+    "listeners": 174,
+    "observers": 1,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 200
+   },
+   "middle": {
+    "heapBytes": 3717352,
+    "nodes": 288,
+    "listeners": 174,
+    "observers": 1,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 1200
+   },
+   "end": {
+    "heapBytes": 3883388,
+    "nodes": 288,
+    "listeners": 174,
+    "observers": 1,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 2200
+   },
+   "removed": {
+    "heapBytes": 3692656,
+    "nodes": 169,
+    "listeners": 168,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 0,
+    "rafCalls": 2200
+   },
+   "rafCallsWhileRemoved": 0
+  },
+  {
+   "impl": "surface",
+   "cycles": 500,
+   "start": {
+    "heapBytes": 3366552,
+    "nodes": 288,
+    "listeners": 174,
+    "observers": 1,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 200
+   },
+   "middle": {
+    "heapBytes": 3717028,
+    "nodes": 288,
+    "listeners": 174,
+    "observers": 1,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 1200
+   },
+   "end": {
+    "heapBytes": 3884248,
+    "nodes": 288,
+    "listeners": 174,
+    "observers": 1,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 2200
+   },
+   "removed": {
+    "heapBytes": 3693560,
+    "nodes": 169,
+    "listeners": 168,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 0,
+    "rafCalls": 2200
+   },
+   "rafCallsWhileRemoved": 0
+  },
+  {
+   "impl": "surface",
+   "cycles": 500,
+   "start": {
+    "heapBytes": 3366560,
+    "nodes": 288,
+    "listeners": 174,
+    "observers": 1,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 200
+   },
+   "middle": {
+    "heapBytes": 3717544,
+    "nodes": 288,
+    "listeners": 174,
+    "observers": 1,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 1200
+   },
+   "end": {
+    "heapBytes": 3883276,
+    "nodes": 288,
+    "listeners": 174,
+    "observers": 1,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 2200
+   },
+   "removed": {
+    "heapBytes": 3692532,
+    "nodes": 169,
+    "listeners": 168,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 0,
+    "rafCalls": 2200
+   },
+   "rafCallsWhileRemoved": 0
+  },
+  {
+   "impl": "surface",
+   "cycles": 500,
+   "start": {
+    "heapBytes": 3366596,
+    "nodes": 288,
+    "listeners": 174,
+    "observers": 1,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 200
+   },
+   "middle": {
+    "heapBytes": 3717736,
+    "nodes": 288,
+    "listeners": 174,
+    "observers": 1,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 1200
+   },
+   "end": {
+    "heapBytes": 3882548,
+    "nodes": 288,
+    "listeners": 174,
+    "observers": 1,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 2200
+   },
+   "removed": {
+    "heapBytes": 3691828,
+    "nodes": 169,
+    "listeners": 168,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 0,
+    "rafCalls": 2200
+   },
+   "rafCallsWhileRemoved": 0
+  }
+ ],
+ "motion-height": [
+  {
+   "impl": "motion-height",
+   "cycles": 500,
+   "start": {
+    "heapBytes": 3462572,
+    "nodes": 284,
+    "listeners": 173,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 150
+   },
+   "middle": {
+    "heapBytes": 3852140,
+    "nodes": 284,
+    "listeners": 173,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 900
+   },
+   "end": {
+    "heapBytes": 3999320,
+    "nodes": 284,
+    "listeners": 173,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 1650
+   },
+   "removed": {
+    "heapBytes": 3932584,
+    "nodes": 167,
+    "listeners": 169,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 1650
+   },
+   "rafCallsWhileRemoved": 0
+  },
+  {
+   "impl": "motion-height",
+   "cycles": 500,
+   "start": {
+    "heapBytes": 3462604,
+    "nodes": 284,
+    "listeners": 173,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 150
+   },
+   "middle": {
+    "heapBytes": 3852512,
+    "nodes": 284,
+    "listeners": 173,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 900
+   },
+   "end": {
+    "heapBytes": 4000544,
+    "nodes": 284,
+    "listeners": 173,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 1650
+   },
+   "removed": {
+    "heapBytes": 3933820,
+    "nodes": 167,
+    "listeners": 169,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 1650
+   },
+   "rafCallsWhileRemoved": 0
+  },
+  {
+   "impl": "motion-height",
+   "cycles": 500,
+   "start": {
+    "heapBytes": 3462640,
+    "nodes": 284,
+    "listeners": 173,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 150
+   },
+   "middle": {
+    "heapBytes": 3851980,
+    "nodes": 284,
+    "listeners": 173,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 900
+   },
+   "end": {
+    "heapBytes": 3998076,
+    "nodes": 284,
+    "listeners": 173,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 1650
+   },
+   "removed": {
+    "heapBytes": 3931364,
+    "nodes": 167,
+    "listeners": 169,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 1650
+   },
+   "rafCallsWhileRemoved": 0
+  },
+  {
+   "impl": "motion-height",
+   "cycles": 500,
+   "start": {
+    "heapBytes": 3462584,
+    "nodes": 284,
+    "listeners": 173,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 150
+   },
+   "middle": {
+    "heapBytes": 3852712,
+    "nodes": 284,
+    "listeners": 173,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 900
+   },
+   "end": {
+    "heapBytes": 4000552,
+    "nodes": 284,
+    "listeners": 173,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 1650
+   },
+   "removed": {
+    "heapBytes": 3933828,
+    "nodes": 167,
+    "listeners": 169,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 1650
+   },
+   "rafCallsWhileRemoved": 0
+  },
+  {
+   "impl": "motion-height",
+   "cycles": 500,
+   "start": {
+    "heapBytes": 3462584,
+    "nodes": 284,
+    "listeners": 173,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 150
+   },
+   "middle": {
+    "heapBytes": 3852636,
+    "nodes": 284,
+    "listeners": 173,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 900
+   },
+   "end": {
+    "heapBytes": 4000808,
+    "nodes": 284,
+    "listeners": 173,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 1650
+   },
+   "removed": {
+    "heapBytes": 3934084,
+    "nodes": 167,
+    "listeners": 169,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 1650
+   },
+   "rafCallsWhileRemoved": 0
+  }
+ ],
+ "broken-leak": [
+  {
+   "impl": "broken-leak",
+   "cycles": 500,
+   "start": {
+    "heapBytes": 3032156,
+    "nodes": 53,
+    "listeners": 216,
+    "observers": 51,
+    "intervals": 51,
+    "resizeListeners": 51,
+    "rafCalls": 4230
+   },
+   "middle": {
+    "heapBytes": 3310704,
+    "nodes": 53,
+    "listeners": 466,
+    "observers": 301,
+    "intervals": 301,
+    "resizeListeners": 301,
+    "rafCalls": 138309
+   },
+   "end": {
+    "heapBytes": 3414420,
+    "nodes": 53,
+    "listeners": 716,
+    "observers": 551,
+    "intervals": 551,
+    "resizeListeners": 551,
+    "rafCalls": 460337
+   },
+   "removed": {
+    "heapBytes": 3411620,
+    "nodes": 50,
+    "listeners": 715,
+    "observers": 551,
+    "intervals": 551,
+    "resizeListeners": 551,
+    "rafCalls": 469153
+   },
+   "rafCallsWhileRemoved": 12673
+  },
+  {
+   "impl": "broken-leak",
+   "cycles": 500,
+   "start": {
+    "heapBytes": 3032764,
+    "nodes": 53,
+    "listeners": 216,
+    "observers": 51,
+    "intervals": 51,
+    "resizeListeners": 51,
+    "rafCalls": 4281
+   },
+   "middle": {
+    "heapBytes": 3306880,
+    "nodes": 53,
+    "listeners": 466,
+    "observers": 301,
+    "intervals": 301,
+    "resizeListeners": 301,
+    "rafCalls": 138059
+   },
+   "end": {
+    "heapBytes": 3410636,
+    "nodes": 53,
+    "listeners": 716,
+    "observers": 551,
+    "intervals": 551,
+    "resizeListeners": 551,
+    "rafCalls": 460087
+   },
+   "removed": {
+    "heapBytes": 3408636,
+    "nodes": 50,
+    "listeners": 715,
+    "observers": 551,
+    "intervals": 551,
+    "resizeListeners": 551,
+    "rafCalls": 468903
+   },
+   "rafCallsWhileRemoved": 11571
+  },
+  {
+   "impl": "broken-leak",
+   "cycles": 500,
+   "start": {
+    "heapBytes": 3032732,
+    "nodes": 53,
+    "listeners": 216,
+    "observers": 51,
+    "intervals": 51,
+    "resizeListeners": 51,
+    "rafCalls": 4281
+   },
+   "middle": {
+    "heapBytes": 3307004,
+    "nodes": 53,
+    "listeners": 466,
+    "observers": 301,
+    "intervals": 301,
+    "resizeListeners": 301,
+    "rafCalls": 138059
+   },
+   "end": {
+    "heapBytes": 3410744,
+    "nodes": 53,
+    "listeners": 716,
+    "observers": 551,
+    "intervals": 551,
+    "resizeListeners": 551,
+    "rafCalls": 460638
+   },
+   "removed": {
+    "heapBytes": 3407136,
+    "nodes": 50,
+    "listeners": 715,
+    "observers": 551,
+    "intervals": 551,
+    "resizeListeners": 551,
+    "rafCalls": 469454
+   },
+   "rafCallsWhileRemoved": 12122
+  },
+  {
+   "impl": "broken-leak",
+   "cycles": 500,
+   "start": {
+    "heapBytes": 3032720,
+    "nodes": 53,
+    "listeners": 216,
+    "observers": 51,
+    "intervals": 51,
+    "resizeListeners": 51,
+    "rafCalls": 4281
+   },
+   "middle": {
+    "heapBytes": 3307108,
+    "nodes": 53,
+    "listeners": 466,
+    "observers": 301,
+    "intervals": 301,
+    "resizeListeners": 301,
+    "rafCalls": 138360
+   },
+   "end": {
+    "heapBytes": 3416296,
+    "nodes": 53,
+    "listeners": 716,
+    "observers": 551,
+    "intervals": 551,
+    "resizeListeners": 551,
+    "rafCalls": 460939
+   },
+   "removed": {
+    "heapBytes": 3406884,
+    "nodes": 50,
+    "listeners": 715,
+    "observers": 551,
+    "intervals": 551,
+    "resizeListeners": 551,
+    "rafCalls": 469755
+   },
+   "rafCallsWhileRemoved": 11571
+  },
+  {
+   "impl": "broken-leak",
+   "cycles": 500,
+   "start": {
+    "heapBytes": 3032124,
+    "nodes": 53,
+    "listeners": 216,
+    "observers": 51,
+    "intervals": 51,
+    "resizeListeners": 51,
+    "rafCalls": 4230
+   },
+   "middle": {
+    "heapBytes": 3307092,
+    "nodes": 53,
+    "listeners": 466,
+    "observers": 301,
+    "intervals": 301,
+    "resizeListeners": 301,
+    "rafCalls": 138008
+   },
+   "end": {
+    "heapBytes": 3420232,
+    "nodes": 53,
+    "listeners": 716,
+    "observers": 551,
+    "intervals": 551,
+    "resizeListeners": 551,
+    "rafCalls": 460888
+   },
+   "removed": {
+    "heapBytes": 3411620,
+    "nodes": 50,
+    "listeners": 715,
+    "observers": 551,
+    "intervals": 551,
+    "resizeListeners": 551,
+    "rafCalls": 469704
+   },
+   "rafCallsWhileRemoved": 12122
+  }
+ ]
+}

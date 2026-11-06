@@ -22,8 +22,8 @@ const MUTANTS = [
   ['repeat-request-advances', `${CORE}/machine.ts`, 'if (destroyed || shape === desired) return false;', 'if (destroyed) return false;'],
   ['destroy-does-not-stop-requests', `${CORE}/machine.ts`, 'if (destroyed || shape === desired) return false;', 'if (shape === desired) return false;'],
   ['token-ignores-newer-intent', `${CORE}/machine.ts`, 'isCurrent: (token) => !destroyed && token.generation === generation,', 'isCurrent: () => !destroyed,'],
-  ['retarget-drops-velocity', `${CORE}/engine.ts`, "begin(from, velocity, to, 'shape');", "begin(from, ZERO, to, 'shape');"],
-  ['retarget-starts-from-target', `${CORE}/engine.ts`, 'height: visible.height,\n      radius: visible.radius,\n    };\n    const to', 'height: target.height,\n      radius: visible.radius,\n    };\n    const to'],
+  ['retarget-drops-velocity', `${CORE}/engine.ts`, 'begin(from, velocity, to, reason);', 'begin(from, ZERO, to, reason);'],
+  ['retarget-starts-from-target', `${CORE}/engine.ts`, 'height: visible.height,\n      radius: visible.radius,\n    };\n    begin(', 'height: target.height,\n      radius: visible.radius,\n    };\n    begin('],
   ['offset-ignores-size-anchor', `${CORE}/engine.ts`, 'const origin = port.readOrigin(visible.width, visible.height);', 'port.readOrigin(visible.width, visible.height);\n    const origin = target;'],
   ['offset-off-by-a-quarter', `${CORE}/engine.ts`, 'dx: visible.x - origin.x,', 'dx: visible.x - (origin.x * 0.75 + target.x * 0.25),'],
   ['consumer-translate-dropped', `${CORE}/dom-port.ts`, "baseTranslate = { x, y };", ''],
@@ -31,7 +31,7 @@ const MUTANTS = [
   ['position-not-held', `${CORE}/engine.ts`, 'dy: visible.y - origin.y,', 'dy: 0,'],
   ['horizontal-position-not-held', `${CORE}/engine.ts`, 'dx: visible.x - origin.x,', 'dx: 0,'],
   ['content-retarget-drops-velocity', `${CORE}/engine.ts`, "begin(values, velocity, to, 'content');\n        }\n        return;", "begin(values, ZERO, to, 'content');\n        }\n        return;"],
-  ['translate-not-written', `${CORE}/dom-port.ts`, 'if (values.dx !== undefined || values.dy !== undefined) style.translate = `${values.dx ?? 0}px ${values.dy ?? 0}px`;', ''],
+  ['translate-not-written', `${CORE}/dom-port.ts`, 'if (values.dx !== undefined || values.dy !== undefined) style.translate = `calc(${baseTranslate.x} + ${values.dx ?? 0}px) calc(${baseTranslate.y} + ${values.dy ?? 0}px)`;', ''],
   ['width-not-written', `${CORE}/dom-port.ts`, 'if (width !== undefined) root.style.width = `${Math.max(width - insets.width, 0)}px`;', ''],
   ['radius-not-written', `${CORE}/dom-port.ts`, 'if (values.radius !== undefined && !skipRadius) style.borderRadius = `${values.radius}px`;', ''],
   ['consumer-styles-dropped', `${CORE}/dom-port.ts`, "if (value) root.style.setProperty(property, value);\n    else root.style.removeProperty(property);", 'root.style.removeProperty(property);'],
@@ -40,12 +40,12 @@ const MUTANTS = [
   ['scroller-gets-clipped', `${CORE}/dom-port.ts`, "if (style.overflowX === 'visible' && style.overflowY === 'visible') root.style.overflow = 'clip';", "root.style.overflow = 'clip';"],
   ['mirror-not-detected', `${CORE}/dom-port.ts`, 'if (scaleX <= 0 || scaleY <= 0) return { scaleX: 1, scaleY: 1, unsupported: true };', ''],
   ['zoom-ignored', `${CORE}/dom-port.ts`, 'if (zoomed > 0 && zoomed !== 1) {', 'if (false) {'],
-  ['rest-move-assumes-no-padding', `${CORE}/engine.ts`, "if (previousRoot === null || Math.abs(nextRoot - previousRoot) <= SAME_BOX_PX) return;\n\n      readSpring();\n      heightOnly = true;\n      begin({ ...ZERO, height: previousRoot }, ZERO, { ...ZERO, height: nextRoot }, 'content');", "if (previousRoot === null || Math.abs(nextRoot - previousRoot) <= SAME_BOX_PX) return;\n\n      readSpring();\n      heightOnly = true;\n      begin({ ...ZERO, height: previousHeight }, ZERO, { ...ZERO, height }, 'content');"],
+  ['rest-move-assumes-no-padding', `${CORE}/engine.ts`, "begin({ ...ZERO, height: previousRoot }, ZERO, { ...ZERO, height: nextRoot }, 'content');", "begin({ ...ZERO, height: previousHeight }, ZERO, { ...ZERO, height }, 'content');"],
   ['destroy-leaves-loop-running', `${CORE}/engine.ts`, "destroyed = true;\n      stopLoop();", 'destroyed = true;'],
   ['destroy-leaves-inline-styles', `${CORE}/engine.ts`, "stopLoop();\n      segments = null;\n      port.release();\n      onTrace?.({ type: 'destroy'", "stopLoop();\n      segments = null;\n      onTrace?.({ type: 'destroy'"],
   ['no-end-correction', `${CORE}/engine.ts`, 'const MAX_CORRECTIONS = 2;', 'const MAX_CORRECTIONS = 0;'],
   ['viewport-change-ignored', `${CORE}/engine.ts`, 'if (segments && !heightOnly) viewportDirty = true;', ''],
-  ['content-growth-not-animated', `${CORE}/engine.ts`, 'if (port.prefersReducedMotion() || port.isDocumentHidden()) return;\n\n      const { values', 'return;\n\n      const { values'],
+  ['content-growth-not-animated', `${CORE}/engine.ts`, 'if (port.prefersReducedMotion() || port.isDocumentHidden()) return;\n      // The root may not', 'return;\n      // The root may not'],
   ['growth-in-flight-ignored', `${CORE}/engine.ts`, "begin(values, velocity, to, 'content');\n        }\n        return;", '}\n        return;'],
   ['removed-field-loses-focus', 'packages/react/src/inspector/Inspector.tsx', 'observer.observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: [\'disabled\'] });', ''],
   ['reopen-after-settle-skips-initial', 'packages/react/src/inspector/Inspector.tsx', 'const remembered = settledClosed.current ? null : lastFocused.current;', 'const remembered = lastFocused.current;'],
@@ -58,14 +58,14 @@ const MUTANTS = [
   ['reduced-motion-ignored', `${CORE}/engine.ts`, "if (port.prefersReducedMotion()) return 'reduced-motion' as const;", ''],
   ['rotation-ignored', `${CORE}/engine.ts`, "if (target.unsupportedTransform) return 'unsupported-transform' as const;", ''],
   ['stale-action-runs', `${CORE}/engine.ts`, 'if (machine.isCurrent(token)) {', 'if (machine.snapshot()) {'],
-  ['scroll-not-restored', `${CORE}/dom-port.ts`, 'pendingScroll = readScrollPositions(root);\n      const rect', 'const rect'],
+  ['scroll-not-restored', `${CORE}/dom-port.ts`, 'pendingScroll = readScrollPositions(root);\n      suspendConflictingTransition', 'suspendConflictingTransition'],
   ['ancestor-scale-ignored', `${CORE}/dom-port.ts`, 'scaleX *= matrix.a;\n    scaleY *= matrix.d;', ''],
   ['content-width-not-locked', `${CORE}/dom-port.ts`, 'content.style.width = `${width}px`;', ''],
   ['focus-ignores-inert', `${CORE}/focus.ts`, "if (element.closest('[inert]')) return false;", ''],
   ['capture-skipped', 'packages/react/src/surface/Surface.tsx', 'if (previous.shape !== this.props.shape) this.props.capture();', ''],
   ['observer-not-disconnected', 'packages/react/src/surface/Surface.tsx', 'observer.disconnect();', ''],
   ['resize-listener-not-removed', 'packages/react/src/surface/Surface.tsx', "window.removeEventListener('resize', onViewportChange);", ''],
-  ['close-does-not-move-focus', 'packages/react/src/inspector/Inspector.tsx', "if (panel.contains(active)) traceFocus('close', [triggerRef.current, latest.current.fallbackFocusRef?.current, rootRef.current]);", ''],
+  ['close-does-not-move-focus', 'packages/react/src/inspector/Inspector.tsx', "if (panel.contains(active) || pressedInPanel) traceFocus('close', [triggerRef.current, latest.current.fallbackFocusRef?.current, rootRef.current]);", ''],
   ['closing-panel-not-inert', 'packages/react/src/inspector/Inspector.tsx', "panel.setAttribute('inert', '');", ''],
   ['reopen-forgets-field', 'packages/react/src/inspector/Inspector.tsx', 'const remembered = settledClosed.current ? null : lastFocused.current;', 'const remembered = null;'],
   ['typing-does-not-cancel-close', 'packages/react/src/inspector/Inspector.tsx', 'if (pendingToken.current) {\n      handleRef.current?.invalidate();', 'if (false) {\n      handleRef.current?.invalidate();'],
@@ -127,6 +127,12 @@ for (const [id, file, find, replace] of MUTANTS) {
   console.log(`${id}: ${caught ? 'caught' : 'SURVIVED'} (${result.failedUnit?.length ?? 0} unit, ${result.failedE2e?.length ?? 0} browser)`);
 }
 
+// Read and judged by hand. A survivor listed here cannot change behavior, for the reason given.
+const EQUIVALENT = {
+  'focus-ignores-inert': 'moveFocus also checks activeElement after focusing, and focus() on an inert element does nothing, so the candidate is skipped either way.',
+  'no-backdrop-dismissal': "Base UI's modal Dialog has its own internal backdrop, which still dismisses on an outside press when Dialog.Backdrop is absent. The hit area is redundant code.",
+};
+
 const summary = {
   commit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: SANDBOX, encoding: 'utf8' }).trim(),
   date: new Date().toISOString(),
@@ -135,6 +141,7 @@ const summary = {
   total: results.length,
   caught: results.filter((r) => r.outcome === 'caught').length,
   survived: results.filter((r) => r.outcome === 'survived').map((r) => r.id),
+  equivalent: Object.fromEntries(results.filter((r) => r.outcome === 'survived' && EQUIVALENT[r.id]).map((r) => [r.id, EQUIVALENT[r.id]])),
   notApplied: results.filter((r) => r.outcome === 'not-applied').map((r) => r.id),
   results,
 };

@@ -46,7 +46,8 @@ export function environment(browserVersion) {
   } catch { /* Not a Mac, or no battery tool. */ }
   const pkg = JSON.parse(readFileSync(join(ROOT, 'packages/react/package.json'), 'utf8'));
   const docs = JSON.parse(readFileSync(join(ROOT, 'apps/docs/package.json'), 'utf8'));
-  const dirty = sh('git', ['status', '--porcelain']).length > 0;
+  // results/ changes during a run by design. Only source counts.
+  const dirty = sh('git', ['status', '--porcelain', '--', ':!results']).length > 0;
   return {
     commit: sh('git', ['rev-parse', 'HEAD']),
     dirty,

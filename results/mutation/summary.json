@@ -1,6 +1,6 @@
 {
-  "commit": "8b9e5a17f0382ef9705c9dfe9f4c0aea12b8f3a1",
-  "date": "2026-11-06T07:45:12.723Z",
+  "commit": "f3a4d2425f6f5af5172ea3526aa7f53a60f3b4d2",
+  "date": "2026-11-06T09:37:44.903Z",
   "controlClean": true,
   "control": {
     "unitStatus": 0,
@@ -8,54 +8,59 @@
     "failedUnit": [],
     "failedE2e": []
   },
-  "total": 32,
-  "caught": 15,
+  "total": 55,
+  "caught": 42,
   "survived": [
-    "stale-completion-commits",
-    "repeat-request-advances",
-    "destroy-does-not-stop-requests",
-    "retarget-drops-velocity",
-    "position-not-held",
-    "destroy-leaves-loop-running",
-    "destroy-leaves-inline-styles",
-    "no-end-correction",
-    "viewport-change-ignored",
-    "growth-in-flight-ignored",
-    "rotation-ignored",
-    "ancestor-scale-ignored",
-    "content-width-not-locked",
+    "horizontal-position-not-held",
+    "consumer-styles-dropped",
+    "mirror-not-detected",
+    "no-backdrop-dismissal",
     "focus-ignores-inert",
-    "reopen-forgets-field",
-    "modal-never-unmounts",
     "actionbar-takes-space"
   ],
-  "notApplied": [],
+  "notApplied": [
+    "retarget-drops-velocity",
+    "retarget-starts-from-target",
+    "translate-not-written",
+    "rest-move-assumes-no-padding",
+    "content-growth-not-animated",
+    "scroll-not-restored",
+    "close-does-not-move-focus"
+  ],
   "results": [
     {
       "id": "stale-completion-commits",
       "file": "packages/react/src/core/machine.ts",
-      "outcome": "survived",
+      "outcome": "caught",
       "unitStatus": 1,
-      "e2eStatus": 0,
-      "failedUnit": [],
+      "e2eStatus": null,
+      "failedUnit": [
+        "packages/react/test/machine.test.ts > state model > M4: a close completing after a reopen does not close the surface",
+        "packages/react/test/machine.test.ts > state model > M4: a reversal chain leaves only the final generation able to commit",
+        "packages/react/test/machine.test.ts > state model > M7: over random interleavings, rendered only ever takes a desired value and the generation never falls"
+      ],
       "failedE2e": []
     },
     {
       "id": "repeat-request-advances",
       "file": "packages/react/src/core/machine.ts",
-      "outcome": "survived",
+      "outcome": "caught",
       "unitStatus": 1,
-      "e2eStatus": 0,
-      "failedUnit": [],
+      "e2eStatus": null,
+      "failedUnit": [
+        "packages/react/test/machine.test.ts > state model > M2: asking for the desired shape again changes nothing"
+      ],
       "failedE2e": []
     },
     {
       "id": "destroy-does-not-stop-requests",
       "file": "packages/react/src/core/machine.ts",
-      "outcome": "survived",
+      "outcome": "caught",
       "unitStatus": 1,
-      "e2eStatus": 0,
-      "failedUnit": [],
+      "e2eStatus": null,
+      "failedUnit": [
+        "packages/react/test/machine.test.ts > state model > M6: nothing commits after destroy"
+      ],
       "failedE2e": []
     },
     {
@@ -63,44 +68,88 @@
       "file": "packages/react/src/core/machine.ts",
       "outcome": "caught",
       "unitStatus": 1,
-      "e2eStatus": 1,
-      "failedUnit": [],
-      "failedE2e": [
-        "e2e/interruption.spec.ts:6:3 › surface: a deferred close cannot close a reopened surface"
-      ]
+      "e2eStatus": null,
+      "failedUnit": [
+        "packages/react/test/engine.test.ts > engine > a stale deferred action does not run",
+        "packages/react/test/engine.test.ts > engine > invalidate cancels a deferred action and the move still finishes",
+        "packages/react/test/machine.test.ts > state model > M5: invalidate makes a token stale without changing the shape"
+      ],
+      "failedE2e": []
     },
     {
       "id": "retarget-drops-velocity",
       "file": "packages/react/src/core/engine.ts",
-      "outcome": "survived",
-      "unitStatus": 1,
-      "e2eStatus": 0,
-      "failedUnit": [],
-      "failedE2e": []
+      "outcome": "not-applied"
     },
     {
       "id": "retarget-starts-from-target",
       "file": "packages/react/src/core/engine.ts",
+      "outcome": "not-applied"
+    },
+    {
+      "id": "offset-ignores-size-anchor",
+      "file": "packages/react/src/core/engine.ts",
       "outcome": "caught",
       "unitStatus": 1,
+      "e2eStatus": null,
+      "failedUnit": [
+        "packages/react/test/engine.test.ts > engine > a bottom-anchored box starts exactly where it was, because the offset uses layout at that size"
+      ],
+      "failedE2e": []
+    },
+    {
+      "id": "offset-off-by-a-quarter",
+      "file": "packages/react/src/core/engine.ts",
+      "outcome": "caught",
+      "unitStatus": 0,
       "e2eStatus": 1,
       "failedUnit": [],
       "failedE2e": [
-        "e2e/geometry.spec.ts:25:1 › under a scaled ancestor, the move starts from the visible box and ends on the natural one",
-        "e2e/geometry.spec.ts:47:1 › in a nested scroller, a shape change keeps the scroll position",
-        "e2e/inspector.spec.ts:7:1 › focus moves at the request, so typing during the move lands in the field",
-        "e2e/inspector.spec.ts:38:1 › a closing panel cannot be tabbed into",
-        "e2e/interruption.spec.ts:6:3 › surface: reverse twice, then type",
-        "e2e/interruption.spec.ts:6:3 › surface: a deferred close cannot close a reopened surface",
-        "e2e/interruption.spec.ts:6:3 › surface: many fast reversals end on the last request",
-        "e2e/interruption.spec.ts:6:3 › surface: closing during a move with focus inside keeps focus valid",
-        "e2e/interruption.spec.ts:6:3 › surface: content grows during a move",
-        "e2e/interruption.spec.ts:6:3 › surface: viewport changes during a move, then typing continues"
+        "e2e/continuity.spec.ts:77:3 › continuous on every channel, opening: right",
+        "e2e/continuity.spec.ts:77:3 › continuous on every channel, opening: center",
+        "e2e/continuity.spec.ts:82:3 › continuous on every channel, closing: right",
+        "e2e/continuity.spec.ts:82:3 › continuous on every channel, closing: center",
+        "e2e/continuity.spec.ts:77:3 › continuous on every channel, opening: rtl",
+        "e2e/continuity.spec.ts:82:3 › continuous on every channel, closing: rtl",
+        "e2e/continuity.spec.ts:117:1 › a root centered with translate holds still"
+      ]
+    },
+    {
+      "id": "consumer-translate-dropped",
+      "file": "packages/react/src/core/dom-port.ts",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/continuity.spec.ts:117:1 › a root centered with translate holds still"
+      ]
+    },
+    {
+      "id": "focus-stolen-from-user",
+      "file": "packages/react/src/inspector/Inspector.tsx",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/continuity.spec.ts:247:3 › focus holes › focus the user moved elsewhere stays there"
       ]
     },
     {
       "id": "position-not-held",
       "file": "packages/react/src/core/engine.ts",
+      "outcome": "caught",
+      "unitStatus": 1,
+      "e2eStatus": null,
+      "failedUnit": [
+        "packages/react/test/engine.test.ts > engine > a bottom-anchored box starts exactly where it was, because the offset uses layout at that size"
+      ],
+      "failedE2e": []
+    },
+    {
+      "id": "horizontal-position-not-held",
+      "file": "packages/react/src/core/engine.ts",
       "outcome": "survived",
       "unitStatus": 0,
       "e2eStatus": 0,
@@ -108,79 +157,298 @@
       "failedE2e": []
     },
     {
-      "id": "destroy-leaves-loop-running",
+      "id": "content-retarget-drops-velocity",
       "file": "packages/react/src/core/engine.ts",
-      "outcome": "survived",
+      "outcome": "caught",
       "unitStatus": 1,
+      "e2eStatus": null,
+      "failedUnit": [
+        "packages/react/test/engine.test.ts > engine > a content change during a move keeps velocity"
+      ],
+      "failedE2e": []
+    },
+    {
+      "id": "translate-not-written",
+      "file": "packages/react/src/core/dom-port.ts",
+      "outcome": "not-applied"
+    },
+    {
+      "id": "width-not-written",
+      "file": "packages/react/src/core/dom-port.ts",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/continuity.spec.ts:77:3 › continuous on every channel, opening: right",
+        "e2e/continuity.spec.ts:77:3 › continuous on every channel, opening: center",
+        "e2e/continuity.spec.ts:82:3 › continuous on every channel, closing: right",
+        "e2e/continuity.spec.ts:82:3 › continuous on every channel, closing: center",
+        "e2e/continuity.spec.ts:77:3 › continuous on every channel, opening: rtl",
+        "e2e/continuity.spec.ts:77:3 › continuous on every channel, opening: box",
+        "e2e/continuity.spec.ts:82:3 › continuous on every channel, closing: rtl",
+        "e2e/continuity.spec.ts:82:3 › continuous on every channel, closing: box",
+        "e2e/continuity.spec.ts:77:3 › continuous on every channel, opening: mixed",
+        "e2e/continuity.spec.ts:82:3 › continuous on every channel, closing: mixed",
+        "e2e/continuity.spec.ts:77:3 › continuous on every channel, opening: scaled",
+        "e2e/continuity.spec.ts:82:3 › continuous on every channel, closing: scaled",
+        "e2e/continuity.spec.ts:77:3 › continuous on every channel, opening: zoomed",
+        "e2e/continuity.spec.ts:82:3 › continuous on every channel, closing: zoomed",
+        "e2e/continuity.spec.ts:117:1 › a root centered with translate holds still",
+        "e2e/continuity.spec.ts:155:1 › with transition: all on the surface, the engine still animates and CSS is restored"
+      ]
+    },
+    {
+      "id": "radius-not-written",
+      "file": "packages/react/src/core/dom-port.ts",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/continuity.spec.ts:132:1 › radius moves through values between the two shapes"
+      ]
+    },
+    {
+      "id": "consumer-styles-dropped",
+      "file": "packages/react/src/core/dom-port.ts",
+      "outcome": "survived",
+      "unitStatus": 0,
       "e2eStatus": 0,
       "failedUnit": [],
+      "failedE2e": []
+    },
+    {
+      "id": "content-box-ignored",
+      "file": "packages/react/src/core/dom-port.ts",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/continuity.spec.ts:186:5 › height changes at rest › stay continuous and end on the natural height: contentbox"
+      ]
+    },
+    {
+      "id": "transition-not-suspended",
+      "file": "packages/react/src/core/dom-port.ts",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/continuity.spec.ts:155:1 › with transition: all on the surface, the engine still animates and CSS is restored"
+      ]
+    },
+    {
+      "id": "scroller-gets-clipped",
+      "file": "packages/react/src/core/dom-port.ts",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/continuity.spec.ts:177:1 › a scrolling root keeps its scroll position through a move"
+      ]
+    },
+    {
+      "id": "mirror-not-detected",
+      "file": "packages/react/src/core/dom-port.ts",
+      "outcome": "survived",
+      "unitStatus": 0,
+      "e2eStatus": 0,
+      "failedUnit": [],
+      "failedE2e": []
+    },
+    {
+      "id": "zoom-ignored",
+      "file": "packages/react/src/core/dom-port.ts",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/continuity.spec.ts:77:3 › continuous on every channel, opening: zoomed",
+        "e2e/continuity.spec.ts:82:3 › continuous on every channel, closing: zoomed"
+      ]
+    },
+    {
+      "id": "rest-move-assumes-no-padding",
+      "file": "packages/react/src/core/engine.ts",
+      "outcome": "not-applied"
+    },
+    {
+      "id": "destroy-leaves-loop-running",
+      "file": "packages/react/src/core/engine.ts",
+      "outcome": "caught",
+      "unitStatus": 1,
+      "e2eStatus": null,
+      "failedUnit": [
+        "packages/react/test/engine.test.ts > engine > unmount stops the loop and a late intent is dropped"
+      ],
       "failedE2e": []
     },
     {
       "id": "destroy-leaves-inline-styles",
       "file": "packages/react/src/core/engine.ts",
-      "outcome": "survived",
+      "outcome": "caught",
       "unitStatus": 1,
-      "e2eStatus": 0,
-      "failedUnit": [],
+      "e2eStatus": null,
+      "failedUnit": [
+        "packages/react/test/engine.test.ts > engine > unmount stops the loop and a late intent is dropped"
+      ],
       "failedE2e": []
     },
     {
       "id": "no-end-correction",
       "file": "packages/react/src/core/engine.ts",
-      "outcome": "survived",
+      "outcome": "caught",
       "unitStatus": 1,
-      "e2eStatus": 0,
-      "failedUnit": [],
+      "e2eStatus": null,
+      "failedUnit": [
+        "packages/react/test/engine.test.ts > engine > corrects when the natural box moved at the end, and the correction is bounded"
+      ],
       "failedE2e": []
     },
     {
       "id": "viewport-change-ignored",
       "file": "packages/react/src/core/engine.ts",
-      "outcome": "survived",
+      "outcome": "caught",
       "unitStatus": 1,
-      "e2eStatus": 0,
-      "failedUnit": [],
+      "e2eStatus": null,
+      "failedUnit": [
+        "packages/react/test/engine.test.ts > engine > a viewport change during a move is measured at most once per frame"
+      ],
       "failedE2e": []
     },
     {
       "id": "content-growth-not-animated",
       "file": "packages/react/src/core/engine.ts",
-      "outcome": "caught",
-      "unitStatus": 1,
-      "e2eStatus": 1,
-      "failedUnit": [],
-      "failedE2e": [
-        "e2e/interruption.spec.ts:6:3 › surface: content grows at rest"
-      ]
+      "outcome": "not-applied"
     },
     {
       "id": "growth-in-flight-ignored",
       "file": "packages/react/src/core/engine.ts",
+      "outcome": "caught",
+      "unitStatus": 1,
+      "e2eStatus": null,
+      "failedUnit": [
+        "packages/react/test/engine.test.ts > engine > a content change during a move keeps velocity",
+        "packages/react/test/engine.test.ts > engine > a content change during a move retargets by the change in content height"
+      ],
+      "failedE2e": []
+    },
+    {
+      "id": "removed-field-loses-focus",
+      "file": "packages/react/src/inspector/Inspector.tsx",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/continuity.spec.ts:216:3 › focus holes › a trigger removed while focused sends focus into the open panel",
+        "e2e/continuity.spec.ts:225:3 › focus holes › a field removed while focused does not lose focus, and Escape still closes",
+        "e2e/continuity.spec.ts:237:3 › focus holes › a trigger disabled while focused does not lose focus"
+      ]
+    },
+    {
+      "id": "reopen-after-settle-skips-initial",
+      "file": "packages/react/src/inspector/Inspector.tsx",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/continuity.spec.ts:259:3 › focus holes › a fresh open uses initialFocus, every time"
+      ]
+    },
+    {
+      "id": "modal-panel-not-inert",
+      "file": "packages/react/src/inspector/Inspector.tsx",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/continuity.spec.ts:292:3 › modal closing › the panel is inert from the moment of the close"
+      ]
+    },
+    {
+      "id": "backdrop-stays-opaque-closed",
+      "file": "packages/react/src/inspector/ModalInspector.tsx",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/continuity.spec.ts:313:3 › modal closing › with reduced motion, the backdrop does not fade",
+        "e2e/continuity.spec.ts:302:3 › modal closing › the backdrop fades with the panel"
+      ]
+    },
+    {
+      "id": "closing-modal-catches-presses",
+      "file": "packages/react/src/css/inspector.css",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/continuity.spec.ts:320:3 › modal closing › a press on the row during a close reopens it",
+        "e2e/continuity.spec.ts:329:3 › modal closing › reopening during a close returns to the field in use"
+      ]
+    },
+    {
+      "id": "no-backdrop-dismissal",
+      "file": "packages/react/src/inspector/ModalInspector.tsx",
       "outcome": "survived",
       "unitStatus": 0,
       "e2eStatus": 0,
       "failedUnit": [],
       "failedE2e": []
+    },
+    {
+      "id": "timeline-overruns-max",
+      "file": "packages/react/src/timeline/Timeline.tsx",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/continuity.spec.ts:368:3 › Timeline edges › playback lands on max when the step does not divide the range"
+      ]
+    },
+    {
+      "id": "timeline-ignores-seek",
+      "file": "packages/react/src/timeline/Timeline.tsx",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/continuity.spec.ts:374:3 › Timeline edges › a seek during playback is respected"
+      ]
     },
     {
       "id": "reduced-motion-ignored",
       "file": "packages/react/src/core/engine.ts",
       "outcome": "caught",
       "unitStatus": 1,
-      "e2eStatus": 1,
-      "failedUnit": [],
-      "failedE2e": [
-        "e2e/inspector.spec.ts:114:1 › reduced motion: same states and focus, no moving phase"
-      ]
+      "e2eStatus": null,
+      "failedUnit": [
+        "packages/react/test/engine.test.ts > engine, moves that skip animation > reduced motion reaches the shape in the same task",
+        "packages/react/test/engine.test.ts > engine, moves that skip animation > reduced motion ignores content changes at rest"
+      ],
+      "failedE2e": []
     },
     {
       "id": "rotation-ignored",
       "file": "packages/react/src/core/engine.ts",
-      "outcome": "survived",
+      "outcome": "caught",
       "unitStatus": 1,
-      "e2eStatus": 0,
-      "failedUnit": [],
+      "e2eStatus": null,
+      "failedUnit": [
+        "packages/react/test/engine.test.ts > engine, moves that skip animation > a rotated ancestor goes straight to the target"
+      ],
       "failedE2e": []
     },
     {
@@ -188,40 +456,40 @@
       "file": "packages/react/src/core/engine.ts",
       "outcome": "caught",
       "unitStatus": 1,
-      "e2eStatus": 1,
-      "failedUnit": [],
-      "failedE2e": [
-        "e2e/interruption.spec.ts:6:3 › surface: a deferred close cannot close a reopened surface"
-      ]
+      "e2eStatus": null,
+      "failedUnit": [
+        "packages/react/test/engine.test.ts > engine > unmount stops the loop and a late intent is dropped",
+        "packages/react/test/engine.test.ts > engine > a stale deferred action does not run"
+      ],
+      "failedE2e": []
     },
     {
       "id": "scroll-not-restored",
+      "file": "packages/react/src/core/dom-port.ts",
+      "outcome": "not-applied"
+    },
+    {
+      "id": "ancestor-scale-ignored",
       "file": "packages/react/src/core/dom-port.ts",
       "outcome": "caught",
       "unitStatus": 0,
       "e2eStatus": 1,
       "failedUnit": [],
       "failedE2e": [
-        "e2e/geometry.spec.ts:47:1 › in a nested scroller, a shape change keeps the scroll position"
+        "e2e/continuity.spec.ts:77:3 › continuous on every channel, opening: scaled",
+        "e2e/continuity.spec.ts:82:3 › continuous on every channel, closing: scaled"
       ]
-    },
-    {
-      "id": "ancestor-scale-ignored",
-      "file": "packages/react/src/core/dom-port.ts",
-      "outcome": "survived",
-      "unitStatus": 0,
-      "e2eStatus": 0,
-      "failedUnit": [],
-      "failedE2e": []
     },
     {
       "id": "content-width-not-locked",
       "file": "packages/react/src/core/dom-port.ts",
-      "outcome": "survived",
+      "outcome": "caught",
       "unitStatus": 0,
-      "e2eStatus": 0,
+      "e2eStatus": 1,
       "failedUnit": [],
-      "failedE2e": []
+      "failedE2e": [
+        "e2e/continuity.spec.ts:125:1 › the content keeps one width for the whole move"
+      ]
     },
     {
       "id": "focus-ignores-inert",
@@ -240,6 +508,30 @@
       "e2eStatus": 1,
       "failedUnit": [],
       "failedE2e": [
+        "e2e/continuity.spec.ts:77:3 › continuous on every channel, opening: right",
+        "e2e/continuity.spec.ts:77:3 › continuous on every channel, opening: center",
+        "e2e/continuity.spec.ts:82:3 › continuous on every channel, closing: right",
+        "e2e/continuity.spec.ts:77:3 › continuous on every channel, opening: bottom",
+        "e2e/continuity.spec.ts:82:3 › continuous on every channel, closing: center",
+        "e2e/continuity.spec.ts:82:3 › continuous on every channel, closing: bottom",
+        "e2e/continuity.spec.ts:77:3 › continuous on every channel, opening: rtl",
+        "e2e/continuity.spec.ts:82:3 › continuous on every channel, closing: rtl",
+        "e2e/continuity.spec.ts:77:3 › continuous on every channel, opening: box",
+        "e2e/continuity.spec.ts:82:3 › continuous on every channel, closing: box",
+        "e2e/continuity.spec.ts:77:3 › continuous on every channel, opening: mixed",
+        "e2e/continuity.spec.ts:82:3 › continuous on every channel, closing: mixed",
+        "e2e/continuity.spec.ts:77:3 › continuous on every channel, opening: scaled",
+        "e2e/continuity.spec.ts:82:3 › continuous on every channel, closing: scaled",
+        "e2e/continuity.spec.ts:77:3 › continuous on every channel, opening: zoomed",
+        "e2e/continuity.spec.ts:90:1 › continuous from the inspector row to a bottom sheet",
+        "e2e/continuity.spec.ts:82:3 › continuous on every channel, closing: zoomed",
+        "e2e/continuity.spec.ts:139:1 › a reversal carries velocity: the box keeps going for a moment",
+        "e2e/continuity.spec.ts:132:1 › radius moves through values between the two shapes",
+        "e2e/continuity.spec.ts:155:1 › with transition: all on the surface, the engine still animates and CSS is restored",
+        "e2e/continuity.spec.ts:271:3 › focus holes › reopening during a close returns to the field in use, not the first field",
+        "e2e/continuity.spec.ts:345:3 › modal closing › the panel holds its scroll position during a close",
+        "e2e/continuity.spec.ts:354:3 › modal closing › in a right-to-left page, the closed shape sits on the trigger",
+        "e2e/continuity.spec.ts:329:3 › modal closing › reopening during a close returns to the field in use",
         "e2e/geometry.spec.ts:25:1 › under a scaled ancestor, the move starts from the visible box and ends on the natural one",
         "e2e/geometry.spec.ts:47:1 › in a nested scroller, a shape change keeps the scroll position",
         "e2e/inspector.spec.ts:7:1 › focus moves at the request, so typing during the move lands in the field",
@@ -277,19 +569,7 @@
     {
       "id": "close-does-not-move-focus",
       "file": "packages/react/src/inspector/Inspector.tsx",
-      "outcome": "caught",
-      "unitStatus": 0,
-      "e2eStatus": 1,
-      "failedUnit": [],
-      "failedE2e": [
-        "e2e/inspector.spec.ts:19:1 › Escape closes and returns focus to the trigger",
-        "e2e/inspector.spec.ts:27:1 › reopening during a close returns focus and the caret to the field",
-        "e2e/inspector.spec.ts:114:1 › reduced motion: same states and focus, no moving phase",
-        "e2e/interruption.spec.ts:6:3 › surface: reverse twice, then type",
-        "e2e/interruption.spec.ts:6:3 › surface: many fast reversals end on the last request",
-        "e2e/interruption.spec.ts:6:3 › surface: closing during a move with focus inside keeps focus valid",
-        "e2e/interruption.spec.ts:6:3 › surface: viewport changes during a move, then typing continues"
-      ]
+      "outcome": "not-applied"
     },
     {
       "id": "closing-panel-not-inert",
@@ -299,17 +579,21 @@
       "e2eStatus": 1,
       "failedUnit": [],
       "failedE2e": [
+        "e2e/continuity.spec.ts:292:3 › modal closing › the panel is inert from the moment of the close",
         "e2e/inspector.spec.ts:38:1 › a closing panel cannot be tabbed into"
       ]
     },
     {
       "id": "reopen-forgets-field",
       "file": "packages/react/src/inspector/Inspector.tsx",
-      "outcome": "survived",
+      "outcome": "caught",
       "unitStatus": 0,
-      "e2eStatus": 0,
+      "e2eStatus": 1,
       "failedUnit": [],
-      "failedE2e": []
+      "failedE2e": [
+        "e2e/continuity.spec.ts:271:3 › focus holes › reopening during a close returns to the field in use, not the first field",
+        "e2e/continuity.spec.ts:329:3 › modal closing › reopening during a close returns to the field in use"
+      ]
     },
     {
       "id": "typing-does-not-cancel-close",
@@ -333,15 +617,6 @@
         "e2e/inspector.spec.ts:170:1 › removal with focus inside moves focus to the fallback",
         "e2e/interruption.spec.ts:6:3 › surface: removal during a move with focus inside"
       ]
-    },
-    {
-      "id": "modal-never-unmounts",
-      "file": "packages/react/src/inspector/ModalInspector.tsx",
-      "outcome": "survived",
-      "unitStatus": 0,
-      "e2eStatus": 0,
-      "failedUnit": [],
-      "failedE2e": []
     },
     {
       "id": "actionbar-keeps-focus",

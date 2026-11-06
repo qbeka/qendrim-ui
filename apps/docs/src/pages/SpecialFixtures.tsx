@@ -176,6 +176,9 @@ const VARIANT_CSS = `
 .v-translated[data-shape='a'] { width: 100px; } .v-translated[data-shape='b'] { width: 400px; }
 .v-mixed { border-radius: 12px 12px 0 0; }
 .v-mixed[data-shape='a'] { width: 120px; height: 60px; } .v-mixed[data-shape='b'] { width: 300px; height: 240px; border-radius: 0; }
+.v-shift { width: 120px; height: 60px; }
+.v-shift[data-shape='b'] { margin-inline-start: 200px; }
+.v-heights[data-shape='a'] { height: 60px; } .v-heights[data-shape='b'] { height: 200px; }
 .v-pad { padding: 40px; }
 .v-min { min-height: 300px; }
 .v-content-box { width: 300px; padding: 20px; box-sizing: content-box; }
@@ -270,7 +273,8 @@ export const VARIANTS: Record<string, React.ReactNode> = {
   mixed: <Variant className="v-mixed" />,
   scroll: <Variant className="v-scroll"><Long n={40} /></Variant>,
   inline: <Variant className="v-box" style={{ overflow: 'auto', outline: '1px solid red', boxShadow: 'none' }} />,
-  inlinewidth: <Variant className="v-box-free" style={{ width: 320, borderRadius: 20, overflow: 'auto' }}><div style={{ height: 60 }}>Inline</div></Variant>,
+  inlinewidth: <Variant className="v-heights" style={{ width: 320, borderRadius: 20, overflow: 'auto' }}><div style={{ height: 40 }}>Inline</div></Variant>,
+  shift: <Variant className="v-shift" />,
   pad: <Grow className="v-pad" />,
   min: <Grow className="v-min" />,
   contentbox: <Grow className="v-content-box" />,

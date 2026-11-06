@@ -1,0 +1,727 @@
+{
+  "label": "final",
+  "timing": {
+    "surface": {
+      "latencyFromRestMedian": {
+        "n": 6,
+        "median": 11.549999997019768,
+        "min": 10.150000005960464,
+        "max": 12.799999982118607
+      },
+      "turnaroundMedian": {
+        "n": 6,
+        "median": 27.80000001192093,
+        "min": 27.19999998807907,
+        "max": 33.19999998807907
+      },
+      "missedTurns": {
+        "n": 6,
+        "median": 0,
+        "min": 0,
+        "max": 0
+      },
+      "latencyTypingMedian": {
+        "n": 6,
+        "median": 10.950000002980232,
+        "min": 8.199999958276749,
+        "max": 13.349999994039536
+      },
+      "layoutCount": {
+        "n": 6,
+        "median": 163,
+        "min": 163,
+        "max": 163
+      },
+      "recalcStyleCount": {
+        "n": 6,
+        "median": 212,
+        "min": 212,
+        "max": 212
+      },
+      "layoutMs": {
+        "n": 6,
+        "median": 4.401499999999999,
+        "min": 3.4199999999999995,
+        "max": 4.8839999999999995
+      },
+      "recalcStyleMs": {
+        "n": 6,
+        "median": 5.262499999999999,
+        "min": 4.620000000000001,
+        "max": 6.089
+      },
+      "scriptMs": {
+        "n": 6,
+        "median": 11.96,
+        "min": 10.142999999999999,
+        "max": 13.920000000000002
+      },
+      "taskMs": {
+        "n": 6,
+        "median": 55.433499999999995,
+        "min": 46.35600000000001,
+        "max": 64.01200000000001
+      },
+      "frameP50": {
+        "n": 6,
+        "median": 16.69999999999891,
+        "min": 16.69999999999891,
+        "max": 16.699999999999818
+      },
+      "frameP95": {
+        "n": 6,
+        "median": 16.700000000000728,
+        "min": 16.700000000000728,
+        "max": 16.799999999999272
+      },
+      "frameMax": {
+        "n": 6,
+        "median": 16.80000000000109,
+        "min": 16.799999999999272,
+        "max": 16.80000000000109
+      },
+      "longFrames": {
+        "n": 6,
+        "median": 0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "motion-height": {
+      "latencyFromRestMedian": {
+        "n": 6,
+        "median": 12.450000002980232,
+        "min": 11.000000029802322,
+        "max": 13.900000005960464
+      },
+      "turnaroundMedian": {
+        "n": 6,
+        "median": 30.94999998807907,
+        "min": 26.600000023841858,
+        "max": 31.30000001192093
+      },
+      "missedTurns": {
+        "n": 6,
+        "median": 0,
+        "min": 0,
+        "max": 0
+      },
+      "latencyTypingMedian": {
+        "n": 6,
+        "median": 12.050000011920929,
+        "min": 8.049999982118607,
+        "max": 14.299999982118607
+      },
+      "layoutCount": {
+        "n": 6,
+        "median": 124,
+        "min": 123,
+        "max": 133
+      },
+      "recalcStyleCount": {
+        "n": 6,
+        "median": 172,
+        "min": 171,
+        "max": 181
+      },
+      "layoutMs": {
+        "n": 6,
+        "median": 4.668500000000001,
+        "min": 3.314000000000001,
+        "max": 6.224
+      },
+      "recalcStyleMs": {
+        "n": 6,
+        "median": 5.1625000000000005,
+        "min": 3.915,
+        "max": 6.758
+      },
+      "scriptMs": {
+        "n": 6,
+        "median": 12.898999999999997,
+        "min": 10.071999999999997,
+        "max": 16.579
+      },
+      "taskMs": {
+        "n": 6,
+        "median": 60.69100000000001,
+        "min": 45.072,
+        "max": 80.873
+      },
+      "frameP50": {
+        "n": 6,
+        "median": 16.69999999999891,
+        "min": 16.69999999999891,
+        "max": 16.69999999999891
+      },
+      "frameP95": {
+        "n": 6,
+        "median": 16.745000000000072,
+        "min": 16.700000000000728,
+        "max": 16.799999999999272
+      },
+      "frameMax": {
+        "n": 6,
+        "median": 16.80000000000109,
+        "min": 16.800000000000182,
+        "max": 16.80000000000109
+      },
+      "longFrames": {
+        "n": 6,
+        "median": 0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "motion-measured": {
+      "latencyFromRestMedian": {
+        "n": 6,
+        "median": 11.049999997019768,
+        "min": 8.499999970197678,
+        "max": 14.550000011920929
+      },
+      "turnaroundMedian": {
+        "n": 6,
+        "median": 30.249999970197678,
+        "min": 29.099999964237213,
+        "max": 33.09999996423721
+      },
+      "missedTurns": {
+        "n": 6,
+        "median": 0,
+        "min": 0,
+        "max": 0
+      },
+      "latencyTypingMedian": {
+        "n": 6,
+        "median": 9.299999997019768,
+        "min": 4.9000000059604645,
+        "max": 12.849999994039536
+      },
+      "layoutCount": {
+        "n": 6,
+        "median": 117,
+        "min": 117,
+        "max": 118
+      },
+      "recalcStyleCount": {
+        "n": 6,
+        "median": 165,
+        "min": 165,
+        "max": 166
+      },
+      "layoutMs": {
+        "n": 6,
+        "median": 4.243500000000001,
+        "min": 3.6039999999999996,
+        "max": 4.961
+      },
+      "recalcStyleMs": {
+        "n": 6,
+        "median": 4.802999999999998,
+        "min": 4.207999999999998,
+        "max": 5.508999999999999
+      },
+      "scriptMs": {
+        "n": 6,
+        "median": 11.6675,
+        "min": 10.363999999999999,
+        "max": 13.042000000000005
+      },
+      "taskMs": {
+        "n": 6,
+        "median": 56.28999999999999,
+        "min": 49.092999999999996,
+        "max": 65.18400000000003
+      },
+      "frameP50": {
+        "n": 6,
+        "median": 16.69999999999891,
+        "min": 16.69999999999891,
+        "max": 16.69999999999891
+      },
+      "frameP95": {
+        "n": 6,
+        "median": 16.745000000000072,
+        "min": 16.700000000000728,
+        "max": 16.799999999999272
+      },
+      "frameMax": {
+        "n": 6,
+        "median": 16.80000000000109,
+        "min": 16.799999999999272,
+        "max": 16.80000000000109
+      },
+      "longFrames": {
+        "n": 6,
+        "median": 0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "motion-layout": {
+      "latencyFromRestMedian": {
+        "n": 6,
+        "median": 13.25,
+        "min": 9.850000023841858,
+        "max": 14.350000023841858
+      },
+      "turnaroundMedian": {
+        "n": 6,
+        "median": 12,
+        "min": 9.5,
+        "max": 12.800000011920929
+      },
+      "missedTurns": {
+        "n": 6,
+        "median": 0,
+        "min": 0,
+        "max": 0
+      },
+      "latencyTypingMedian": {
+        "n": 6,
+        "median": 10.100000008940697,
+        "min": 7.800000011920929,
+        "max": 11.950000017881393
+      },
+      "layoutCount": {
+        "n": 6,
+        "median": 37,
+        "min": 37,
+        "max": 37
+      },
+      "recalcStyleCount": {
+        "n": 6,
+        "median": 191,
+        "min": 191,
+        "max": 192
+      },
+      "layoutMs": {
+        "n": 6,
+        "median": 1.1675,
+        "min": 1.0370000000000001,
+        "max": 1.2530000000000001
+      },
+      "recalcStyleMs": {
+        "n": 6,
+        "median": 19.942500000000003,
+        "min": 16.446,
+        "max": 21.759
+      },
+      "scriptMs": {
+        "n": 6,
+        "median": 22.675,
+        "min": 18.644999999999996,
+        "max": 23.938000000000002
+      },
+      "taskMs": {
+        "n": 6,
+        "median": 81.83550000000002,
+        "min": 67.87000000000002,
+        "max": 88.732
+      },
+      "frameP50": {
+        "n": 6,
+        "median": 16.69999999999891,
+        "min": 16.69999999999891,
+        "max": 16.699999999999818
+      },
+      "frameP95": {
+        "n": 6,
+        "median": 16.700000000000728,
+        "min": 16.700000000000728,
+        "max": 16.799999999999272
+      },
+      "frameMax": {
+        "n": 6,
+        "median": 16.80000000000109,
+        "min": 16.800000000000182,
+        "max": 16.80000000000109
+      },
+      "longFrames": {
+        "n": 6,
+        "median": 0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "native-grid": {
+      "latencyFromRestMedian": {
+        "n": 6,
+        "median": 27.974999994039536,
+        "min": 26.900000005960464,
+        "max": 28.549999982118607
+      },
+      "turnaroundMedian": {
+        "n": 6,
+        "median": 25.799999982118607,
+        "min": 24.5,
+        "max": 26.80000001192093
+      },
+      "missedTurns": {
+        "n": 6,
+        "median": 0,
+        "min": 0,
+        "max": 0
+      },
+      "latencyTypingMedian": {
+        "n": 6,
+        "median": 7.574999988079071,
+        "min": 5.5999999940395355,
+        "max": 9.049999982118607
+      },
+      "layoutCount": {
+        "n": 6,
+        "median": 80,
+        "min": 80,
+        "max": 87
+      },
+      "recalcStyleCount": {
+        "n": 6,
+        "median": 135,
+        "min": 135,
+        "max": 142
+      },
+      "layoutMs": {
+        "n": 6,
+        "median": 4.185499999999999,
+        "min": 3.8840000000000003,
+        "max": 6.281
+      },
+      "recalcStyleMs": {
+        "n": 6,
+        "median": 4.42,
+        "min": 3.862000000000001,
+        "max": 6.503000000000002
+      },
+      "scriptMs": {
+        "n": 6,
+        "median": 7.4285,
+        "min": 6.901000000000001,
+        "max": 11.738000000000001
+      },
+      "taskMs": {
+        "n": 6,
+        "median": 45.3445,
+        "min": 41.223,
+        "max": 71.428
+      },
+      "frameP50": {
+        "n": 6,
+        "median": 16.69999999999891,
+        "min": 16.69999999999891,
+        "max": 16.69999999999891
+      },
+      "frameP95": {
+        "n": 6,
+        "median": 16.745000000000072,
+        "min": 16.700000000000728,
+        "max": 16.799999999999272
+      },
+      "frameMax": {
+        "n": 6,
+        "median": 16.80000000000109,
+        "min": 16.80000000000109,
+        "max": 16.80000000000109
+      },
+      "longFrames": {
+        "n": 6,
+        "median": 0,
+        "min": 0,
+        "max": 0
+      }
+    }
+  },
+  "foundation": {
+    "dialog-q": {
+      "latencyMedian": {
+        "n": 6,
+        "median": 10.400000005960464,
+        "min": 9.049999982118607,
+        "max": 11.299999982118607
+      },
+      "layoutCount": {
+        "n": 6,
+        "median": 80,
+        "min": 80,
+        "max": 80
+      },
+      "scriptMs": {
+        "n": 6,
+        "median": 44.452,
+        "min": 42.695,
+        "max": 46.839
+      },
+      "taskMs": {
+        "n": 6,
+        "median": 127.5765,
+        "min": 123.83800000000001,
+        "max": 137.179
+      }
+    },
+    "dialog-base": {
+      "latencyMedian": {
+        "n": 6,
+        "median": 9.799999982118607,
+        "min": 8.449999988079071,
+        "max": 10.800000011920929
+      },
+      "layoutCount": {
+        "n": 6,
+        "median": 80,
+        "min": 80,
+        "max": 80
+      },
+      "scriptMs": {
+        "n": 6,
+        "median": 43.2625,
+        "min": 40.803000000000004,
+        "max": 55.504
+      },
+      "taskMs": {
+        "n": 6,
+        "median": 124.73749999999998,
+        "min": 120.10199999999999,
+        "max": 160.816
+      }
+    },
+    "popover-q": {
+      "latencyMedian": {
+        "n": 6,
+        "median": 12.099999979138374,
+        "min": 11.050000011920929,
+        "max": 13.050000011920929
+      },
+      "layoutCount": {
+        "n": 6,
+        "median": 100,
+        "min": 100,
+        "max": 100
+      },
+      "scriptMs": {
+        "n": 6,
+        "median": 48.445,
+        "min": 44.002,
+        "max": 51.59400000000001
+      },
+      "taskMs": {
+        "n": 6,
+        "median": 163.9875,
+        "min": 151.428,
+        "max": 177.774
+      }
+    },
+    "popover-base": {
+      "latencyMedian": {
+        "n": 6,
+        "median": 10.450000002980232,
+        "min": 7.300000011920929,
+        "max": 11.550000011920929
+      },
+      "layoutCount": {
+        "n": 6,
+        "median": 100,
+        "min": 100,
+        "max": 100
+      },
+      "scriptMs": {
+        "n": 6,
+        "median": 48.115500000000004,
+        "min": 39.076,
+        "max": 57.96
+      },
+      "taskMs": {
+        "n": 6,
+        "median": 161.357,
+        "min": 125.636,
+        "max": 195.932
+      }
+    },
+    "select-q": {
+      "latencyMedian": {
+        "n": 6,
+        "median": 10.575000002980232,
+        "min": 8.700000017881393,
+        "max": 11.100000023841858
+      },
+      "layoutCount": {
+        "n": 6,
+        "median": 160,
+        "min": 156,
+        "max": 160
+      },
+      "scriptMs": {
+        "n": 6,
+        "median": 68.5875,
+        "min": 56.269,
+        "max": 73.42800000000001
+      },
+      "taskMs": {
+        "n": 6,
+        "median": 205.5995,
+        "min": 171.306,
+        "max": 214.916
+      }
+    },
+    "select-base": {
+      "latencyMedian": {
+        "n": 6,
+        "median": 10.150000005960464,
+        "min": 9.650000005960464,
+        "max": 12.550000011920929
+      },
+      "layoutCount": {
+        "n": 6,
+        "median": 160,
+        "min": 156,
+        "max": 160
+      },
+      "scriptMs": {
+        "n": 6,
+        "median": 61.7115,
+        "min": 55.948,
+        "max": 73.892
+      },
+      "taskMs": {
+        "n": 6,
+        "median": 186.4615,
+        "min": 161.81,
+        "max": 222.447
+      }
+    }
+  },
+  "leaks": {
+    "surface": {
+      "nodesGrowth": {
+        "n": 5,
+        "median": 0,
+        "min": 0,
+        "max": 0
+      },
+      "listenersGrowth": {
+        "n": 5,
+        "median": 0,
+        "min": 0,
+        "max": 0
+      },
+      "heapGrowthBytes": {
+        "n": 5,
+        "median": 516716,
+        "min": 515452,
+        "max": 517696
+      },
+      "heapGrowthSecondHalfBytes": {
+        "n": 5,
+        "median": 166036,
+        "min": 164812,
+        "max": 180124
+      },
+      "observersAfterRemoval": {
+        "n": 5,
+        "median": 0,
+        "min": 0,
+        "max": 0
+      },
+      "intervalsAfterRemoval": {
+        "n": 5,
+        "median": 0,
+        "min": 0,
+        "max": 0
+      },
+      "rafCallsWhileRemoved": {
+        "n": 5,
+        "median": 0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "motion-height": {
+      "nodesGrowth": {
+        "n": 5,
+        "median": 0,
+        "min": 0,
+        "max": 0
+      },
+      "listenersGrowth": {
+        "n": 5,
+        "median": 0,
+        "min": 0,
+        "max": 0
+      },
+      "heapGrowthBytes": {
+        "n": 5,
+        "median": 537940,
+        "min": 535436,
+        "max": 538224
+      },
+      "heapGrowthSecondHalfBytes": {
+        "n": 5,
+        "median": 147840,
+        "min": 146096,
+        "max": 148172
+      },
+      "observersAfterRemoval": {
+        "n": 5,
+        "median": 0,
+        "min": 0,
+        "max": 0
+      },
+      "intervalsAfterRemoval": {
+        "n": 5,
+        "median": 0,
+        "min": 0,
+        "max": 0
+      },
+      "rafCallsWhileRemoved": {
+        "n": 5,
+        "median": 0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "broken-leak": {
+      "nodesGrowth": {
+        "n": 5,
+        "median": 0,
+        "min": 0,
+        "max": 0
+      },
+      "listenersGrowth": {
+        "n": 5,
+        "median": 500,
+        "min": 500,
+        "max": 500
+      },
+      "heapGrowthBytes": {
+        "n": 5,
+        "median": 382264,
+        "min": 377872,
+        "max": 388108
+      },
+      "heapGrowthSecondHalfBytes": {
+        "n": 5,
+        "median": 103756,
+        "min": 103716,
+        "max": 113140
+      },
+      "observersAfterRemoval": {
+        "n": 5,
+        "median": 551,
+        "min": 551,
+        "max": 551
+      },
+      "intervalsAfterRemoval": {
+        "n": 5,
+        "median": 551,
+        "min": 551,
+        "max": 551
+      },
+      "rafCallsWhileRemoved": {
+        "n": 5,
+        "median": 12122,
+        "min": 11571,
+        "max": 12673
+      }
+    }
+  }
+}

@@ -73,7 +73,7 @@ function expectContinuous(list: Frame[]) {
   }
 }
 
-for (const name of ['right', 'center', 'bottom', 'rtl', 'box', 'mixed', 'scaled', 'zoomed']) {
+for (const name of ['right', 'center', 'bottom', 'rtl', 'box', 'mixed', 'scaled', 'zoomed', 'shift']) {
   test(`continuous on every channel, opening: ${name}`, async ({ page }) => {
     await open(page, name);
     expectContinuous(await frames(page, 'toggle'));
@@ -147,9 +147,14 @@ test('a reversal carries velocity: the box keeps going for a moment', async ({ p
 
 test('under a mirrored ancestor, the move goes straight to the target', async ({ page }) => {
   await open(page, 'mirrored');
-  await page.getByTestId('toggle').click();
-  await expect(page.getByTestId('surface')).toHaveAttribute('data-phase', 'settled');
-  expect((await page.getByTestId('surface').boundingBox())?.width).toBeCloseTo(300, 0);
+  // Read in the same task as the click, because a move would end by itself given time.
+  const width = await page.evaluate(async () => {
+    (document.querySelector('[data-testid="toggle"]') as HTMLElement).click();
+    await Promise.resolve();
+    await new Promise(requestAnimationFrame);
+    return document.querySelector('[data-testid="surface"]')?.getBoundingClientRect().width;
+  });
+  expect(width).toBeCloseTo(300, 0);
 });
 
 test('with transition: all on the surface, the engine still animates and CSS is restored', async ({ page }) => {
@@ -166,6 +171,8 @@ test('consumer inline styles survive a move', async ({ page }) => {
   await open(page, 'inlinewidth');
   await page.getByTestId('toggle').click();
   await page.waitForTimeout(100);
+  // Mid-move, to prove the engine really borrowed the height.
+  expect(await page.getByTestId('surface').getAttribute('data-phase')).toBe('moving');
   await page.getByTestId('toggle').click();
   await page.waitForTimeout(800);
   const style = await page.getByTestId('surface').getAttribute('style');

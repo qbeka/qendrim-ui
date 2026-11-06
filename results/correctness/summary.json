@@ -1,0 +1,305 @@
+{
+  "date": "2026-11-06T08:58:43.536Z",
+  "runs": 5,
+  "impls": [
+    "motion-height",
+    "motion-layout",
+    "motion-measured",
+    "native-grid",
+    "surface"
+  ],
+  "scenarios": [
+    {
+      "name": "a deferred close cannot close a reopened surface",
+      "results": {
+        "motion-height": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "motion-layout": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "motion-measured": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "native-grid": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "surface": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        }
+      }
+    },
+    {
+      "name": "closing during a move with focus inside keeps focus valid",
+      "results": {
+        "motion-height": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "motion-layout": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "motion-measured": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "native-grid": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "surface": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        }
+      }
+    },
+    {
+      "name": "content grows at rest",
+      "results": {
+        "motion-height": {
+          "runs": 5,
+          "failed": 5,
+          "kinds": [
+            "geometry-jump"
+          ],
+          "label": "5 of 5: geometry-jump"
+        },
+        "motion-layout": {
+          "runs": 5,
+          "failed": 5,
+          "kinds": [
+            "text-stretch"
+          ],
+          "label": "5 of 5: text-stretch"
+        },
+        "motion-measured": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "native-grid": {
+          "runs": 5,
+          "failed": 5,
+          "kinds": [
+            "geometry-jump"
+          ],
+          "label": "5 of 5: geometry-jump"
+        },
+        "surface": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        }
+      }
+    },
+    {
+      "name": "content grows during a move",
+      "results": {
+        "motion-height": {
+          "runs": 5,
+          "failed": 5,
+          "kinds": [
+            "geometry-jump"
+          ],
+          "label": "5 of 5: geometry-jump"
+        },
+        "motion-layout": {
+          "runs": 5,
+          "failed": 5,
+          "kinds": [
+            "text-stretch"
+          ],
+          "label": "5 of 5: text-stretch"
+        },
+        "motion-measured": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "native-grid": {
+          "runs": 5,
+          "failed": 3,
+          "kinds": [
+            "geometry-jump"
+          ],
+          "label": "3 of 5: geometry-jump"
+        },
+        "surface": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        }
+      }
+    },
+    {
+      "name": "many fast reversals end on the last request",
+      "results": {
+        "motion-height": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "motion-layout": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "motion-measured": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "native-grid": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "surface": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        }
+      }
+    },
+    {
+      "name": "removal during a move with focus inside",
+      "results": {
+        "motion-height": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "motion-layout": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "motion-measured": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "native-grid": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "surface": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        }
+      }
+    },
+    {
+      "name": "reverse twice, then type",
+      "results": {
+        "motion-height": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "motion-layout": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "motion-measured": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "native-grid": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "surface": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        }
+      }
+    },
+    {
+      "name": "viewport changes during a move, then typing continues",
+      "results": {
+        "motion-height": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "motion-layout": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "motion-measured": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "native-grid": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        },
+        "surface": {
+          "runs": 5,
+          "failed": 0,
+          "kinds": [],
+          "label": "0 of 5"
+        }
+      }
+    }
+  ]
+}

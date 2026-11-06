@@ -1,0 +1,527 @@
+{
+  "method": "esbuild bundle of the installed tarball, minified, ESM, React external, gzip level 9, brotli quality 11",
+  "versions": {
+    "esbuild": "0.28.2"
+  },
+  "foundation": [
+    {
+      "name": "button",
+      "q": {
+        "name": "button",
+        "minified": 8169,
+        "gzip": 3355,
+        "brotli": 3051,
+        "byPackage": {
+          "@qbeka/react": 399,
+          "@base-ui/react": 5388,
+          "@floating-ui/utils": 216,
+          "@base-ui/utils": 2044,
+          "entry": 105
+        }
+      },
+      "base": {
+        "name": "button",
+        "minified": 7759,
+        "gzip": 3199,
+        "brotli": 2926,
+        "byPackage": {
+          "@base-ui/react": 5385,
+          "@floating-ui/utils": 216,
+          "@base-ui/utils": 2044,
+          "entry": 97
+        }
+      },
+      "incrementalGzip": 156
+    },
+    {
+      "name": "input",
+      "q": {
+        "name": "input",
+        "minified": 25939,
+        "gzip": 9783,
+        "brotli": 8916,
+        "byPackage": {
+          "@qbeka/react": 228,
+          "@base-ui/react": 20936,
+          "@base-ui/utils": 4178,
+          "@floating-ui/utils": 406,
+          "entry": 81
+        }
+      },
+      "base": {
+        "name": "input",
+        "minified": 25731,
+        "gzip": 9718,
+        "brotli": 8869,
+        "byPackage": {
+          "@base-ui/react": 20936,
+          "@base-ui/utils": 4178,
+          "@floating-ui/utils": 406,
+          "entry": 101
+        }
+      },
+      "incrementalGzip": 65
+    },
+    {
+      "name": "field",
+      "q": {
+        "name": "field",
+        "minified": 26296,
+        "gzip": 9888,
+        "brotli": 8993,
+        "byPackage": {
+          "@qbeka/react": 609,
+          "@base-ui/react": 20798,
+          "@base-ui/utils": 4178,
+          "@floating-ui/utils": 406,
+          "entry": 195
+        }
+      },
+      "base": {
+        "name": "field",
+        "minified": 25791,
+        "gzip": 9761,
+        "brotli": 8895,
+        "byPackage": {
+          "@base-ui/react": 20798,
+          "@base-ui/utils": 4178,
+          "@floating-ui/utils": 406,
+          "entry": 299
+        }
+      },
+      "incrementalGzip": 127
+    },
+    {
+      "name": "select",
+      "q": {
+        "name": "select",
+        "minified": 129439,
+        "gzip": 46092,
+        "brotli": 40850,
+        "byPackage": {
+          "use-sync-external-store": 1707,
+          "@qbeka/react": 1610,
+          "@base-ui/react": 90017,
+          "@base-ui/utils": 14029,
+          "@floating-ui/utils": 3849,
+          "@floating-ui/core": 6473,
+          "@floating-ui/dom": 7140,
+          "@floating-ui/react-dom": 2850,
+          "entry": 108
+        }
+      },
+      "base": {
+        "name": "select",
+        "minified": 128159,
+        "gzip": 45674,
+        "brotli": 40530,
+        "byPackage": {
+          "use-sync-external-store": 1707,
+          "@base-ui/react": 90017,
+          "@base-ui/utils": 14029,
+          "@floating-ui/utils": 3849,
+          "@floating-ui/core": 6473,
+          "@floating-ui/dom": 7140,
+          "@floating-ui/react-dom": 2850,
+          "entry": 438
+        }
+      },
+      "incrementalGzip": 418
+    },
+    {
+      "name": "tabs",
+      "q": {
+        "name": "tabs",
+        "minified": 37017,
+        "gzip": 13860,
+        "brotli": 12572,
+        "byPackage": {
+          "use-sync-external-store": 836,
+          "@qbeka/react": 661,
+          "@base-ui/react": 28603,
+          "@base-ui/utils": 4593,
+          "@floating-ui/utils": 826,
+          "entry": 219
+        }
+      },
+      "base": {
+        "name": "tabs",
+        "minified": 36378,
+        "gzip": 13670,
+        "brotli": 12392,
+        "byPackage": {
+          "use-sync-external-store": 836,
+          "@base-ui/react": 28603,
+          "@base-ui/utils": 4593,
+          "@floating-ui/utils": 826,
+          "entry": 241
+        }
+      },
+      "incrementalGzip": 190
+    },
+    {
+      "name": "popover",
+      "q": {
+        "name": "popover",
+        "minified": 119798,
+        "gzip": 41603,
+        "brotli": 36846,
+        "byPackage": {
+          "use-sync-external-store": 1707,
+          "@qbeka/react": 1036,
+          "@base-ui/react": 81240,
+          "@base-ui/utils": 13689,
+          "@floating-ui/utils": 3849,
+          "@floating-ui/core": 6473,
+          "@floating-ui/dom": 7140,
+          "@floating-ui/react-dom": 2850,
+          "entry": 158
+        }
+      },
+      "base": {
+        "name": "popover",
+        "minified": 118834,
+        "gzip": 41236,
+        "brotli": 36499,
+        "byPackage": {
+          "use-sync-external-store": 1707,
+          "@base-ui/react": 81240,
+          "@base-ui/utils": 13689,
+          "@floating-ui/utils": 3849,
+          "@floating-ui/core": 6473,
+          "@floating-ui/dom": 7140,
+          "@floating-ui/react-dom": 2850,
+          "entry": 230
+        }
+      },
+      "incrementalGzip": 367
+    },
+    {
+      "name": "dialog",
+      "q": {
+        "name": "dialog",
+        "minified": 70739,
+        "gzip": 24329,
+        "brotli": 21885,
+        "byPackage": {
+          "use-sync-external-store": 1707,
+          "@qbeka/react": 1038,
+          "@base-ui/react": 51616,
+          "@base-ui/utils": 13520,
+          "@floating-ui/utils": 1044,
+          "entry": 158
+        }
+      },
+      "base": {
+        "name": "dialog",
+        "minified": 69765,
+        "gzip": 23982,
+        "brotli": 21545,
+        "byPackage": {
+          "use-sync-external-store": 1707,
+          "@base-ui/react": 51616,
+          "@base-ui/utils": 13520,
+          "@floating-ui/utils": 1044,
+          "entry": 222
+        }
+      },
+      "incrementalGzip": 347
+    },
+    {
+      "name": "tooltip",
+      "q": {
+        "name": "tooltip",
+        "minified": 98397,
+        "gzip": 34343,
+        "brotli": 30661,
+        "byPackage": {
+          "use-sync-external-store": 1707,
+          "@qbeka/react": 790,
+          "@base-ui/react": 64281,
+          "@base-ui/utils": 9552,
+          "@floating-ui/utils": 3846,
+          "@floating-ui/core": 6473,
+          "@floating-ui/dom": 7132,
+          "@floating-ui/react-dom": 2850,
+          "entry": 110
+        }
+      },
+      "base": {
+        "name": "tooltip",
+        "minified": 97719,
+        "gzip": 34109,
+        "brotli": 30445,
+        "byPackage": {
+          "use-sync-external-store": 1707,
+          "@base-ui/react": 64281,
+          "@base-ui/utils": 9552,
+          "@floating-ui/utils": 3846,
+          "@floating-ui/core": 6473,
+          "@floating-ui/dom": 7132,
+          "@floating-ui/react-dom": 2850,
+          "entry": 222
+        }
+      },
+      "incrementalGzip": 234
+    }
+  ],
+  "signature": [
+    {
+      "name": "surface",
+      "minified": 10348,
+      "gzip": 4245,
+      "brotli": 3880,
+      "byPackage": {
+        "@qbeka/react": 10248,
+        "entry": 83
+      }
+    },
+    {
+      "name": "inspector",
+      "minified": 17232,
+      "gzip": 6838,
+      "brotli": 6206,
+      "byPackage": {
+        "@qbeka/react": 15832,
+        "@base-ui/utils": 79,
+        "@base-ui/react": 1148,
+        "entry": 156
+      }
+    },
+    {
+      "name": "modal inspector",
+      "minified": 87614,
+      "gzip": 30466,
+      "brotli": 27277,
+      "byPackage": {
+        "use-sync-external-store": 1707,
+        "@qbeka/react": 17864,
+        "@base-ui/utils": 13525,
+        "@base-ui/react": 51661,
+        "@floating-ui/utils": 1045,
+        "entry": 156
+      }
+    },
+    {
+      "name": "timeline",
+      "minified": 40628,
+      "gzip": 15818,
+      "brotli": 14331,
+      "byPackage": {
+        "use-sync-external-store": 836,
+        "@qbeka/react": 3303,
+        "@base-ui/react": 28140,
+        "@floating-ui/utils": 406,
+        "@base-ui/utils": 6581,
+        "entry": 83
+      }
+    },
+    {
+      "name": "actionbar",
+      "minified": 33058,
+      "gzip": 12194,
+      "brotli": 11091,
+      "byPackage": {
+        "@qbeka/react": 11603,
+        "@base-ui/react": 18718,
+        "@base-ui/utils": 2238,
+        "@floating-ui/utils": 267,
+        "entry": 122
+      }
+    },
+    {
+      "name": "barrel, Button only",
+      "minified": 8141,
+      "gzip": 3322,
+      "brotli": 3047,
+      "byPackage": {
+        "@base-ui/react": 5398,
+        "@base-ui/utils": 2035,
+        "@floating-ui/utils": 216,
+        "@qbeka/react": 399,
+        "entry": 76
+      }
+    },
+    {
+      "name": "barrel, everything",
+      "minified": 265895,
+      "gzip": 90406,
+      "brotli": 77343,
+      "byPackage": {
+        "use-sync-external-store": 1707,
+        "@qbeka/react": 27649,
+        "@base-ui/react": 199449,
+        "@base-ui/utils": 14890,
+        "@floating-ui/utils": 3849,
+        "@floating-ui/core": 6473,
+        "@floating-ui/dom": 7140,
+        "@floating-ui/react-dom": 2850,
+        "entry": 0
+      }
+    }
+  ],
+  "shared": [
+    {
+      "name": "react-19",
+      "gzip": 69154,
+      "brotli": 59541
+    },
+    {
+      "name": "react-18",
+      "gzip": 45880,
+      "brotli": 40051
+    }
+  ],
+  "css": [
+    {
+      "name": "tokens",
+      "files": [
+        "tokens.css"
+      ],
+      "raw": 3217,
+      "gzip": 1102,
+      "brotli": 934
+    },
+    {
+      "name": "surface",
+      "files": [
+        "surface.css"
+      ],
+      "raw": 64,
+      "gzip": 81,
+      "brotli": 62
+    },
+    {
+      "name": "inspector",
+      "files": [
+        "surface.css",
+        "inspector.css"
+      ],
+      "raw": 4539,
+      "gzip": 1428,
+      "brotli": 1186
+    },
+    {
+      "name": "button",
+      "files": [
+        "button.css"
+      ],
+      "raw": 2042,
+      "gzip": 691,
+      "brotli": 607
+    },
+    {
+      "name": "input",
+      "files": [
+        "input.css"
+      ],
+      "raw": 856,
+      "gzip": 394,
+      "brotli": 325
+    },
+    {
+      "name": "field",
+      "files": [
+        "field.css"
+      ],
+      "raw": 536,
+      "gzip": 226,
+      "brotli": 181
+    },
+    {
+      "name": "select",
+      "files": [
+        "select.css",
+        "popup.css"
+      ],
+      "raw": 3058,
+      "gzip": 799,
+      "brotli": 669
+    },
+    {
+      "name": "tabs",
+      "files": [
+        "tabs.css"
+      ],
+      "raw": 1341,
+      "gzip": 512,
+      "brotli": 430
+    },
+    {
+      "name": "popover",
+      "files": [
+        "popup.css"
+      ],
+      "raw": 1435,
+      "gzip": 467,
+      "brotli": 388
+    },
+    {
+      "name": "dialog",
+      "files": [
+        "dialog.css"
+      ],
+      "raw": 1449,
+      "gzip": 527,
+      "brotli": 444
+    },
+    {
+      "name": "tooltip",
+      "files": [
+        "popup.css"
+      ],
+      "raw": 1435,
+      "gzip": 467,
+      "brotli": 388
+    },
+    {
+      "name": "timeline",
+      "files": [
+        "timeline.css"
+      ],
+      "raw": 2806,
+      "gzip": 859,
+      "brotli": 723
+    },
+    {
+      "name": "actionbar",
+      "files": [
+        "surface.css",
+        "actionbar.css"
+      ],
+      "raw": 2119,
+      "gzip": 743,
+      "brotli": 605
+    },
+    {
+      "name": "recipes",
+      "files": [
+        "recipes.css"
+      ],
+      "raw": 1292,
+      "gzip": 509,
+      "brotli": 424
+    },
+    {
+      "name": "styles.css (all)",
+      "files": [
+        "styles.css"
+      ],
+      "raw": 23200,
+      "gzip": 4683,
+      "brotli": 4033
+    }
+  ],
+  "motion": [
+    {
+      "name": "motion, layout prop",
+      "gzip": 45207,
+      "brotli": 40584
+    },
+    {
+      "name": "motion, height animation",
+      "gzip": 45216,
+      "brotli": 40651
+    }
+  ]
+}
