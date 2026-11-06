@@ -312,6 +312,19 @@ const Panel = forwardRef<HTMLDivElement, InspectorPanelProps>(function Panel({ l
 
   const classes = ['q-inspector-panel', className].filter(Boolean).join(' ');
 
+  // Keeps one identity across renders. Base UI stores the popup element in state, and a new
+  // callback here would hand it null and then the node again on every render.
+  const popupRef = useRef<React.Ref<HTMLDivElement> | undefined>(undefined);
+  const setPopup = useCallback(
+    (node: HTMLDivElement | null) => {
+      surface.rootRef.current = node;
+      const forwarded = popupRef.current;
+      if (typeof forwarded === 'function') forwarded(node);
+      else if (forwarded) (forwarded as React.RefObject<HTMLDivElement | null>).current = node;
+    },
+    [surface.rootRef],
+  );
+
   // Keeps a modal's closed shape on top of its trigger, wherever the trigger is now.
   const refreshOrigin = useCallback(() => {
     const root = surface.rootRef.current;
@@ -345,15 +358,11 @@ const Panel = forwardRef<HTMLDivElement, InspectorPanelProps>(function Panel({ l
             // keepMounted hides the popup with the `hidden` attribute, which has no box to
             // read. The closed shape uses `visibility` instead, so it stays measurable.
             const { hidden: _hidden, ...popup } = props as typeof props & { hidden?: boolean };
+            popupRef.current = (popup as { ref?: React.Ref<HTMLDivElement> }).ref;
             return (
               <Surface
                 {...popup}
-                ref={(node) => {
-                  surface.rootRef.current = node;
-                  const forwarded = (popup as { ref?: React.Ref<HTMLDivElement> }).ref;
-                  if (typeof forwarded === 'function') forwarded(node);
-                  else if (forwarded) (forwarded as React.RefObject<HTMLDivElement | null>).current = node;
-                }}
+                ref={setPopup}
                 className={['q-inspector', 'q-inspector--modal', surface.className].filter(Boolean).join(' ')}
                 shape={open ? 'open' : 'closed'}
                 handleRef={surface.handleRef}

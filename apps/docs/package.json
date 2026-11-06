@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
+    "@base-ui/react": "1.9.0",
     "@qbeka/react": "workspace:*",
     "geist": "1.9.1",
     "motion": "14.9.1",

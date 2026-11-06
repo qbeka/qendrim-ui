@@ -9,6 +9,7 @@ import './site.css';
 
 const Fixture = lazy(() => import('./pages/Fixture').then((m) => ({ default: m.Fixture })));
 const Workbench = lazy(() => import('./pages/Workbench').then((m) => ({ default: m.Workbench })));
+const FoundationCompare = lazy(() => import('./pages/FoundationCompare').then((m) => ({ default: m.FoundationCompare })));
 const SpecialFixtures = lazy(() => import('./pages/SpecialFixtures').then((m) => ({ default: m.SpecialFixtures })));
 
 type Theme = 'system' | 'light' | 'dark';
@@ -82,6 +83,7 @@ export function App() {
   }, [path]);
 
   if (path === '/fixture') return <Suspense fallback={null}><Fixture /></Suspense>;
+  if (path === '/fixture/foundation') return <Suspense fallback={null}><FoundationCompare /></Suspense>;
   if (path === '/fixture/special') return <Suspense fallback={null}><SpecialFixtures /></Suspense>;
 
   return (

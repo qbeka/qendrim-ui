@@ -20,7 +20,8 @@ test.describe('modal inspector', () => {
     await open(page);
     for (let i = 0; i < 6; i += 1) {
       await page.keyboard.press('Tab');
-      expect(await page.evaluate(() => !!document.activeElement?.closest('[role="dialog"]') || document.activeElement?.getAttribute('data-base-ui-focus-guard') !== null)).toBe(true);
+      // The focus guards redirect in a tick, so give the trap a moment to land.
+      await expect.poll(() => page.evaluate(() => !!document.activeElement?.closest('[role="dialog"]'))).toBe(true);
     }
   });
 
