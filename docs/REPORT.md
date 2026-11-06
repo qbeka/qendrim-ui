@@ -1,6 +1,6 @@
 # Report
 
-Measured on 2026-11-06 at commit `f3a4d24`, on one Apple M5 Pro Mac on AC power, in headless Chromium 158. Other work ran on the machine, including another session driving browsers. Load average was 2.5 to 8.3. Raw data is in `results/final`.
+Measured on 2026-11-06 at commit `fb8b32c`, on one Apple M5 Pro Mac on AC power, in headless Chromium 158. Other work ran on the machine, including another session driving browsers. Load average was 2.5 to 8.3. Raw data is in `results/final`.
 
 ## Summary
 
@@ -285,5 +285,7 @@ node scripts/check-budgets.mjs baseline
 | Walkthrough, 64 seconds, with captions and no voice | `media/walkthrough.mp4` | Same |
 
 The recordings add a dot for the pointer and captions for the viewer. These are in `scripts/record.mjs`, and they are not in the product.
+
+Commit hashes in `results/` and in this report were updated after a file with no effect on the code was removed from git history. The source at each commit is unchanged.
 
 The manifest for `results/final` says `dirty: true`. The earlier consumer step had rewritten `results/consumers/summary.json` when the run started. Source was clean. `bench/lib.mjs` now ignores `results/`.
