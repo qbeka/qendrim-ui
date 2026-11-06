@@ -41,6 +41,7 @@ main { flex: 1; }
 .d-header nav a[aria-current='page'], .d-guide-nav a[aria-current='page'] { color: var(--q-color-ink); box-shadow: 0 1.5px 0 var(--q-color-ink); }
 .d-prefs { display: flex; gap: 12px; margin-inline-start: auto; font-size: 13px; color: var(--q-color-muted); }
 .d-prefs label { display: flex; align-items: center; gap: 4px; }
+.w-controls input[type='range'] { accent-color: var(--q-color-accent); }
 .d-prefs select, .w-controls select { font: inherit; color: var(--q-color-ink); background: var(--q-color-surface); border: 1px solid var(--q-color-rule-strong); border-radius: 6px; padding: 2px 4px; min-height: 28px; }
 
 a { color: var(--q-color-accent); text-underline-offset: 2px; }
