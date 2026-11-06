@@ -4,7 +4,7 @@ React components for panels that keep working when you change your mind. Open on
 
 ![The project inspector open on a row, with its fields and save controls](media/cover.png)
 
-**[Watch the 19 second replay](media/demo.mp4)**
+**[Try it live](https://www.qendrimbeka.com/projects/qendrim-ui/index.html)** or [watch the 19 second recording](media/demo.mp4).
 
 ## Try it
 
