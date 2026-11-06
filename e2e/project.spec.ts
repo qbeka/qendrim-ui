@@ -22,7 +22,7 @@ test.describe('project page', () => {
   test('first use: type during the move, interrupt repeatedly, keep the text and the node', async ({ page, browserName }) => {
     const errors: string[] = [];
     page.on('pageerror', (error) => {
-      // WebKit reports this about once in 1,700 presses, with no visible effect, from the panels' own observers.
+      // WebKit reports this about once in 1,700 presses, with no visible effect. The source is not pinned down.
       if (browserName === 'webkit' && error.message.startsWith('ResizeObserver loop')) return;
       errors.push(error.message);
     });
