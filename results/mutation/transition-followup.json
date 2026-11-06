@@ -1,0 +1,29 @@
+{
+  "commit": "4b317ed0bc32269794ae439bbcd48d5021b27402",
+  "date": "2026-11-06T10:23:22.865Z",
+  "controlClean": true,
+  "control": {
+    "unitStatus": 0,
+    "e2eStatus": 0,
+    "failedUnit": [],
+    "failedE2e": []
+  },
+  "total": 1,
+  "caught": 1,
+  "survived": [],
+  "equivalent": {},
+  "notApplied": [],
+  "results": [
+    {
+      "id": "transition-not-suspended",
+      "file": "packages/react/src/core/dom-port.ts",
+      "outcome": "caught",
+      "unitStatus": 0,
+      "e2eStatus": 1,
+      "failedUnit": [],
+      "failedE2e": [
+        "e2e/continuity.spec.ts:160:1 › with transition: all on the surface, the engine still animates and CSS is restored"
+      ]
+    }
+  ]
+}

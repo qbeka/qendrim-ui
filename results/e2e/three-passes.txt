@@ -1,0 +1,4 @@
+pass 1:  94 skipped; 507 passed (2.6m);
+pass 2:  94 skipped; 507 passed (2.7m);
+pass 3:  94 skipped; 507 passed (2.7m);
+Commit d8651c7. Later commits changed one test and documentation.

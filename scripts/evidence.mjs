@@ -130,7 +130,7 @@ sections.push({
 
 const out = {
   measuredAt: manifest.date.slice(0, 10),
-  environment: `${manifest.hardware.cpu}, ${manifest.hardware.memoryGiB} GB, ${manifest.os}, Chromium ${manifest.browser}, headless. ${manifest.power}.`,
+  environment: `${manifest.hardware.cpu}, ${manifest.hardware.memoryGiB} GB, ${manifest.os}, Chromium ${manifest.browser}, headless, on AC power.`,
   sections,
   limits: [
     'All timing is from one Mac in a headless browser. Other work ran on that machine during the runs.',

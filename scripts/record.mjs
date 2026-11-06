@@ -65,7 +65,7 @@ await session('demo', async (page, say, glide) => {
   await page.goto(`${BASE}/`);
   await page.waitForTimeout(700);
   const row = page.locator('.q-inspector-trigger').first();
-  await say('Open it. Focus lands in the field at once.', 0);
+  await say('Open it. Focus lands in the field at once.', 1100);
   await glide(row);
   await page.mouse.down();
   await page.mouse.up();
@@ -73,7 +73,7 @@ await session('demo', async (page, say, glide) => {
   await page.keyboard.press('End');
   await page.keyboard.type(', phase two', { delay: 70 });
   await page.waitForTimeout(500);
-  await say('Reverse it twice while it moves.', 0);
+  await say('Reverse it twice while it moves.', 1100);
   await page.keyboard.press('Escape');
   await page.waitForTimeout(110);
   await page.keyboard.press('Enter');
@@ -82,25 +82,25 @@ await session('demo', async (page, say, glide) => {
   await page.waitForTimeout(110);
   await page.keyboard.press('Enter');
   await page.waitForTimeout(900);
-  await say('Keep typing. The text and the caret are still there.', 0);
+  await say('Keep typing. The text and the caret are still there.', 1100);
   await page.keyboard.type(' north', { delay: 70 });
   await page.waitForTimeout(700);
-  await say('Change the target while it moves.', 0);
+  await say('Change the target while it moves.', 1100);
   const details = page.getByRole('button', { name: 'Show details' });
   await glide(details);
   await page.mouse.down();
   await page.mouse.up();
   await page.waitForTimeout(1000);
-  await say('Resize the window.', 0);
+  await say('Resize the window.', 1100);
   await page.setViewportSize({ width: 1000, height: 800 });
   await page.waitForTimeout(500);
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.waitForTimeout(700);
-  await say('Close it. Focus returns to the row.', 0);
+  await say('Close it. Focus returns to the row.', 1100);
   await page.getByLabel('Name').first().focus();
   await page.keyboard.press('Escape');
   await page.waitForTimeout(1300);
-  await say('Open it again. Nothing was lost.', 0);
+  await say('Open it again. Nothing was lost.', 1100);
   await page.keyboard.press('Enter');
   await page.waitForTimeout(1800);
   await say('', 0);
@@ -110,7 +110,7 @@ await session('demo', async (page, say, glide) => {
 await session('walkthrough', async (page, say, glide) => {
   await page.goto(`${BASE}/examples/projects`);
   await page.waitForTimeout(500);
-  await say('Qendrim UI is a React library for panels that keep working when you change your mind.', 4200);
+  await say('Qendrim UI is a React library for panels that keep working when you change your mind.', 6200);
   await say('This row and its editor are one element. Nothing is copied, so input state survives.', 0);
   const row = page.getByTestId('project-harbor').getByRole('button').first();
   await glide(row);
@@ -169,7 +169,7 @@ await session('walkthrough', async (page, say, glide) => {
   await say('Motion and CSS are good baselines. The evidence page shows where they pass, and what each one costs.', 0);
   await page.goto(`${BASE}/evidence`);
   await page.waitForTimeout(600);
-  await say('Motion and CSS are good baselines. The evidence page shows where they pass, and what each one costs.', 5000);
+  await say('Motion and CSS are good baselines. The evidence page shows where they pass, and what each one costs.', 7000);
   await page.evaluate(() => window.scrollTo({ top: 900, behavior: 'smooth' }));
   await page.waitForTimeout(5000);
   await page.goto(`${BASE}/components/inspector`);

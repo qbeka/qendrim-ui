@@ -31,7 +31,7 @@ export function Evidence() {
   return (
     <div className="d-wide">
       <h1>Evidence</h1>
-      <p className="d-lede">Measurements from recorded runs. Each number links back to raw samples and a manifest in the repository.</p>
+      <p className="d-lede">Measurements from recorded runs. The raw samples and a manifest for each run are in the repository, under results.</p>
       {missing ? <p>No results have been published with this build. Run <code>pnpm bench</code> to produce them.</p> : null}
       {summary ? (
         <>

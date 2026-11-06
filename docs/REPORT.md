@@ -25,11 +25,11 @@ Measured on 2026-11-06 at commit `f3a4d24`, on one Apple M5 Pro Mac on AC power,
 |---|---|---|
 | State model and engine, no browser | 48 | `packages/react/test`: 10 machine, 11 spring, 27 engine |
 | Detectors, no browser | 19 | `apps/docs/src/harness/detect.test.ts` |
-| Browser behavior | BROWSER_COUNTS | `e2e/` |
+| Browser tests | 507 in each of 3 full runs: 192 Chromium, 145 Firefox, 145 WebKit, 25 StrictMode | `e2e/` |
 | Interruption suite, library | 8 scenarios in each of 3 browsers, and in StrictMode | `e2e/interruption.spec.ts` |
 | Comparison suite | 8 scenarios, 5 implementations, 5 runs each: 200 runs | `bench/correctness` |
 | Negative controls | 9 checks over 6 seeded broken implementations | `e2e/negative-controls.spec.ts` |
-| Mutation check | MUTATION_LINE | `scripts/mutate.mjs` |
+| Mutation check | 55 deliberate defects. 53 caught, 2 equivalent. Unmodified code passed in the same sandbox. | `scripts/mutate.mjs`, `results/mutation` |
 
 The browser matrix is Chromium 158, Firefox and WebKit from Playwright 1.65.0. Chromium runs everything. Firefox and WebKit run the behavior specs. axe, the layout shift check and the negative controls run in Chromium only. A separate Chromium project runs the interruption and Inspector specs on the development build, because StrictMode's extra effects only run there.
 
@@ -216,7 +216,18 @@ The second pass found more: the new turnaround metric dropped samples, the new d
 | A modal could not be reopened by clicking the row during a close, in all browsers. | Fixed. The closing panel covered the row. |
 | The first mutation run reported 15 of 32, which was false. Vitest writes to stderr, and the script read stdout. | Fixed, by reading each failure's reason. |
 
-FULL_PASSES
+After the last library change, the full matrix passed 507 of 507 three times in a row, with no Firefox hang and no WebKit timeouts. See `results/e2e/three-passes.txt`.
+
+## Mutation check
+
+Each mutant breaks one thing in a separate clone. I read the failing test for each catch, and each one targets the behavior that was broken. 52 were caught in the full run. `transition-not-suspended` survived, so I tightened that test, and it was caught in a follow-up run, in `results/mutation/transition-followup.json`.
+
+Two survivors are equivalent, which is my judgment from reading the code:
+
+- `focus-ignores-inert`: `moveFocus` already checks `activeElement` after focusing, and `focus()` does nothing on an inert element. So the check is redundant.
+- `no-backdrop-dismissal`: Base UI's modal dialog has its own internal backdrop, so `Dialog.Backdrop` here is redundant. This is the cleanup named under the budgets.
+
+The first attempts at this check were wrong in two ways. The script read the wrong output stream, and 7 mutants never applied because the code had moved. Both showed up only because I read the results rather than the score.
 
 ## Accessibility and review
 

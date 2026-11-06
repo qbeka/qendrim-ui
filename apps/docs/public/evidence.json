@@ -1,6 +1,6 @@
 {
   "measuredAt": "2026-11-06",
-  "environment": "Apple M5 Pro, 48 GB, Darwin 25.6.0, Chromium 158.0.8127.18, headless. Now drawing from 'AC Power'.",
+  "environment": "Apple M5 Pro, 48 GB, Darwin 25.6.0, Chromium 158.0.8127.18, headless, on AC power.",
   "sections": [
     {
       "id": "budgets",
