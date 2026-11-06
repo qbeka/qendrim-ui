@@ -59,7 +59,7 @@ Frozen in `docs/PREREGISTRATION.md` before the final run. `results/final/budgets
 
 ### Why three budgets were missed
 
-The budgets came from the first baseline. An independent review then found that the engine jumped for any box not anchored at its top left corner. The fix needs a second forced read at each request, to find where layout puts the box at its current size. The other fixes also added code. So:
+The budgets came from the first baseline. A later review then found that the engine jumped for any box not anchored at its top left corner. The fix needs a second forced read at each request, to find where layout puts the box at its current size. The other fixes also added code. So:
 
 - **Layouts rose from 139 to 163.** The count is a forced read per request, plus a frame-driven layout during the move. Task time did not rise, 59.3 ms to 55.4 ms within noise.
 - **Surface grew by 644 bytes and Inspector by 954 bytes.**
@@ -114,7 +114,7 @@ Five implementations of one fixture. `surface` and the three Motion baselines us
 
 The separation is narrow. Every baseline handles reversal, focus and stale work when given the plain rules. The only failures are content growth, for `height: auto` and CSS, which cannot animate to a size they do not know, and stretch, for the layout prop. `motion-measured` is clean.
 
-An earlier draft of this table showed the library well ahead. That came from the harness, not the library. The independent review section below explains how.
+An earlier draft of this table showed the library well ahead. That came from the harness, not the library. The later review section below explains how.
 
 This table covers one panel shape in one layout. It does not test anchored shapes, sheets or transformed ancestors on the baselines. The library's continuity tests cover those, and no baseline was built for them. So this is not evidence that the baselines fail there.
 
@@ -188,7 +188,7 @@ Clean consumers found a real bug. `Field.Root` failed in a React Server Componen
 
 The counted resources return to zero, and the control shows that the counters see a leak. This does not prove there is no leak. Heap growth is similar across all three, including the control, so the heap reading here cannot tell them apart. It is not evidence either way.
 
-## Independent review
+## Review
 
 A separate agent reviewed a clean clone, with the code and the contract and none of my conclusions. It then checked the fixes. This changed the project more than anything else did.
 

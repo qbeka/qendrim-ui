@@ -129,10 +129,10 @@ These come from the first baseline, in `results/baseline`, plus a margin. They w
 |---|---|
 | A run lost to a closed browser is repeated and logged in the manifest. | A browser closed mid-run during the first baseline attempt. Repeating only on a lost browser cannot select for good numbers. |
 | The ActionBar criterion was reworded from "score of 0". | The bar's own entrance creates raw entries, all marked as following input, which CLS excludes. The requirement is about surrounding content, so the test now checks that. |
-| An independent review on a clean clone changed the detectors, the baselines and one metric, after the first baseline and before any final run. See the table below. | The review found the suite was blind to the worst engine bug, and that the comparison was tilted toward the library. |
+| A later review on a clean clone changed the detectors, the baselines and one metric, after the first baseline and before any final run. See the table below. | The review found the suite was blind to the worst engine bug, and that the comparison was tilted toward the library. |
 | The first baseline used 3 runs, 200 leak cycles and 2 leak runs. | It only sets budgets. The final run uses the full protocol above. |
 
-## What the independent review changed
+## What the review changed
 
 | Found | Change |
 |---|---|

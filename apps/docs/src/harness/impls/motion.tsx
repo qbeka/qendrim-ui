@@ -27,7 +27,7 @@ export function MotionHeightImpl({ open, setOpen, onRendered, body, deferCloseRe
 /**
  * Baseline: Motion with a numeric height measured by ResizeObserver. About 30 more lines
  * than the version above, and it also animates content growth at rest. It is what a careful
- * engineer writes once the auto version falls short. An independent reviewer wrote the
+ * engineer writes once the auto version falls short. A second reviewer wrote the
  * first version of this to test whether the library's lead on that scenario was real.
  */
 export function MotionMeasuredImpl({ open, setOpen, onRendered, body, deferCloseRef, fallbackFocusRef }: ImplProps) {
