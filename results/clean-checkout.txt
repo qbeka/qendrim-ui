@@ -1,5 +1,32 @@
-Commit: 2bde084fd2c3636ad53aa0a87296f5625074e48a
-Date: Fri Nov  6 04:27:20 CST 2026
+Commit: c6e1237e63c4e8d097c40572218220cc4f992967
+Date: Fri Nov  6 04:27:36 CST 2026
 Node: v22.16.0, pnpm: 12.10.1
 == pnpm install --frozen-lockfile
-Failed. Clone kept at /var/folders/nw/4qt8jmj578l1nb4zy5j0mccr0000gn/T/qendrim-clean.m1JIuHgBuH
++ vitest 5.1.0
+
+Done in 422ms using pnpm v12.10.1
+== pnpm check
+Scope: 2 of 3 workspace projects
+$ tsc --noEmit -p tsconfig.json
+$ tsc --noEmit -p tsconfig.json
+== pnpm test
+   Start at  03:27:39
+   Duration  128ms (transform 51%, tests 33%, import 12%, worker 3%)
+
+== pnpm build
+dist/assets/index-D_dFd4l4.js                  352.88 kB │ gzip: 111.88 kB
+
+✓ built in 388ms
+== pnpm exec playwright test --reporter=line --workers=4
+[601/601] [chromium-strict-mode] › e2e/interruption.spec.ts:6:3 › surface: removal during a move with focus inside
+  94 skipped
+  507 passed (2.7m)
+== node consumers/check.mjs
+Unpacking tarball...
+Linting...
+All good!
+== pnpm bench:smoke
+Leak run 1 of 1: motion-height
+Leak run 1 of 1: broken-leak
+Wrote /private/var/folders/nw/4qt8jmj578l1nb4zy5j0mccr0000gn/T/qendrim-clean.0V4gOii4Dc/repo/results/smoke
+All steps passed.

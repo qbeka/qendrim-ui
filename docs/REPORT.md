@@ -214,6 +214,7 @@ The second pass found more: the new turnaround metric dropped samples, the new d
 | A browser closed mid-run during the first baseline attempt. | Cause not known. Runs now retry a lost browser and log it. The final run lost none. |
 | One full run at the final commit had 60 WebKit timeouts, and no assertion failed. WebKit passed 142 of 142 right after, alone. | Probably a stalled WebKit process, not proven. See the passes below. |
 | A modal could not be reopened by clicking the row during a close, in all browsers. | Fixed. The closing panel covered the row. |
+| A clean clone could not install: pnpm refused esbuild's build script. | Fixed. The development checkout had hidden this. `results/clean-checkout.txt` now shows every step passing from a fresh clone. |
 | The first mutation run reported 15 of 32, which was false. Vitest writes to stderr, and the script read stdout. | Fixed, by reading each failure's reason. |
 
 After the last library change, the full matrix passed 507 of 507 three times in a row, with no Firefox hang and no WebKit timeouts. See `results/e2e/three-passes.txt`.
