@@ -6,4 +6,5 @@ test-results
 playwright-report
 consumers/.work
 results/tmp
+results/smoke
 handoff
