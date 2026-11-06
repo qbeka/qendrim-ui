@@ -130,7 +130,7 @@ async function checkNext(entry, app, browser) {
   try {
     await waitFor(`http://127.0.0.1:${entry.port}`);
     const html = await (await fetch(`http://127.0.0.1:${entry.port}`)).text();
-    const ssr = ['Rendered on the server', 'data-shape="closed"', 'aria-expanded="false"', 'from the server'].filter((s) => !html.includes(s));
+    const ssr = ['Rendered on the server', 'data-shape="closed"', 'aria-expanded="false"', 'from the server', 'Server tab', 'Server row', 'Panel body'].filter((s) => !html.includes(s));
     const page = await browser.newPage();
     const problems = await behave(page, `http://127.0.0.1:${entry.port}/`);
     await page.close();

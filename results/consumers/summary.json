@@ -1,7 +1,7 @@
 {
   "tarball": "qbeka-react-0.1.0.tgz",
-  "tarballSha": "20d7e613fe7148ffecb67682de294b7cbe5549f760952e521d4626761e9b53f9",
-  "tarballBytes": 30155,
+  "tarballSha": "165f7eb23571fc60c530dc8f0d07b2cdf8594bc8482a830be161dca5a297df20",
+  "tarballBytes": 30974,
   "publint": "Running publint v0.3.25 for /Users/qendrimbeka/Coding_Projects/qendrim-ui/consumers/.work/qbeka-react-0.1.0.tgz...\nUnpacking tarball...\nLinting...\nAll good!",
   "versions": {
     "vite": "8.3.6",
@@ -67,8 +67,11 @@
         "ok": true,
         "bytes": 3922
       },
-      "ok": false,
-      "error": "⚠ Warning: Next.js inferred your workspace root, but it may not be correct.\n We detected multiple lockfiles and selected the directory of /Users/qendrimbeka/Coding_Projects/qendrim-ui/pnpm-lock.yaml as the root directory.\n To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.\n   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.\n Detected additional lockfiles: \n   * /Users/qendrimbeka/Coding_Projects/qendrim-ui/consumers/.work/next-react-18/package-lock.json\n\nError occurred prerendering page \"/\". Read more: https://nextjs.org/docs/messages/prerender-error\nError: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined.\n    at ignore-listed frames {\n  digest: '2724073382'\n}\nExport encountered an error on /page: /, exiting the build.\n⨯ Next.js build worker exited with code: 1 and signal: null\n"
+      "types": true,
+      "build": true,
+      "ssrMissing": [],
+      "problems": [],
+      "ok": true
     },
     {
       "id": "next-react-19",
@@ -79,8 +82,11 @@
         "ok": true,
         "bytes": 3935
       },
-      "ok": false,
-      "error": "Error occurred prerendering page \"/\". Read more: https://nextjs.org/docs/messages/prerender-error\nError: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined.\n    at ignore-listed frames {\n  digest: '3133134706'\n}\nExport encountered an error on /page: /, exiting the build.\n⨯ Next.js build worker exited with code: 1 and signal: null\n"
+      "types": true,
+      "build": true,
+      "ssrMissing": [],
+      "problems": [],
+      "ok": true
     }
   ]
 }

@@ -99,7 +99,7 @@ export interface InspectorRootProps extends Omit<HTMLAttributes<HTMLDivElement>,
   children?: ReactNode;
 }
 
-function Root({ open: openProp, defaultOpen = false, onOpenChange, modal = false, sheet = false, fallbackFocusRef, onSettle, onTrace, className, children, ...rest }: InspectorRootProps) {
+export function InspectorRoot({ open: openProp, defaultOpen = false, onOpenChange, modal = false, sheet = false, fallbackFocusRef, onSettle, onTrace, className, children, ...rest }: InspectorRootProps) {
   const [uncontrolled, setUncontrolled] = useState(defaultOpen);
   const open = openProp ?? uncontrolled;
   const [pending, setPending] = useState(false);
@@ -261,7 +261,7 @@ function Root({ open: openProp, defaultOpen = false, onOpenChange, modal = false
 
 export interface InspectorTriggerProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
-const Trigger = forwardRef<HTMLButtonElement, InspectorTriggerProps>(function Trigger({ className, ...rest }, ref) {
+export const InspectorTrigger = forwardRef<HTMLButtonElement, InspectorTriggerProps>(function Trigger({ className, ...rest }, ref) {
   const { open, setOpen, modal, triggerId, panelId, triggerRef } = useRequiredContext();
 
   const setRef = useCallback(
@@ -290,7 +290,7 @@ export interface InspectorPanelProps extends HTMLAttributes<HTMLDivElement> {
   children?: ReactNode;
 }
 
-const Panel = forwardRef<HTMLDivElement, InspectorPanelProps>(function Panel({ label, initialFocus, className, children, ...rest }, ref) {
+export const InspectorPanel = forwardRef<HTMLDivElement, InspectorPanelProps>(function Panel({ label, initialFocus, className, children, ...rest }, ref) {
   const context = useRequiredContext();
   const { open, setOpen, modal, triggerId, panelId, panelRef, invalidateClose, initialFocusRef, surface } = context;
   const scope = useScopeAttributes();
@@ -406,9 +406,7 @@ const Panel = forwardRef<HTMLDivElement, InspectorPanelProps>(function Panel({ l
 
 export interface InspectorCloseProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
-const Close = forwardRef<HTMLButtonElement, InspectorCloseProps>(function Close(props, ref) {
+export const InspectorClose = forwardRef<HTMLButtonElement, InspectorCloseProps>(function Close(props, ref) {
   const { setOpen } = useRequiredContext();
   return <button type="button" {...mergeProps<'button'>({ onClick: () => setOpen(false) }, props)} ref={ref} />;
 });
-
-export const Inspector = { Root, Trigger, Panel, Close };

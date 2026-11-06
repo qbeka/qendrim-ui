@@ -7,11 +7,11 @@ function join(base: string, className: unknown) {
   return typeof className === 'string' ? `${base} ${className}` : base;
 }
 
-const Root = forwardRef<HTMLDivElement, ComponentPropsWithoutRef<typeof BaseTabs.Root>>(function TabsRoot({ className, ...rest }, ref) {
+export const TabsRoot = forwardRef<HTMLDivElement, ComponentPropsWithoutRef<typeof BaseTabs.Root>>(function Root({ className, ...rest }, ref) {
   return <BaseTabs.Root {...rest} ref={ref} className={join('q-tabs', className)} />;
 });
 
-const List = forwardRef<HTMLDivElement, ComponentPropsWithoutRef<typeof BaseTabs.List>>(function TabsList({ className, children, ...rest }, ref) {
+export const TabsList = forwardRef<HTMLDivElement, ComponentPropsWithoutRef<typeof BaseTabs.List>>(function List({ className, children, ...rest }, ref) {
   return (
     <BaseTabs.List {...rest} ref={ref} className={join('q-tabs-list', className)}>
       {children}
@@ -20,12 +20,10 @@ const List = forwardRef<HTMLDivElement, ComponentPropsWithoutRef<typeof BaseTabs
   );
 });
 
-const Tab = forwardRef<HTMLElement, ComponentPropsWithoutRef<typeof BaseTabs.Tab>>(function TabsTab({ className, ...rest }, ref) {
+export const TabsTab = forwardRef<HTMLElement, ComponentPropsWithoutRef<typeof BaseTabs.Tab>>(function Tab({ className, ...rest }, ref) {
   return <BaseTabs.Tab {...rest} ref={ref as never} className={join('q-tabs-tab', className)} />;
 });
 
-const Panel = forwardRef<HTMLDivElement, ComponentPropsWithoutRef<typeof BaseTabs.Panel>>(function TabsPanel({ className, ...rest }, ref) {
+export const TabsPanel = forwardRef<HTMLDivElement, ComponentPropsWithoutRef<typeof BaseTabs.Panel>>(function Panel({ className, ...rest }, ref) {
   return <BaseTabs.Panel {...rest} ref={ref} className={join('q-tabs-panel', className)} />;
 });
-
-export const Tabs = { Root, List, Tab, Panel };

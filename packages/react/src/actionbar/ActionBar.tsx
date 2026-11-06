@@ -23,7 +23,7 @@ export interface ActionBarProps {
  * list. The anchor is a zero-height sticky element, and the bar hangs from it. The bar
  * does not take focus when it appears, because the user is still selecting.
  */
-function Root({ open, label, status, fallbackFocusRef, className, children }: ActionBarProps) {
+export function ActionBarRoot({ open, label, status, fallbackFocusRef, className, children }: ActionBarProps) {
   const barRef = useRef<HTMLDivElement | null>(null);
 
   useIsomorphicLayoutEffect(() => {
@@ -51,8 +51,6 @@ function Root({ open, label, status, fallbackFocusRef, className, children }: Ac
   );
 }
 
-const Action = forwardRef<HTMLButtonElement, ComponentPropsWithoutRef<typeof Toolbar.Button>>(function ActionBarAction({ className, ...rest }, ref) {
+export const ActionBarAction = forwardRef<HTMLButtonElement, ComponentPropsWithoutRef<typeof Toolbar.Button>>(function Action({ className, ...rest }, ref) {
   return <Toolbar.Button {...rest} ref={ref} className={['q-actionbar-action', typeof className === 'string' ? className : ''].filter(Boolean).join(' ')} />;
 });
-
-export const ActionBar = { Root, Action };

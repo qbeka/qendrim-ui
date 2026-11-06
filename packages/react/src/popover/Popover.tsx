@@ -13,7 +13,7 @@ export interface PopoverContentProps extends Omit<ComponentPropsWithoutRef<typeo
   container?: HTMLElement | null;
 }
 
-const Content = forwardRef<HTMLDivElement, PopoverContentProps>(function PopoverContent({ title, side, align, container, className, children, ...rest }, ref) {
+export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(function Content({ title, side, align, container, className, children, ...rest }, ref) {
   const scope = useScopeAttributes();
   return (
     <BasePopover.Portal container={container ?? undefined}>
@@ -27,4 +27,6 @@ const Content = forwardRef<HTMLDivElement, PopoverContentProps>(function Popover
   );
 });
 
-export const Popover = { Root: BasePopover.Root, Trigger: BasePopover.Trigger, Close: BasePopover.Close, Content };
+export const PopoverRoot = BasePopover.Root;
+export const PopoverTrigger = BasePopover.Trigger;
+export const PopoverClose = BasePopover.Close;

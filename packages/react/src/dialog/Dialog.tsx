@@ -12,7 +12,7 @@ export interface DialogContentProps extends Omit<ComponentPropsWithoutRef<typeof
   container?: HTMLElement | null;
 }
 
-const Content = forwardRef<HTMLDivElement, DialogContentProps>(function DialogContent({ title, description, container, className, children, ...rest }, ref) {
+export const DialogContent = forwardRef<HTMLDivElement, DialogContentProps>(function Content({ title, description, container, className, children, ...rest }, ref) {
   const scope = useScopeAttributes();
   return (
     <BaseDialog.Portal container={container ?? undefined}>
@@ -26,4 +26,6 @@ const Content = forwardRef<HTMLDivElement, DialogContentProps>(function DialogCo
   );
 });
 
-export const Dialog = { Root: BaseDialog.Root, Trigger: BaseDialog.Trigger, Close: BaseDialog.Close, Content };
+export const DialogRoot = BaseDialog.Root;
+export const DialogTrigger = BaseDialog.Trigger;
+export const DialogClose = BaseDialog.Close;
