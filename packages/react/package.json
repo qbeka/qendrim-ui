@@ -5,12 +5,35 @@
   "license": "MIT",
   "author": "Qendrim Beka",
   "type": "module",
-  "sideEffects": ["*.css"],
-  "files": ["dist", "LICENSE", "THIRD_PARTY_NOTICES.md", "README.md"],
+  "sideEffects": [
+    "*.css"
+  ],
+  "files": [
+    "dist",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md",
+    "README.md"
+  ],
   "exports": {
-    ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" },
-    "./surface": { "types": "./dist/surface/index.d.ts", "default": "./dist/surface/index.js" },
-    "./package.json": "./package.json"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./surface": {
+      "types": "./dist/surface/index.d.ts",
+      "default": "./dist/surface/index.js"
+    },
+    "./package.json": "./package.json",
+    "./inspector": {
+      "types": "./dist/inspector/index.d.ts",
+      "default": "./dist/inspector/index.js"
+    },
+    "./scope": {
+      "types": "./dist/scope/index.d.ts",
+      "default": "./dist/scope/index.js"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./css/*": "./dist/css/*"
   },
   "scripts": {
     "build": "node scripts/build.mjs",

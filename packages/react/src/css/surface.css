@@ -1,0 +1,5 @@
+@layer qendrim {
+  [data-q-surface] {
+    display: block;
+  }
+}

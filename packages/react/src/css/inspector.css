@@ -1,0 +1,144 @@
+@layer qendrim {
+  .q-inspector-slot {
+    /* Holds the row's place when an open sheet leaves normal flow. */
+    min-height: var(--q-inspector-row-height, 3.25rem);
+  }
+
+  .q-inspector {
+    background: var(--q-color-surface);
+    border: 1px solid var(--q-color-rule);
+    border-radius: var(--q-radius-row);
+    color: var(--q-color-ink);
+    outline: none;
+  }
+
+  .q-inspector[data-shape='open'] {
+    border-radius: var(--q-radius-panel);
+    border-color: var(--q-color-rule-strong);
+  }
+
+  .q-inspector [data-q-surface-content] {
+    position: relative;
+  }
+
+  .q-inspector-trigger {
+    all: unset;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: var(--q-space-3);
+    inline-size: 100%;
+    min-block-size: var(--q-inspector-row-height, 3.25rem);
+    padding-inline: var(--q-space-4);
+    cursor: pointer;
+    font: inherit;
+    touch-action: manipulation;
+  }
+
+  .q-inspector-trigger:focus-visible {
+    outline: 2px solid var(--q-color-focus);
+    outline-offset: -2px;
+    border-radius: inherit;
+  }
+
+  .q-inspector-panel {
+    padding: var(--q-space-4);
+    outline: none;
+  }
+
+  /*
+   * While closed, the panel leaves flow but keeps its box, so the natural height of the
+   * surface is the row. The clip hides it during the move. Once settled, visibility takes
+   * it out of the tab order and the accessibility tree. It also keeps layout boxes, so
+   * scroll positions inside the panel survive, which display: none does not promise.
+   */
+  .q-inspector:not(.q-inspector--modal)[data-shape='closed'] {
+    overflow: clip;
+  }
+
+  .q-inspector:not(.q-inspector--modal)[data-shape='closed'] .q-inspector-panel {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: var(--q-inspector-row-height, 3.25rem);
+  }
+
+  .q-inspector:not(.q-inspector--modal)[data-shape='closed'][data-phase='settled'] .q-inspector-panel {
+    visibility: hidden;
+  }
+
+  @media (max-width: 639.98px) {
+    .q-inspector-slot[data-sheet] > .q-inspector[data-shape='open'] {
+      position: fixed;
+      inset-inline: 0;
+      inset-block-end: 0;
+      z-index: var(--q-layer-sheet);
+      border-end-start-radius: 0;
+      border-end-end-radius: 0;
+    }
+
+    .q-inspector-slot[data-sheet] > .q-inspector[data-shape='open'] > [data-q-surface-content] {
+      max-block-size: 85dvh;
+      overflow: auto;
+      overscroll-behavior: contain;
+    }
+  }
+
+  /* Modal: the closed shape sits on the trigger, and the open shape is centered. */
+  .q-inspector--modal {
+    position: fixed;
+    z-index: var(--q-layer-modal);
+    box-shadow: var(--q-shadow-popup);
+  }
+
+  .q-inspector--modal[data-shape='open'] {
+    inset-block-start: 8dvh;
+    inset-inline-start: 50%;
+    inline-size: min(36rem, calc(100vw - 2rem));
+    margin-inline-start: calc(min(36rem, calc(100vw - 2rem)) / -2);
+  }
+
+  .q-inspector--modal[data-shape='open'] > [data-q-surface-content] {
+    max-block-size: 84dvh;
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+
+  .q-inspector--modal[data-shape='closed'] {
+    inset-block-start: var(--q-origin-y, 50dvh);
+    inset-inline-start: var(--q-origin-x, 50%);
+    inline-size: var(--q-origin-width, 0);
+    block-size: var(--q-origin-height, 0);
+    overflow: clip;
+  }
+
+  /* The row is gone, so there is nothing to return to. Close to the center. */
+  .q-inspector--modal[data-shape='closed'][data-origin='lost'] {
+    inset-block-start: 40dvh;
+    inset-inline-start: 50%;
+    inline-size: 0;
+    block-size: 0;
+  }
+
+  .q-inspector--modal[data-shape='closed'][data-phase='settled'] {
+    visibility: hidden;
+  }
+
+  .q-inspector-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: var(--q-layer-backdrop);
+    background: var(--q-color-scrim);
+    transition: opacity 180ms linear;
+  }
+
+  .q-inspector-backdrop[data-starting-style],
+  .q-inspector-backdrop[data-ending-style] {
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .q-inspector-backdrop {
+      transition: none;
+    }
+  }
+}

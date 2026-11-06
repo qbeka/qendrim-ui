@@ -1,0 +1,105 @@
+/*
+ * Tokens. Importing this file defines custom properties and nothing else: no reset, no
+ * font download, no change to any element outside this library.
+ */
+@layer qendrim {
+  :where(:root, [data-q-recipe]) {
+    /* Color: warm white, dark ink, one forest accent. */
+    --q-color-page: #fbf8f4;
+    --q-color-surface: #ffffff;
+    --q-color-wash: #6040200e;
+    --q-color-ink: #111511;
+    --q-color-body: #444944;
+    --q-color-muted: #5a5e5a;
+    --q-color-rule: #1115111c;
+    --q-color-rule-strong: #11151138;
+    --q-color-accent: #1d3a2a;
+    --q-color-on-accent: #fbf8f4;
+    --q-color-danger: #9a2c1f;
+    --q-color-focus: #1d5a3e;
+    --q-color-scrim: #11151166;
+
+    /* Type: stacks only. Fonts are opt-in, see docs/ASSETS.md. */
+    --q-font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --q-font-serif: ui-serif, Georgia, 'Times New Roman', serif;
+    --q-font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+    --q-font-content: var(--q-font-sans);
+    --q-font-control: var(--q-font-sans);
+    --q-text-xs: 0.75rem;
+    --q-text-sm: 0.8125rem;
+    --q-text-md: 0.875rem;
+    --q-text-lg: 1rem;
+    --q-leading: 1.45;
+
+    /* Space, on a 4 px grid. */
+    --q-space-1: 0.25rem;
+    --q-space-2: 0.5rem;
+    --q-space-3: 0.75rem;
+    --q-space-4: 1rem;
+    --q-space-5: 1.5rem;
+    --q-space-6: 2rem;
+
+    /* Shape. */
+    --q-radius-control: 6px;
+    --q-radius-row: 8px;
+    --q-radius-panel: 12px;
+    --q-border: 1px;
+    --q-control-height: 2rem;
+    --q-shadow-popup: 0 1px 2px #1115110f, 0 8px 24px #11151114;
+
+    /* Motion. Surface reads these two at each request. */
+    --q-surface-response: 320;
+    --q-surface-damping: 1;
+    --q-motion-fast: 120ms;
+    --q-ease: cubic-bezier(0.2, 0, 0, 1);
+
+    /* Layers. */
+    --q-layer-sheet: 40;
+    --q-layer-backdrop: 50;
+    --q-layer-modal: 51;
+    --q-layer-popup: 60;
+    --q-layer-tooltip: 70;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :where(:root:not([data-q-theme='light']), [data-q-recipe]:not([data-q-theme='light'])) {
+      color-scheme: dark;
+      --q-color-page: #101311;
+      --q-color-surface: #171b18;
+      --q-color-wash: #e8e4dc0d;
+      --q-color-ink: #eeebe4;
+      --q-color-body: #c4c5be;
+      --q-color-muted: #a3a59f;
+      --q-color-rule: #e8e4dc1f;
+      --q-color-rule-strong: #e8e4dc40;
+      --q-color-accent: #cfe3d4;
+      --q-color-on-accent: #101311;
+      --q-color-danger: #f09a8c;
+      --q-color-focus: #8fd0a8;
+      --q-color-scrim: #00000099;
+      --q-shadow-popup: 0 1px 2px #0000004d, 0 8px 24px #00000066;
+    }
+  }
+
+  :where([data-q-theme='dark']) {
+    color-scheme: dark;
+    --q-color-page: #101311;
+    --q-color-surface: #171b18;
+    --q-color-wash: #e8e4dc0d;
+    --q-color-ink: #eeebe4;
+    --q-color-body: #c4c5be;
+    --q-color-muted: #a3a59f;
+    --q-color-rule: #e8e4dc1f;
+    --q-color-rule-strong: #e8e4dc40;
+    --q-color-accent: #cfe3d4;
+    --q-color-on-accent: #101311;
+    --q-color-danger: #f09a8c;
+    --q-color-focus: #8fd0a8;
+    --q-color-scrim: #00000099;
+    --q-shadow-popup: 0 1px 2px #0000004d, 0 8px 24px #00000066;
+  }
+
+  :where([data-q-theme='light']) {
+    color-scheme: light;
+  }
+}

@@ -26,6 +26,8 @@ export interface SurfaceProps extends HTMLAttributes<HTMLDivElement> {
   /** Receives engine events. Used by diagnostics. Has no effect on behavior. */
   onTrace?: (event: TraceEvent) => void;
   handleRef?: RefObject<SurfaceHandle | null>;
+  /** Runs just before the old box is read. Inspector uses it to refresh a modal's origin. */
+  beforeCapture?: () => void;
   children?: ReactNode;
 }
 
@@ -56,7 +58,7 @@ class BeforeMutation extends Component<SnapshotProps> {
 }
 
 export const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface(
-  { shape, onSettle, onTrace, handleRef, children, ...rest },
+  { shape, onSettle, onTrace, handleRef, beforeCapture, children, ...rest },
   forwardedRef,
 ) {
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -64,9 +66,9 @@ export const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface
   const engineRef = useRef<Engine | null>(null);
 
   // The engine outlives renders, so it calls the latest callbacks through a ref.
-  const callbacks = useRef({ onSettle, onTrace });
+  const callbacks = useRef({ onSettle, onTrace, beforeCapture });
   useIsomorphicLayoutEffect(() => {
-    callbacks.current = { onSettle, onTrace };
+    callbacks.current = { onSettle, onTrace, beforeCapture };
   });
 
   const initialShape = useRef(shape);
@@ -119,7 +121,10 @@ export const Surface = forwardRef<HTMLDivElement, SurfaceProps>(function Surface
     engineRef.current?.commit(shape);
   }, [shape]);
 
-  const capture = useCallback(() => engineRef.current?.capture(), []);
+  const capture = useCallback(() => {
+    callbacks.current.beforeCapture?.();
+    engineRef.current?.capture();
+  }, []);
 
   const setRoot = useCallback(
     (node: HTMLDivElement | null) => {
