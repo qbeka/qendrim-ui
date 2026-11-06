@@ -65,6 +65,7 @@ export const COMPONENTS: ComponentDoc[] = [
       'Use it for one panel that changes layout: a row that opens, a drawer that docks, a bar that grows.',
       'Do not use it for lists that reorder, or for moving something between two parents. It never reparents.',
       'Put padding on your content, not on the root. Put any max-height on [data-q-surface-content].',
+      'Set size and radius in CSS, not in the style prop. The engine owns inline width, height, translate, overflow, box-sizing and border-radius during a move, and clears them at the end.',
     ],
   },
   {

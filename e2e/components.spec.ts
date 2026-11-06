@@ -166,6 +166,28 @@ test.describe('ActionBar', () => {
     expect(after).toEqual(before);
   });
 
+  test('appearing shifts nothing but the bar itself, and adds nothing to CLS', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'The layout shift API is in Chromium.');
+    await special(page, 'actionbar');
+    await page.evaluate(() => {
+      const store = window as unknown as { __shifts: Array<{ input: boolean; sources: string[] }> };
+      store.__shifts = [];
+      new PerformanceObserver((list) => {
+        for (const entry of list.getEntries() as unknown as Array<{ hadRecentInput: boolean; sources: Array<{ node?: Element }> }>) {
+          store.__shifts.push({ input: entry.hadRecentInput, sources: entry.sources.map((s) => s.node?.className ?? 'unknown') });
+        }
+      }).observe({ type: 'layout-shift', buffered: false });
+    });
+    await page.getByTestId('bar-add').click();
+    await page.waitForTimeout(700);
+    await page.getByTestId('bar-clear').click();
+    await page.waitForTimeout(700);
+    const shifts = await page.evaluate(() => (window as unknown as { __shifts: Array<{ input: boolean; sources: string[] }> }).__shifts);
+    // The bar's own entrance counts as movement. Input-driven entries are excluded from CLS.
+    expect(shifts.filter((s) => !s.input)).toEqual([]);
+    expect(shifts.flatMap((s) => s.sources).filter((c) => !c.includes('q-actionbar'))).toEqual([]);
+  });
+
   test('it does not take focus when it appears, and arrow keys move inside it', async ({ page }) => {
     await special(page, 'actionbar');
     // Keyboard, because Safari does not focus a button on click.

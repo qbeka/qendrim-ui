@@ -91,4 +91,41 @@ Pass criterion: `surface` shows no growth in DOM nodes or listeners, no active o
 
 esbuild bundle of the tarball installed in a clean app, minified, ESM, React external, gzip level 9. React's own cost is reported once on its own.
 
-BUDGETS
+## Budgets, frozen before the final run
+
+These come from the first baseline, in `results/baseline`, plus a margin. They were committed before the final run and before any tuning. Sizes are gzipped JavaScript with React excluded.
+
+| Budget | Baseline | Limit |
+|---|---|---|
+| Surface import | 3,601 bytes | 4,096 bytes |
+| Inspector import | 5,884 bytes | 6,500 bytes |
+| ModalInspector import | 29,453 bytes | 31,000 bytes |
+| Timeline import | 15,793 bytes | 17,000 bytes |
+| ActionBar import | 11,545 bytes | 12,500 bytes |
+| Each foundation component over Base UI directly | 418 bytes at most | 512 bytes |
+| Barrel import of Button over the subpath import | Smaller | 64 bytes |
+| `styles.css` | 4,493 bytes | 5,120 bytes |
+| `tokens.css` | 1,102 bytes | 1,280 bytes |
+| Surface, click to first change from rest | 12.6 ms | 20 ms |
+| Surface, click to first change reversing | 9.3 ms | 16 ms |
+| Surface, key to first change mid-move | 8.5 ms | 16 ms |
+| Surface, layouts in the reversal workload | 139 | 150 |
+| Surface, main thread task time in the reversal workload | 59.3 ms | 75 ms |
+| Surface, frame intervals over 25 ms in the reversal workload | 0 | 2 |
+| Foundation latency over Base UI directly | 1.8 ms at most | 3 ms |
+| Foundation task time over Base UI directly | 6 percent at most | 15 percent |
+| Foundation layout count over Base UI directly | 0 | 0 |
+
+## Other pass criteria
+
+- No stale final state and no lost focus in the interruption suite, in Chromium, Firefox and WebKit.
+- The simplest import brings no signature component: the Button-only page has no Inspector, Surface, Timeline or ActionBar code.
+- A closed control becoming active moves nothing around it. In Chrome's layout shift entries for the ActionBar, the only source is the bar itself, and no entry counts toward CLS.
+
+## Changes after this file was first written
+
+| Change | Reason |
+|---|---|
+| A run lost to a closed browser is repeated and logged in the manifest. | A browser closed mid-run during the first baseline attempt. Repeating only on a lost browser cannot select for good numbers. |
+| The ActionBar criterion was reworded from "score of 0". | The bar's own entrance creates raw entries, all marked as following input, which CLS excludes. The requirement is about surrounding content, so the test now checks that. |
+| The first baseline used 3 runs, 200 leak cycles and 2 leak runs. | It only sets budgets. The final run uses the full protocol above. |

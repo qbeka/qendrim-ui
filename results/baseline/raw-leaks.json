@@ -1,0 +1,254 @@
+{
+ "surface": [
+  {
+   "impl": "surface",
+   "cycles": 200,
+   "start": {
+    "heapBytes": 3307844,
+    "nodes": 288,
+    "listeners": 174,
+    "observers": 1,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 200
+   },
+   "middle": {
+    "heapBytes": 3421344,
+    "nodes": 288,
+    "listeners": 174,
+    "observers": 1,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 600
+   },
+   "end": {
+    "heapBytes": 3573468,
+    "nodes": 288,
+    "listeners": 174,
+    "observers": 1,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 1000
+   },
+   "removed": {
+    "heapBytes": 3509308,
+    "nodes": 169,
+    "listeners": 168,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 0,
+    "rafCalls": 1000
+   },
+   "rafCallsWhileRemoved": 0
+  },
+  {
+   "impl": "surface",
+   "cycles": 200,
+   "start": {
+    "heapBytes": 3307840,
+    "nodes": 288,
+    "listeners": 174,
+    "observers": 1,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 200
+   },
+   "middle": {
+    "heapBytes": 3421340,
+    "nodes": 288,
+    "listeners": 174,
+    "observers": 1,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 600
+   },
+   "end": {
+    "heapBytes": 3573420,
+    "nodes": 288,
+    "listeners": 174,
+    "observers": 1,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 1000
+   },
+   "removed": {
+    "heapBytes": 3508824,
+    "nodes": 169,
+    "listeners": 168,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 0,
+    "rafCalls": 1000
+   },
+   "rafCallsWhileRemoved": 0
+  }
+ ],
+ "motion-height": [
+  {
+   "impl": "motion-height",
+   "cycles": 200,
+   "start": {
+    "heapBytes": 3423520,
+    "nodes": 284,
+    "listeners": 173,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 150
+   },
+   "middle": {
+    "heapBytes": 3592004,
+    "nodes": 284,
+    "listeners": 173,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 450
+   },
+   "end": {
+    "heapBytes": 3756920,
+    "nodes": 284,
+    "listeners": 173,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 750
+   },
+   "removed": {
+    "heapBytes": 3703280,
+    "nodes": 167,
+    "listeners": 169,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 750
+   },
+   "rafCallsWhileRemoved": 0
+  },
+  {
+   "impl": "motion-height",
+   "cycles": 200,
+   "start": {
+    "heapBytes": 3423512,
+    "nodes": 284,
+    "listeners": 173,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 150
+   },
+   "middle": {
+    "heapBytes": 3592024,
+    "nodes": 284,
+    "listeners": 173,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 450
+   },
+   "end": {
+    "heapBytes": 3756912,
+    "nodes": 284,
+    "listeners": 173,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 750
+   },
+   "removed": {
+    "heapBytes": 3703272,
+    "nodes": 167,
+    "listeners": 169,
+    "observers": 0,
+    "intervals": 0,
+    "resizeListeners": 1,
+    "rafCalls": 750
+   },
+   "rafCallsWhileRemoved": 0
+  }
+ ],
+ "broken-leak": [
+  {
+   "impl": "broken-leak",
+   "cycles": 200,
+   "start": {
+    "heapBytes": 3003832,
+    "nodes": 53,
+    "listeners": 216,
+    "observers": 51,
+    "intervals": 51,
+    "resizeListeners": 51,
+    "rafCalls": 4230
+   },
+   "middle": {
+    "heapBytes": 3119536,
+    "nodes": 53,
+    "listeners": 316,
+    "observers": 151,
+    "intervals": 151,
+    "resizeListeners": 151,
+    "rafCalls": 35333
+   },
+   "end": {
+    "heapBytes": 3274128,
+    "nodes": 53,
+    "listeners": 416,
+    "observers": 251,
+    "intervals": 251,
+    "resizeListeners": 251,
+    "rafCalls": 96736
+   },
+   "removed": {
+    "heapBytes": 3275168,
+    "nodes": 50,
+    "listeners": 415,
+    "observers": 251,
+    "intervals": 251,
+    "resizeListeners": 251,
+    "rafCalls": 100752
+   },
+   "rafCallsWhileRemoved": 5271
+  },
+  {
+   "impl": "broken-leak",
+   "cycles": 200,
+   "start": {
+    "heapBytes": 3003820,
+    "nodes": 53,
+    "listeners": 216,
+    "observers": 51,
+    "intervals": 51,
+    "resizeListeners": 51,
+    "rafCalls": 4230
+   },
+   "middle": {
+    "heapBytes": 3119536,
+    "nodes": 53,
+    "listeners": 316,
+    "observers": 151,
+    "intervals": 151,
+    "resizeListeners": 151,
+    "rafCalls": 35333
+   },
+   "end": {
+    "heapBytes": 3274128,
+    "nodes": 53,
+    "listeners": 416,
+    "observers": 251,
+    "intervals": 251,
+    "resizeListeners": 251,
+    "rafCalls": 96736
+   },
+   "removed": {
+    "heapBytes": 3275180,
+    "nodes": 50,
+    "listeners": 415,
+    "observers": 251,
+    "intervals": 251,
+    "resizeListeners": 251,
+    "rafCalls": 100752
+   },
+   "rafCallsWhileRemoved": 5271
+  }
+ ]
+}

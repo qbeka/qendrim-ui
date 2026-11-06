@@ -67,7 +67,7 @@ function suite() {
   const unit = sh('pnpm', ['exec', 'vitest', 'run'], SANDBOX);
   const build = sh('pnpm', ['--filter', 'docs', 'build'], SANDBOX);
   if (build.status !== 0) return { outcome: 'build-failed', reason: build.stdout.slice(-400) };
-  const e2e = sh('pnpm', ['exec', 'playwright', 'test', '--project=chromium', '--reporter=line', ...SPECS], SANDBOX, { E2E_PORT: PORT });
+  const e2e = sh('pnpm', ['exec', 'playwright', 'test', '--project=chromium', '--reporter=line', '--workers=3', ...SPECS], SANDBOX, { E2E_PORT: PORT });
   const failedUnit = [...unit.stdout.matchAll(/FAIL\s+(.+)/g)].map((m) => m[1].trim());
   const failedE2e = [...e2e.stdout.matchAll(/^\s+\d+\) \[chromium\] › (.+?)\s*─*\s*$/gm)].map((m) => m[1].trim());
   return { unitStatus: unit.status, e2eStatus: e2e.status, failedUnit: [...new Set(failedUnit)], failedE2e: [...new Set(failedE2e)] };

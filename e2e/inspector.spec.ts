@@ -151,6 +151,22 @@ test('a failed deferred close stays open', async ({ page }) => {
   await expect(page.getByTestId('defer-pending')).toHaveText('false');
 });
 
+test('content changes raise no ResizeObserver loop error', async ({ page }) => {
+  await page.addInitScript(() => {
+    (window as unknown as { __errors: string[] }).__errors = [];
+    window.addEventListener('error', (event) => (window as unknown as { __errors: string[] }).__errors.push(event.message));
+  });
+  await openFixture(page, 'surface', { open: '1', record: '0' });
+  for (let i = 0; i < 6; i += 1) {
+    await control(page, 'ctl-details');
+    await wait(page, 40);
+    await control(page, 'ctl-error');
+    await wait(page, 40);
+  }
+  await wait(page, 600);
+  expect(await page.evaluate(() => (window as unknown as { __errors: string[] }).__errors)).toEqual([]);
+});
+
 test('removal with focus inside moves focus to the fallback', async ({ page }) => {
   await openFixture(page, 'surface', { open: '1', record: '0' });
   await input(page).focus();
