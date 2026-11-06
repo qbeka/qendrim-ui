@@ -10,7 +10,7 @@ const INSTALL_LATENCY = `
 (() => {
   const channel = new MessageChannel();
   let onFrame = null;
-  channel.port1.onmessage = () => { const f = onFrame; onFrame = null; f && f(); };
+  channel.port1.onmessage = () => { const f = onFrame; onFrame = null; if (f) f(); };
   const nextFrameEnd = (f) => requestAnimationFrame(() => { onFrame = f; channel.port2.postMessage(0); });
   window.__latency = { geometry: [], value: [], visible: [] };
   const read = () => document.querySelector('[data-probe="box"]')?.getBoundingClientRect().height ?? 0;
@@ -167,7 +167,7 @@ export async function measureFoundationCase(browser, baseUrl, name, rounds) {
     window.__open = [];
     const channel = new MessageChannel();
     let cb = null;
-    channel.port1.onmessage = () => { const f = cb; cb = null; f && f(); };
+    channel.port1.onmessage = () => { const f = cb; cb = null; if (f) f(); };
     const end = (f) => requestAnimationFrame(() => { cb = f; channel.port2.postMessage(0); });
     document.addEventListener('click', (e) => {
       if (!e.target.closest?.('[data-probe="trigger"]')) return;

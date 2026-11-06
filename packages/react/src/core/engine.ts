@@ -101,7 +101,6 @@ export function createEngine({ initial, port, clock, onSettle, onTrace }: Engine
   let spring: Spring = springFromResponse(320, 1);
   let frame: number | null = null;
   let captured: MeasuredBox | null = null;
-  let lastTarget: NaturalBox | null = null;
   let chrome = 0; // Root height minus content height, from the last natural read.
   let contentWidth: number | null = null;
   let contentHeight: number | null = null;
@@ -182,7 +181,6 @@ export function createEngine({ initial, port, clock, onSettle, onTrace }: Engine
   }
 
   function rememberTarget(target: NaturalBox) {
-    lastTarget = target;
     chrome = target.height - target.contentHeight;
     contentWidth = target.contentWidth;
     contentHeight = target.contentHeight;

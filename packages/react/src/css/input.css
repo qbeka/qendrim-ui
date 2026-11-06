@@ -12,8 +12,9 @@
   }
 
   .q-input:focus-visible {
-    outline: 2px solid var(--q-color-focus);
-    outline-offset: -1px;
+    border-color: var(--q-color-focus);
+    outline: 1px solid var(--q-color-focus);
+    outline-offset: 0;
   }
 
   .q-input[data-invalid] {

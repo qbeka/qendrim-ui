@@ -24,6 +24,22 @@ for (const [impl, scenario, kind] of CONTROLS) {
   });
 }
 
+test('the workbench reports the broken fixture, and only that side', async ({ page }) => {
+  await page.goto('/workbench');
+  await page.getByTestId('w-broken').check();
+  await page.getByTestId('w-right').selectOption('broken-stale');
+  await page.getByTestId('w-toggle').click();
+  await page.waitForTimeout(600);
+  await page.getByTestId('w-defer').click();
+  await page.waitForTimeout(100);
+  await page.getByTestId('w-toggle').click();
+  await page.waitForTimeout(100);
+  await page.getByTestId('w-toggle').click();
+  await expect(page.getByTestId('w-b-violations')).toContainText('stale-final-state', { timeout: 4000 });
+  await expect(page.getByTestId('w-a-violations')).toContainText('No violations');
+  await expect(page.getByTestId('w-a-rendered')).toHaveText('open');
+});
+
 test('broken-leak leaves resources running after removal', async ({ page }) => {
   await openFixture(page, 'broken-leak', { record: '0' });
   await trigger(page).click();

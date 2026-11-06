@@ -19,7 +19,7 @@
     --q-color-focus: #1d5a3e;
     --q-color-scrim: #11151166;
 
-    /* Type: stacks only. Fonts are opt-in, see docs/ASSETS.md. */
+    /* Type: stacks only. A font is yours to load. Setting these variables is all it takes. */
     --q-font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
     --q-font-serif: ui-serif, Georgia, 'Times New Roman', serif;
     --q-font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;

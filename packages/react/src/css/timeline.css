@@ -64,6 +64,7 @@
   }
 
   .q-timeline-thumb {
+    z-index: 1;
     inline-size: 0.75rem;
     block-size: 0.75rem;
     border: 1.5px solid var(--q-color-ink);

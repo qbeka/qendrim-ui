@@ -33,6 +33,7 @@ const Stage = forwardRef<StageHandle, { impl: string; width: number; testId: str
   const [focusLog, setFocusLog] = useState<string[]>([]);
   const [found, setFound] = useState<Violation[]>([]);
   const rootRef = useRef<HTMLDivElement>(null);
+  const openRef = useRef(false);
   const requested = useRef<Requested>('closed');
   const rendered = useRef<Requested>('closed');
   const generation = useRef(0);
@@ -68,6 +69,7 @@ const Stage = forwardRef<StageHandle, { impl: string; width: number; testId: str
       } else {
         recorder.mark('late-commit');
       }
+      openRef.current = next;
       setOpenState(next);
     },
     [recorder],
@@ -78,7 +80,7 @@ const Stage = forwardRef<StageHandle, { impl: string; width: number; testId: str
   }, []);
 
   useImperativeHandle(ref, () => ({
-    toggle: () => setOpen(requested.current !== 'open'),
+    toggle: () => setOpen(!openRef.current),
     grow: () => {
       recorder.mark('grow');
       setDetails((d) => !d);
@@ -98,7 +100,7 @@ const Stage = forwardRef<StageHandle, { impl: string; width: number; testId: str
   return (
     <section className="w-stage" data-testid={testId} style={{ '--stage-width': `${width}px` } as React.CSSProperties}>
       <h2>{entry.label}</h2>
-      {entry.group === 'broken' ? <p className="w-warning">Test fixture. It is broken on purpose. Do not copy it.</p> : null}
+      <p className="w-tag" data-broken={entry.group === 'broken' || undefined}>{entry.group === 'broken' ? 'Test fixture. It is broken on purpose. Do not copy it.' : entry.group === 'library' ? 'This library.' : 'Baseline. A fair, ordinary implementation.'}</p>
       <div ref={rootRef} className="w-frame">
         <Component open={open} setOpen={setOpen} onRendered={onRendered} onTrace={() => undefined} deferCloseRef={deferCloseRef} fallbackFocusRef={fallbackFocusRef} body={<FixtureBody value={value} onValue={setValue} details={details} error={false} onDetails={() => setDetails((d) => !d)} />} />
       </div>

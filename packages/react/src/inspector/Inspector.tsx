@@ -12,7 +12,7 @@ import {
   useState,
   type ButtonHTMLAttributes,
   type ComponentType,
-  type FormEvent,
+
   type HTMLAttributes,
   type KeyboardEvent,
   type ReactNode,
@@ -311,7 +311,7 @@ export const InspectorPanel = forwardRef<HTMLDivElement, InspectorPanelProps>(fu
     [panelRef, ref],
   );
 
-  const onInputCapture = useCallback((_: FormEvent<HTMLDivElement>) => invalidateClose(), [invalidateClose]);
+  const onInputCapture = useCallback(() => invalidateClose(), [invalidateClose]);
 
   if (parts) {
     return (
