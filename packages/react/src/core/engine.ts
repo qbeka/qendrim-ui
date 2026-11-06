@@ -387,6 +387,9 @@ export function createEngine({ initial, port, clock, onSettle, onTrace }: Engine
       if (port.prefersReducedMotion() || port.isDocumentHidden()) return;
       // The root may not follow its content, because of min-height for example.
       if (previousRoot === null || Math.abs(nextRoot - previousRoot) <= SAME_BOX_PX) return;
+      // A root that moved by more than its content also changed for another reason, so the
+      // remembered height is out of date. Follow layout instead of starting from it.
+      if (Math.abs(nextRoot - previousRoot) > Math.abs(height - previousHeight) + SAME_BOX_PX) return;
 
       readSpring();
       heightOnly = true;

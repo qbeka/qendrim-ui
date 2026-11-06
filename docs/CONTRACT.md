@@ -84,7 +84,7 @@ The content box itself reflows at most once per retarget. It is not resized on e
 | F3 | Opening moves focus when the request happens, not when the animation ends. The user can type during the move. |
 | F4 | Closing moves focus out of the panel when the request happens, but only if focus was inside it. If the user already moved focus elsewhere, the surface leaves it alone. |
 | F5 | Reopening during a close returns focus to the element that had it. A fresh open after the close finished starts again from `initialFocus` or the first field. |
-| F6 | If the focus target is gone, focus goes to the next valid owner: trigger, then the declared fallback, then the surface root. This covers a removed surface, a removed trigger, a removed field and a control that became disabled. Each step is traced with its reason. |
+| F6 | If the element holding focus goes away, focus moves to the next valid owner. In an open panel that is the first field, then the trigger, then the declared fallback, then the surface root. This covers a removed surface, a removed trigger, a removed field and a control that became disabled. If the user had already moved focus elsewhere, it stays there. Each move is traced with its reason. |
 | F7 | Modal behavior is an explicit choice in code: `ModalInspector` instead of `Inspector`. Layout never changes it. A panel at the bottom of a small screen stays nonmodal. |
 
 A closing panel is `inert` from the moment of the close request, modal or not, so a user cannot tab into something that is leaving.
@@ -103,7 +103,7 @@ If focus was inside a surface that is being removed, the layout effect cleanup s
 
 The engine's own frame loop only ever completes the current generation, because a new request replaces the running move. So M3 and M4 do not guard the loop. They guard everything else: `ifCurrent` and `closeAfter`, where work finishes later.
 
-CSS transitions on `width`, `height`, `translate` or radius would fight the engine, so they are switched off for the move and restored after it. With `transition: all` that includes any color transition on that element.
+CSS transitions on `width`, `height`, `translate` or radius would fight the engine. If a transition list names any of these, or `all`, the whole list on that element is switched off for the move and restored after it. That includes any color transition in the same list. Put color transitions on a child if you need both.
 
 ## Not promised
 
@@ -113,5 +113,6 @@ CSS transitions on `width`, `height`, `translate` or radius would fight the engi
 - **Mathematical continuity on screen.** The channels are continuous as functions of time. The screen samples them at frame boundaries, and a dropped frame is a dropped frame.
 - **Rotated or mirrored ancestors.** See above.
 - **Corners that differ, and percentage radii.** One number cannot describe them, so they change in one step. The other channels still animate.
-- **Writing to `width`, `height`, `translate`, `border-radius` or `overflow` in the `style` prop during a move.** The value lands when the move ends.
+- **Changing `width`, `height`, `translate`, `border-radius` or `overflow` in the `style` prop during a move.** The engine restores the values from the start of the move, so make that change at rest.
+- **A root that changes height through CSS alone at rest,** such as a new `min-height`, is not tracked. It follows layout, with no animation.
 - **Surfaces that move to another document or to a portal mid-flight.** The element keeps one parent for its whole life.

@@ -33,8 +33,13 @@ describe('detectors', () => {
   });
 
   it('reports content that jumps inside the box', () => {
-    const samples = [0, 0, 0, 120, 120, 120].map((inputTop, i) => sample(i * 16, { inputTop }));
+    const samples = [0, 0, 0, 120, 120, 120].map((inputTop, i) => sample(i * 16, { inputTop, inputVisible: true }));
     expect(detect({ samples, events: [] }).map((v) => v.detail).join()).toContain('inputTop moved');
+  });
+
+  it('ignores the offset of a field that is not there', () => {
+    const samples = [90, 90, 90, 0, 0, 0].map((inputTop, i) => sample(i * 16, { inputTop, inputVisible: i < 3 }));
+    expect(kinds({ samples, events: [] })).not.toContain('geometry-jump');
   });
 
   it('allows a step in layout at a viewport resize', () => {

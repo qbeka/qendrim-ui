@@ -55,6 +55,9 @@ export interface InspectorContextValue {
   panelId: string;
   triggerRef: RefObject<HTMLButtonElement | null>;
   panelRef: RefObject<HTMLDivElement | null>;
+  /** During a reopen, the field that was in use. Null for a fresh open. */
+  reopenFocusRef: RefObject<HTMLElement | null>;
+  noteFocus: (element: HTMLElement) => void;
   surface: {
     handleRef: RefObject<SurfaceHandle | null>;
     rootRef: RefObject<HTMLDivElement | null>;
@@ -87,6 +90,9 @@ export function assignRef<T>(ref: Ref<T> | undefined, value: T | null) {
   if (typeof ref === 'function') ref(value);
   else if (ref) (ref as RefObject<T | null>).current = value;
 }
+
+/** A press this recent still counts as the same action as the close it caused. */
+const RECENT_PRESS_MS = 1000;
 
 const FIRST_FIELD = 'input:not([type=hidden]):not([disabled]), textarea:not([disabled]), select:not([disabled]), button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])';
 
@@ -123,6 +129,8 @@ export function useInspectorCore(options: InspectorCoreOptions, { managesFocus, 
   const lastFocused = useRef<HTMLElement | null>(null); // Last field used in the panel.
   const lastOwned = useRef<HTMLElement | null>(null); // Last element focused anywhere in the surface.
   const settledClosed = useRef(!open);
+  const reopenFocusRef = useRef<HTMLElement | null>(null);
+  const pressedInPanelAt = useRef(-Infinity);
   const pendingToken = useRef<IntentToken | null>(null);
 
   const latest = useRef({ onOpenChange, onSettle, onTrace, fallbackFocusRef, controlled: openProp !== undefined });
@@ -180,12 +188,13 @@ export function useInspectorCore(options: InspectorCoreOptions, { managesFocus, 
 
     if (open) {
       panel.removeAttribute('inert');
-      if (!managesFocus) return;
-      const initial = initialFocusRef.current;
-      if (initial === false) return;
       // F5 is about changing your mind during a close. A fresh open starts from the top.
       const remembered = settledClosed.current ? null : lastFocused.current;
       settledClosed.current = false;
+      reopenFocusRef.current = remembered;
+      if (!managesFocus) return;
+      const initial = initialFocusRef.current;
+      if (initial === false) return;
       traceFocus(remembered ? 'reopen' : 'open', [remembered, initial?.current, panel.querySelector<HTMLElement>(FIRST_FIELD), panel]);
       return;
     }
@@ -195,9 +204,9 @@ export function useInspectorCore(options: InspectorCoreOptions, { managesFocus, 
       const active = doc.activeElement;
       if (panel.contains(active) && active !== panel) lastFocused.current = active as HTMLElement;
       // Safari does not focus a button on click, so pressing Close from a field leaves focus
-      // on <body>. The user was still working in the panel, so it counts as inside.
-      const leftInPanel = active === doc.body && !!lastOwned.current && panel.contains(lastOwned.current);
-      if (panel.contains(active) || leftInPanel) traceFocus('close', [triggerRef.current, latest.current.fallbackFocusRef?.current, rootRef.current]);
+      // on <body>. A press in the panel just now means the user was still working in it.
+      const pressedInPanel = active === doc.body && performance.now() - pressedInPanelAt.current < RECENT_PRESS_MS;
+      if (panel.contains(active) || pressedInPanel) traceFocus('close', [triggerRef.current, latest.current.fallbackFocusRef?.current, rootRef.current]);
     }
     // Set last. Inert on the element holding focus would drop focus to <body>.
     panel.setAttribute('inert', '');
@@ -235,6 +244,10 @@ export function useInspectorCore(options: InspectorCoreOptions, { managesFocus, 
     };
   }, [traceFocus]);
 
+  const noteFocus = useCallback((element: HTMLElement) => {
+    lastFocused.current = element;
+  }, []);
+
   const surfaceOnSettle = useCallback((shape: string) => {
     if (shape === 'closed') settledClosed.current = true;
     latest.current.onSettle?.(shape);
@@ -252,12 +265,14 @@ export function useInspectorCore(options: InspectorCoreOptions, { managesFocus, 
       panelId: `${id}-panel`,
       triggerRef,
       panelRef,
+      reopenFocusRef,
+      noteFocus,
       surface: { handleRef, rootRef, onSettle: surfaceOnSettle, onTrace: surfaceOnTrace, fallbackFocusRef, className },
       invalidateClose,
       initialFocusRef,
       parts,
     }),
-    [open, setOpen, closeAfter, pending, id, surfaceOnSettle, surfaceOnTrace, fallbackFocusRef, className, invalidateClose, parts],
+    [open, setOpen, closeAfter, pending, id, noteFocus, surfaceOnSettle, surfaceOnTrace, fallbackFocusRef, className, invalidateClose, parts],
   );
 
   const onFocusCapture = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
@@ -266,7 +281,20 @@ export function useInspectorCore(options: InspectorCoreOptions, { managesFocus, 
     if (panel?.contains(event.target) && event.target !== panel) lastFocused.current = event.target as HTMLElement;
   }, []);
 
-  return { value, onFocusCapture };
+  // Focus left a control that is still here, so the user moved on and owns focus themselves.
+  // A removed control also fires this, so wait to see whether it is still connected.
+  const onBlurCapture = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
+    const left = event.target as HTMLElement;
+    queueMicrotask(() => {
+      if (lastOwned.current === left && canHoldFocus(left)) lastOwned.current = null;
+    });
+  }, []);
+
+  const onPointerDownCapture = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+    if (panelRef.current?.contains(event.target as Node)) pressedInPanelAt.current = performance.now();
+  }, []);
+
+  return { value, surfaceHandlers: { onFocusCapture, onBlurCapture, onPointerDownCapture } };
 }
 
 export interface InspectorRootProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onSettle'>, InspectorCoreOptions {
@@ -276,7 +304,7 @@ export interface InspectorRootProps extends Omit<HTMLAttributes<HTMLDivElement>,
 }
 
 export function InspectorRoot({ open, defaultOpen, onOpenChange, sheet = false, fallbackFocusRef, onSettle, onTrace, className, children, ...rest }: InspectorRootProps) {
-  const { value, onFocusCapture } = useInspectorCore({ open, defaultOpen, onOpenChange, fallbackFocusRef, onSettle, onTrace, className }, { managesFocus: true, parts: undefined });
+  const { value, surfaceHandlers } = useInspectorCore({ open, defaultOpen, onOpenChange, fallbackFocusRef, onSettle, onTrace, className }, { managesFocus: true, parts: undefined });
   const { surface } = value;
 
   return (
@@ -291,7 +319,7 @@ export function InspectorRoot({ open, defaultOpen, onOpenChange, sheet = false, 
           handleRef={surface.handleRef}
           onSettle={surface.onSettle}
           onTrace={surface.onTrace}
-          onFocusCapture={onFocusCapture}
+          {...surfaceHandlers}
         >
           {children}
         </Surface>

@@ -87,6 +87,8 @@ function detectJumps({ samples, events }: Trace): Violation[] {
       const b = samples[i] as Sample;
       const step = Math.abs(b[channel] - a[channel]);
       if (step <= THRESHOLDS.jumpMinPx) continue;
+      // The field's offset means nothing while the field is absent or hidden.
+      if (channel === 'inputTop' && !(a.inputVisible && b.inputVisible)) continue;
       if (resizes.some((t) => t >= a.t - THRESHOLDS.resizeGuardMs && t <= b.t + THRESHOLDS.resizeGuardMs)) continue;
 
       const before: number[] = [];

@@ -46,23 +46,30 @@ async function frames(page: Page, button: string, ms = 700): Promise<Frame[]> {
   );
 }
 
-/** The largest step on any channel, as a share of that channel's whole move. */
+const FRAME_MS = 1000 / 60;
+
+/** The largest step on a channel, scaled to one 60 Hz frame so a stalled frame is not a jump. */
 function worstStep(list: Frame[], channel: 'x' | 'y' | 'width' | 'height') {
   const values = list.map((f) => f[channel]);
   const distance = Math.abs((values.at(-1) as number) - (values[0] as number));
   let worst = 0;
-  for (let i = 1; i < values.length; i += 1) worst = Math.max(worst, Math.abs((values[i] as number) - (values[i - 1] as number)));
+  for (let i = 1; i < list.length; i += 1) {
+    const elapsed = Math.max(((list[i] as Frame).t - (list[i - 1] as Frame).t) / FRAME_MS, 1);
+    worst = Math.max(worst, Math.abs((values[i] as number) - (values[i - 1] as number)) / elapsed);
+  }
   return { worst, distance };
 }
 
 /**
  * A critically damped spring from rest peaks at about 12 percent of the distance per 60 Hz
- * frame. Anything well over that is a jump. The floor stops small moves from flaking.
+ * frame. A quarter of the distance is a clear error, so the line sits between them. The
+ * floor stops small moves from flaking. A channel that should not move has a distance of
+ * zero, so any step over the floor fails.
  */
 function expectContinuous(list: Frame[]) {
   for (const channel of ['x', 'y', 'width', 'height'] as const) {
     const { worst, distance } = worstStep(list, channel);
-    expect(worst, `${channel}: ${worst.toFixed(1)} px of ${distance.toFixed(1)}`).toBeLessThanOrEqual(Math.max(distance * 0.3, 6));
+    expect(worst, `${channel}: ${worst.toFixed(1)} px of ${distance.toFixed(1)}`).toBeLessThanOrEqual(Math.max(distance * 0.18, 6));
   }
 }
 
@@ -105,6 +112,14 @@ test('continuous from the inspector row to a bottom sheet', async ({ page }) => 
   for (let i = 1; i < samples.length; i += 1) {
     expect(Math.abs((samples[i]?.y ?? 0) - (samples[i - 1]?.y ?? 0))).toBeLessThanOrEqual(Math.max(travel * 0.3, 6));
   }
+});
+
+test('a root centered with translate holds still', async ({ page }) => {
+  await open(page, 'translated');
+  const list = await frames(page, 'toggle');
+  const center = list.map((f) => f.x + f.width / 2);
+  expect(Math.max(...center) - Math.min(...center)).toBeLessThan(2);
+  expect(await page.getByTestId('surface').getAttribute('style')).toBeFalsy();
 });
 
 test('the content keeps one width for the whole move', async ({ page }) => {
@@ -229,6 +244,18 @@ test.describe('focus holes', () => {
     await expect(page.getByTestId('f-first')).toBeFocused();
   });
 
+  test('focus the user moved elsewhere stays there', async ({ page }) => {
+    await open(page, 'holes');
+    await page.getByTestId('f-trigger').focus();
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(500);
+    await page.getByTestId('f-doomed').focus();
+    await page.evaluate(() => (document.activeElement as HTMLElement).blur());
+    await page.evaluate(() => (document.querySelector('[data-testid="f-remove-field"]') as HTMLElement).click());
+    await page.waitForTimeout(100);
+    expect(await page.evaluate(() => document.activeElement?.tagName)).toBe('BODY');
+  });
+
   test('a fresh open uses initialFocus, every time', async ({ page }) => {
     await open(page, 'holes');
     await page.getByTestId('f-trigger').focus();
@@ -281,6 +308,31 @@ test.describe('modal closing', () => {
     expect(opacity[1]).toBe('visible');
     await page.waitForTimeout(800);
     await expect(page.locator('.q-inspector-backdrop')).toBeHidden();
+  });
+
+  test('with reduced motion, the backdrop does not fade', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await openModal(page);
+    await page.keyboard.press('Escape');
+    await expect(page.locator('.q-inspector-backdrop')).toBeHidden({ timeout: 100 });
+  });
+
+  test('a press on the row during a close reopens it', async ({ page }) => {
+    await openModal(page);
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(40);
+    await page.getByTestId('ms-trigger').click({ force: true });
+    await page.waitForTimeout(700);
+    await expect(page.getByTestId('ms-input')).toBeVisible();
+  });
+
+  test('reopening during a close returns to the field in use', async ({ page }) => {
+    await openModal(page);
+    await page.getByTestId('ms-second').focus();
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(40);
+    await page.getByTestId('ms-trigger').click({ force: true });
+    await expect(page.getByTestId('ms-second')).toBeFocused();
   });
 
   test('a press on the backdrop closes it', async ({ page }) => {

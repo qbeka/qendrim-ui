@@ -212,6 +212,14 @@ describe('engine', () => {
     expect(b.page.inline).toBeNull();
   });
 
+  it('a root that changed for another reason does not start from a stale height', () => {
+    const b = harness();
+    b.engine.contentResized(600, 52);
+    b.page.extra = 200; // Root and content together.
+    b.engine.contentResized(600, 60);
+    expect(b.page.inline).toBeNull();
+  });
+
   it('a pending viewport change does not outlive a snap', () => {
     const r = harness();
     r.request(r.engine, 'open');

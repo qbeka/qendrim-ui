@@ -9,9 +9,10 @@ export const VIEWPORT = { width: 1280, height: 800 };
 const INSTALL_LATENCY = `
 (() => {
   const channel = new MessageChannel();
-  let onFrame = null;
-  channel.port1.onmessage = () => { const f = onFrame; onFrame = null; if (f) f(); };
-  const nextFrameEnd = (f) => requestAnimationFrame(() => { onFrame = f; channel.port2.postMessage(0); });
+  // A queue, because several loops wait on the same frame.
+  const waiting = [];
+  channel.port1.onmessage = () => { const f = waiting.shift(); if (f) f(); };
+  const nextFrameEnd = (f) => requestAnimationFrame(() => { waiting.push(f); channel.port2.postMessage(0); });
   window.__latency = { geometry: [], value: [], turnaround: [], missedTurns: 0 };
   const read = () => document.querySelector('[data-probe="box"]')?.getBoundingClientRect().height ?? 0;
   const follow = (start, changed, into) => {

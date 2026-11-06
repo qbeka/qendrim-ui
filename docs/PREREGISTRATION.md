@@ -51,7 +51,7 @@ Same interaction, same class names and CSS, in `apps/docs/src/pages/FoundationCo
 | Name | Implementation |
 |---|---|
 | `surface` | This library's Inspector |
-| `motion-height` | `motion.div` with `animate={{ height: 'auto' }}`, spring with `visualDuration` 0.32 and no bounce |
+| `motion-height` | `motion.div` with `animate={{ height: 'auto' }}`, with the spring below |
 | `motion-measured` | Motion animating a numeric height measured by ResizeObserver. About 30 more lines. |
 | `motion-layout` | `motion.div` with `layout`, conditional panel in `AnimatePresence`, same spring |
 | `native-grid` | CSS transition on `grid-template-rows`, 320 ms |

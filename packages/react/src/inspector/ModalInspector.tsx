@@ -12,7 +12,7 @@ const ModalTrigger = forwardRef<HTMLButtonElement, InspectorTriggerProps>(functi
 });
 
 const ModalPanel = forwardRef<HTMLDivElement, InspectorPanelProps>(function Panel({ label, initialFocus, className, children, ...rest }, ref) {
-  const { open, panelId, surface, triggerRef } = useRequiredContext();
+  const { open, panelId, surface, triggerRef, reopenFocusRef, noteFocus } = useRequiredContext();
   const scope = useScopeAttributes();
 
   // Keeps one identity across renders. Base UI stores the popup element in state, and a new
@@ -57,7 +57,12 @@ const ModalPanel = forwardRef<HTMLDivElement, InspectorPanelProps>(function Pane
       <Dialog.Backdrop className="q-inspector-hit-area" />
       <Dialog.Popup
         aria-label={label}
-        initialFocus={initialFocus === false ? false : initialFocus}
+        initialFocus={() => {
+          // Rule F5: during a reopen, go back to the field in use.
+          if (reopenFocusRef.current && canHoldFocus(reopenFocusRef.current)) return reopenFocusRef.current;
+          if (initialFocus === false) return false;
+          return initialFocus?.current ?? true;
+        }}
         finalFocus={() => {
           if (canHoldFocus(triggerRef.current)) return true;
           return surface.fallbackFocusRef?.current ?? true;
@@ -82,7 +87,7 @@ const ModalPanel = forwardRef<HTMLDivElement, InspectorPanelProps>(function Pane
           );
         }}
       >
-        <div {...rest} ref={ref} id={panelId} className={['q-inspector-panel', className].filter(Boolean).join(' ')}>
+        <div {...rest} ref={ref} id={panelId} className={['q-inspector-panel', className].filter(Boolean).join(' ')} onFocusCapture={(event) => noteFocus(event.target as HTMLElement)}>
           {children}
         </div>
       </Dialog.Popup>

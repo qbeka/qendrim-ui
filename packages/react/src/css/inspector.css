@@ -131,6 +131,7 @@
     z-index: var(--q-layer-backdrop);
     background: var(--q-color-scrim);
     opacity: 0;
+    pointer-events: none; /* A press during a close reaches the row, so it can reopen. */
     visibility: hidden;
     transition: opacity 180ms linear, visibility 0s linear 180ms;
   }
@@ -148,7 +149,8 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .q-inspector-backdrop {
+    .q-inspector-backdrop,
+    .q-inspector-backdrop[data-open] {
       transition: none;
     }
   }

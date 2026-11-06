@@ -73,6 +73,8 @@ export function createDomPort(root: HTMLElement, content: HTMLElement): SurfaceP
   let pendingScroll: Array<[Element, number, number]> = [];
   let insets = { width: 0, height: 0 };
   let skipRadius = false;
+  // The consumer's own translate, such as -50% to center a box. Offsets add to it.
+  let baseTranslate = { x: '0px', y: '0px' };
 
   function borrow() {
     saved ??= new Map(BORROWED.map((property) => [property, root.style.getPropertyValue(property)]));
@@ -132,7 +134,10 @@ export function createDomPort(root: HTMLElement, content: HTMLElement): SurfaceP
     locked = true;
     borrow();
     const style = getComputedStyle(root);
+    suspendConflictingTransition(style);
     insets = readInsets(style);
+    const [x = '0px', y = '0px'] = style.translate === 'none' ? [] : style.translate.split(' ');
+    baseTranslate = { x, y };
     // clip, not hidden. A hidden box is a scroll container, so focusing a field below the
     // fold would scroll the box and shift the content. clip cannot scroll. A root that is
     // already a scroller stays one, or its scroll position would reset for the move.
@@ -184,7 +189,7 @@ export function createDomPort(root: HTMLElement, content: HTMLElement): SurfaceP
       lock();
       const { style } = root;
       writeSize(values.width, values.height);
-      if (values.dx !== undefined || values.dy !== undefined) style.translate = `${values.dx ?? 0}px ${values.dy ?? 0}px`;
+      if (values.dx !== undefined || values.dy !== undefined) style.translate = `calc(${baseTranslate.x} + ${values.dx ?? 0}px) calc(${baseTranslate.y} + ${values.dy ?? 0}px)`;
       if (values.radius !== undefined && !skipRadius) style.borderRadius = `${values.radius}px`;
       if (pendingScroll.length > 0) restoreScroll();
     },

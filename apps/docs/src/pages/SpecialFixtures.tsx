@@ -172,6 +172,8 @@ const VARIANT_CSS = `
 .v-box[data-shape='a'] { width: 120px; height: 60px; border-radius: 4px; }
 .v-box[data-shape='b'] { width: 300px; height: 240px; border-radius: 30px; }
 .v-all { transition: all 200ms; }
+.v-translated { position: absolute; left: 50%; top: 60px; translate: -50% 0; height: 80px; }
+.v-translated[data-shape='a'] { width: 100px; } .v-translated[data-shape='b'] { width: 400px; }
 .v-mixed { border-radius: 12px 12px 0 0; }
 .v-mixed[data-shape='a'] { width: 120px; height: 60px; } .v-mixed[data-shape='b'] { width: 300px; height: 240px; border-radius: 0; }
 .v-pad { padding: 40px; }
@@ -233,6 +235,7 @@ function ModalScroll() {
       <ModalInspector.Trigger data-testid="ms-trigger">Open</ModalInspector.Trigger>
       <ModalInspector.Panel label="Long modal">
         <input aria-label="Field" data-testid="ms-input" />
+        <input aria-label="Second field" data-testid="ms-second" />
         <Long n={80} />
         <ModalInspector.Close data-testid="ms-close">Close</ModalInspector.Close>
       </ModalInspector.Panel>
@@ -256,6 +259,7 @@ function TimelineEdges() {
 export const VARIANTS: Record<string, React.ReactNode> = {
   right: <Variant className="v-right" wrapper={{ height: 200 }} />,
   center: <Variant className="v-center" />,
+  translated: <Variant className="v-translated" wrapper={{ height: 200 }} />,
   bottom: <Variant className="v-bottom" />,
   rtl: <div dir="rtl"><Variant className="v-rtl" /></div>,
   scaled: <Variant className="v-box" wrapper={{ transform: 'scale(0.5)', transformOrigin: 'top left' }} />,
