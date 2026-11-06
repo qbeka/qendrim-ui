@@ -336,7 +336,7 @@ export function Stage() {
   const open = active !== null;
   const extrasHere = extras[target] ?? [];
   const full = extrasHere.length >= EXTRA_LABELS.length;
-  const pristine = rows === ROWS && Object.keys(extras).length === 0 && !active && !narrow && requests === 0;
+  const pristine = rows === ROWS && Object.values(extras).every((list) => list.length === 0) && !active && !narrow && interruptions === 0;
 
   const pressOpen = () => {
     if (open) setActive(null);
@@ -391,7 +391,7 @@ export function Stage() {
               <div><dt>List height</dt><dd ref={heightOut}>Not sampled yet</dd></div>
               <div><dt>Panel</dt><dd ref={phaseOut}>At rest</dd></div>
               <div><dt>Requests</dt><dd data-testid="requests">{requests}</dd></div>
-              <div><dt>Field</dt><dd data-testid="same-node">{sameNode ? 'Same since load' : 'Replaced'}</dd></div>
+              <div><dt>Field</dt><dd data-testid="same-node">{sameNode ? 'Same node' : 'Replaced'}</dd></div>
               <div><dt>Focus</dt><dd>{focusName}</dd></div>
               <div><dt>Selection</dt><dd ref={caretOut}>None</dd></div>
             </dl>

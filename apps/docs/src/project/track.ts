@@ -4,6 +4,7 @@
  */
 const WINDOW_MS = 5000;
 const MAX_FRAME_MS = 34; // A dropped frame should not read as a long flat run.
+const MIN_RANGE_PX = 160; // So a small change stays a small mark on the line.
 const HEIGHT = 40;
 const WIDTH = 1000;
 
@@ -21,8 +22,8 @@ export function createTrack({ line, marks, head, list, onFrame }: TrackParts) {
   let clock = 0;
   let last = 0;
   let frame = 0;
-  let floor = list.getBoundingClientRect().height;
-  let ceiling = floor + 160;
+  let floor = Number.POSITIVE_INFINITY;
+  let ceiling = 0;
 
   const moving = () => list.querySelector('[data-q-surface][data-phase="moving"]') !== null;
   const y = (height: number) => HEIGHT - 1 - ((height - floor) / (ceiling - floor)) * (HEIGHT - 2);
@@ -43,7 +44,8 @@ export function createTrack({ line, marks, head, list, onFrame }: TrackParts) {
     const height = list.getBoundingClientRect().height;
     clock += Math.min(now - last, MAX_FRAME_MS);
     last = now;
-    ceiling = Math.max(ceiling, height);
+    floor = Math.min(floor, height);
+    ceiling = Math.max(ceiling, height, floor + MIN_RANGE_PX);
     samples.push({ t: clock, height });
     const oldest = clock - WINDOW_MS;
     while (samples.length > 2 && (samples[1] as { t: number }).t < oldest) samples.shift();
@@ -69,8 +71,8 @@ export function createTrack({ line, marks, head, list, onFrame }: TrackParts) {
       samples = [];
       interruptions = [];
       clock = 0;
-      floor = list.getBoundingClientRect().height;
-      ceiling = floor + 160;
+      floor = Number.POSITIVE_INFINITY;
+      ceiling = 0;
       line.setAttribute('d', '');
       marks.setAttribute('d', '');
       head.dataset['on'] = 'false';
