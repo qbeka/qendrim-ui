@@ -1,4 +1,4 @@
-import { ActionBar, Button, Dialog, Inspector, Popover, Select, Surface, Tabs, Timeline, Tooltip, Input, Field } from '@qbeka/react';
+import { ActionBar, Button, Dialog, Inspector, ModalInspector, Popover, Select, Surface, Tabs, Timeline, Tooltip, Input, Field } from '@qbeka/react';
 import { useRef, useState, type CSSProperties } from 'react';
 
 /** Test-only page. Each case is one situation from docs/CONTRACT.md that needs its own layout. */
@@ -38,14 +38,14 @@ function Controlled() {
   return (
     <div>
       <button type="button" ref={triggerHost} data-testid="modal-fallback">Fallback</button>
-      <Inspector.Root modal open={open} onOpenChange={setOpen} fallbackFocusRef={triggerHost}>
-        {removed ? null : <Inspector.Trigger data-testid="modal-trigger">Open modal</Inspector.Trigger>}
-        <Inspector.Panel label="Modal review">
+      <ModalInspector.Root open={open} onOpenChange={setOpen} fallbackFocusRef={triggerHost}>
+        {removed ? null : <ModalInspector.Trigger data-testid="modal-trigger">Open modal</ModalInspector.Trigger>}
+        <ModalInspector.Panel label="Modal review">
           <Field.Root><Field.Label>Amount</Field.Label><Input data-testid="modal-input" defaultValue="42.18" /></Field.Root>
-          <Inspector.Close data-testid="modal-close">Close</Inspector.Close>
+          <ModalInspector.Close data-testid="modal-close">Close</ModalInspector.Close>
           <button type="button" data-testid="modal-remove-trigger" onClick={() => setRemoved(true)}>Remove trigger</button>
-        </Inspector.Panel>
-      </Inspector.Root>
+        </ModalInspector.Panel>
+      </ModalInspector.Root>
       <button type="button" data-testid="outside-modal">Outside</button>
     </div>
   );

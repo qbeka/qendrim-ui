@@ -71,10 +71,10 @@ export const COMPONENTS: ComponentDoc[] = [
     slug: 'inspector',
     name: 'Inspector',
     group: 'Signature',
-    summary: 'A row that opens into an editor. It adds disclosure, the focus policy and deferred close to Surface. It is nonmodal unless you ask for modal.',
-    importLine: "import { Inspector, useInspector } from '@qbeka/react/inspector';",
+    summary: 'A row that opens into an editor. It adds disclosure, the focus policy and deferred close to Surface. Inspector is nonmodal. ModalInspector uses the dialog contract.',
+    importLine: "import { Inspector, ModalInspector, useInspector } from '@qbeka/react/inspector';",
     css: 'inspector.css',
-    upstream: 'The nonmodal form uses Surface. The modal form uses Base UI Dialog for focus trapping, the inert background, scroll lock and Escape, and Surface for geometry.',
+    upstream: 'Inspector uses Surface and does not load Base UI Dialog. ModalInspector uses Base UI Dialog for focus trapping, the inert background, scroll lock and Escape, and Surface for geometry.',
     example: `function Example() {
   return (
     <Inspector.Root>
@@ -91,8 +91,8 @@ export const COMPONENTS: ComponentDoc[] = [
     api: [
       { name: 'Root open', type: 'boolean', note: 'Controlled state. Omit it and use defaultOpen for uncontrolled.' },
       { name: 'Root onOpenChange', type: '(open: boolean) => void', note: 'Fires for each request, including Escape.' },
-      { name: 'Root modal', type: 'boolean', note: 'Use the dialog contract. Layout never turns this on for you.' },
-      { name: 'Root sheet', type: 'boolean', note: 'Below 640 px a nonmodal panel docks to the bottom. It stays nonmodal.' },
+      { name: 'ModalInspector', type: 'same parts', note: 'The same API under the dialog contract. A separate import, so layout can never turn it on.' },
+      { name: 'Root sheet', type: 'boolean', note: 'Inspector only. Below 640 px the panel docks to the bottom. It stays nonmodal.' },
       { name: 'Root fallbackFocusRef', type: 'RefObject<HTMLElement>', note: 'Where focus goes if the trigger is gone.' },
       { name: 'Root onSettle, onTrace', type: 'functions', note: 'As on Surface. onTrace also reports focus moves.' },
       { name: 'Panel label', type: 'string', note: 'Required. Names the panel for assistive technology.' },
@@ -102,7 +102,7 @@ export const COMPONENTS: ComponentDoc[] = [
     keyboard: [
       { keys: 'Enter, Space', action: 'On the trigger: opens or closes.' },
       { keys: 'Escape', action: 'In the panel: closes and returns focus to the trigger.' },
-      { keys: 'Tab', action: 'Nonmodal: moves on through the page. Modal: stays in the panel.' },
+      { keys: 'Tab', action: 'Inspector: moves on through the page. ModalInspector: stays in the panel.' },
     ],
     notes: ['closeAfter closes when the work succeeds, unless the user reopened or typed in the meantime. It resolves to whether it closed.'],
   },

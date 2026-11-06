@@ -51,6 +51,7 @@ const ENTRIES = {
 const SIGNATURE = {
   surface: `import { Surface } from '@qbeka/react/surface'; export const X = () => <Surface shape="a">B</Surface>;`,
   inspector: `import { Inspector } from '@qbeka/react/inspector'; export const X = () => <Inspector.Root><Inspector.Trigger>R</Inspector.Trigger><Inspector.Panel label="P">B</Inspector.Panel></Inspector.Root>;`,
+  'modal inspector': `import { ModalInspector } from '@qbeka/react/inspector'; export const X = () => <ModalInspector.Root><ModalInspector.Trigger>R</ModalInspector.Trigger><ModalInspector.Panel label="P">B</ModalInspector.Panel></ModalInspector.Root>;`,
   timeline: `import { Timeline } from '@qbeka/react/timeline'; export const X = () => <Timeline label="T" min={0} max={1} />;`,
   actionbar: `import { ActionBar } from '@qbeka/react/actionbar'; export const X = () => <ActionBar.Root open label="A"><ActionBar.Action>G</ActionBar.Action></ActionBar.Root>;`,
   'barrel, Button only': `import { Button } from '@qbeka/react'; export const X = () => <Button>Save</Button>;`,

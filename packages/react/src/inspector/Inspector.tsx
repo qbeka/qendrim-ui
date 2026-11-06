@@ -1,6 +1,5 @@
 'use client';
 
-import { Dialog } from '@base-ui/react/dialog';
 import { mergeProps } from '@base-ui/react/merge-props';
 import {
   createContext,
@@ -12,16 +11,17 @@ import {
   useRef,
   useState,
   type ButtonHTMLAttributes,
+  type ComponentType,
   type FormEvent,
   type HTMLAttributes,
   type KeyboardEvent,
   type ReactNode,
+  type Ref,
   type RefObject,
 } from 'react';
 import type { TraceEvent } from '../core/engine.js';
-import { canHoldFocus, moveFocus } from '../core/focus.js';
+import { moveFocus } from '../core/focus.js';
 import type { IntentToken } from '../core/machine.js';
-import { useScopeAttributes } from '../scope/Scope.js';
 import { Surface, useIsomorphicLayoutEffect, type SurfaceHandle } from '../surface/Surface.js';
 
 export type FocusReason = 'open' | 'reopen' | 'close' | 'recover';
@@ -38,14 +38,19 @@ export interface FocusTrace {
 
 export type InspectorTrace = TraceEvent | FocusTrace;
 
-interface InspectorContextValue {
+/** Parts that differ for a modal. Passing them in keeps Base UI Dialog out of this file. */
+export interface InspectorParts {
+  Trigger: ComponentType<InspectorTriggerProps & { ref?: Ref<HTMLButtonElement> }>;
+  Panel: ComponentType<InspectorPanelProps & { ref?: Ref<HTMLDivElement> }>;
+}
+
+export interface InspectorContextValue {
   open: boolean;
   setOpen: (open: boolean) => void;
   /** Closes when the work succeeds, unless a newer intent arrives first. Resolves to whether it closed. */
   closeAfter: (work: Promise<unknown>) => Promise<boolean>;
   /** True while a closeAfter is waiting. */
   pending: boolean;
-  modal: boolean;
   triggerId: string;
   panelId: string;
   triggerRef: RefObject<HTMLButtonElement | null>;
@@ -57,49 +62,55 @@ interface InspectorContextValue {
     onTrace: (event: TraceEvent) => void;
     fallbackFocusRef: RefObject<HTMLElement | null> | undefined;
     className: string | undefined;
-    dialogActionsRef: RefObject<Dialog.Root.Actions | null>;
   };
   invalidateClose: () => void;
   initialFocusRef: RefObject<RefObject<HTMLElement | null> | false | undefined>;
+  parts: InspectorParts | undefined;
 }
 
-const InspectorContext = createContext<InspectorContextValue | null>(null);
+export const InspectorContext = createContext<InspectorContextValue | null>(null);
 
 export function useInspector() {
   const context = useContext(InspectorContext);
-  if (!context) throw new Error('useInspector must be called inside Inspector.Root.');
+  if (!context) throw new Error('useInspector must be called inside an Inspector or ModalInspector root.');
   const { open, setOpen, closeAfter, pending } = context;
   return { open, setOpen, closeAfter, pending };
 }
 
-function useRequiredContext() {
+export function useRequiredContext() {
   const context = useContext(InspectorContext);
-  if (!context) throw new Error('Inspector parts must be rendered inside Inspector.Root.');
+  if (!context) throw new Error('Inspector parts must be rendered inside an Inspector or ModalInspector root.');
   return context;
+}
+
+export function assignRef<T>(ref: Ref<T> | undefined, value: T | null) {
+  if (typeof ref === 'function') ref(value);
+  else if (ref) (ref as RefObject<T | null>).current = value;
 }
 
 const FIRST_FIELD = 'input:not([type=hidden]):not([disabled]), textarea:not([disabled]), select:not([disabled]), button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])';
 
-export interface InspectorRootProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onSettle'> {
-  open?: boolean;
-  defaultOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  /**
-   * Use the dialog contract: focus is trapped, the page behind is inert and scroll is
-   * locked. Layout never changes this. A panel at the bottom of a phone stays nonmodal
-   * unless you ask for modal.
-   */
-  modal?: boolean;
-  /** Below 640 CSS pixels, a nonmodal panel docks to the bottom of the screen. */
-  sheet?: boolean;
+export interface InspectorCoreOptions {
+  open?: boolean | undefined;
+  defaultOpen?: boolean | undefined;
+  onOpenChange?: ((open: boolean) => void) | undefined;
   /** Where focus goes if the trigger is gone. Falls back to the surface itself. */
-  fallbackFocusRef?: RefObject<HTMLElement | null>;
-  onSettle?: (shape: string) => void;
-  onTrace?: (event: InspectorTrace) => void;
-  children?: ReactNode;
+  fallbackFocusRef?: RefObject<HTMLElement | null> | undefined;
+  onSettle?: ((shape: string) => void) | undefined;
+  onTrace?: ((event: InspectorTrace) => void) | undefined;
+  className?: string | undefined;
 }
 
-export function InspectorRoot({ open: openProp, defaultOpen = false, onOpenChange, modal = false, sheet = false, fallbackFocusRef, onSettle, onTrace, className, children, ...rest }: InspectorRootProps) {
+interface CoreConfig {
+  /** Base UI owns focus for a modal, so the nonmodal policy stands down. */
+  managesFocus: boolean;
+  parts: InspectorParts | undefined;
+  onClosedSettle?: () => void;
+}
+
+/** State, intent and focus shared by both roots. */
+export function useInspectorCore(options: InspectorCoreOptions, { managesFocus, parts, onClosedSettle }: CoreConfig) {
+  const { open: openProp, defaultOpen = false, onOpenChange, fallbackFocusRef, onSettle, onTrace, className } = options;
   const [uncontrolled, setUncontrolled] = useState(defaultOpen);
   const open = openProp ?? uncontrolled;
   const [pending, setPending] = useState(false);
@@ -109,14 +120,13 @@ export function InspectorRoot({ open: openProp, defaultOpen = false, onOpenChang
   const panelRef = useRef<HTMLDivElement | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const handleRef = useRef<SurfaceHandle | null>(null);
-  const dialogActionsRef = useRef<Dialog.Root.Actions | null>(null);
   const initialFocusRef = useRef<RefObject<HTMLElement | null> | false | undefined>(undefined);
   const lastFocused = useRef<HTMLElement | null>(null);
   const pendingToken = useRef<IntentToken | null>(null);
 
-  const latest = useRef({ onOpenChange, onSettle, onTrace, fallbackFocusRef, controlled: openProp !== undefined });
+  const latest = useRef({ onOpenChange, onSettle, onTrace, fallbackFocusRef, onClosedSettle, controlled: openProp !== undefined });
   useIsomorphicLayoutEffect(() => {
-    latest.current = { onOpenChange, onSettle, onTrace, fallbackFocusRef, controlled: openProp !== undefined };
+    latest.current = { onOpenChange, onSettle, onTrace, fallbackFocusRef, onClosedSettle, controlled: openProp !== undefined };
   });
 
   const setOpen = useCallback((next: boolean) => {
@@ -159,10 +169,10 @@ export function InspectorRoot({ open: openProp, defaultOpen = false, onOpenChang
     }
   }, []);
 
-  // Nonmodal focus policy, rules F3, F4 and F5. Base UI owns this for a modal.
+  // Focus policy, rules F3, F4 and F5 in docs/CONTRACT.md.
   const wasOpen = useRef(open);
   useIsomorphicLayoutEffect(() => {
-    if (wasOpen.current === open || modal) return;
+    if (wasOpen.current === open || !managesFocus) return;
     wasOpen.current = open;
     const panel = panelRef.current;
     if (!panel) return;
@@ -181,7 +191,7 @@ export function InspectorRoot({ open: openProp, defaultOpen = false, onOpenChang
     if (panel.contains(active)) traceFocus('close', [triggerRef.current, latest.current.fallbackFocusRef?.current, rootRef.current]);
     // Set last. Inert on the element holding focus would drop focus to <body>.
     panel.setAttribute('inert', '');
-  }, [open, modal, traceFocus]);
+  }, [open, managesFocus, traceFocus]);
 
   // Rule F6, for a surface removed from the page. A layout effect cleanup runs before
   // React removes the node, so this is the last moment to see that focus was inside.
@@ -197,7 +207,7 @@ export function InspectorRoot({ open: openProp, defaultOpen = false, onOpenChang
   }, [traceFocus]);
 
   const surfaceOnSettle = useCallback((shape: string) => {
-    if (shape === 'closed') dialogActionsRef.current?.unmount();
+    if (shape === 'closed') latest.current.onClosedSettle?.();
     latest.current.onSettle?.(shape);
   }, []);
 
@@ -209,16 +219,16 @@ export function InspectorRoot({ open: openProp, defaultOpen = false, onOpenChang
       setOpen,
       closeAfter,
       pending,
-      modal,
       triggerId: `${id}-trigger`,
       panelId: `${id}-panel`,
       triggerRef,
       panelRef,
-      surface: { handleRef, rootRef, onSettle: surfaceOnSettle, onTrace: surfaceOnTrace, fallbackFocusRef, className, dialogActionsRef },
+      surface: { handleRef, rootRef, onSettle: surfaceOnSettle, onTrace: surfaceOnTrace, fallbackFocusRef, className },
       invalidateClose,
       initialFocusRef,
+      parts,
     }),
-    [open, setOpen, closeAfter, pending, modal, id, surfaceOnSettle, surfaceOnTrace, fallbackFocusRef, className, invalidateClose],
+    [open, setOpen, closeAfter, pending, id, surfaceOnSettle, surfaceOnTrace, fallbackFocusRef, className, invalidateClose, parts],
   );
 
   const onFocusCapture = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
@@ -226,30 +236,31 @@ export function InspectorRoot({ open: openProp, defaultOpen = false, onOpenChang
     if (panel?.contains(event.target) && event.target !== panel) lastFocused.current = event.target as HTMLElement;
   }, []);
 
-  if (modal) {
-    return (
-      <InspectorContext.Provider value={value}>
-        <Dialog.Root open={open} onOpenChange={(next) => setOpen(next)} modal actionsRef={dialogActionsRef}>
-          <div {...rest} className="q-inspector-slot">
-            {children}
-          </div>
-        </Dialog.Root>
-      </InspectorContext.Provider>
-    );
-  }
+  return { value, onFocusCapture };
+}
+
+export interface InspectorRootProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onSettle'>, InspectorCoreOptions {
+  /** Below 640 CSS pixels, the panel docks to the bottom of the screen. It stays nonmodal. */
+  sheet?: boolean;
+  children?: ReactNode;
+}
+
+export function InspectorRoot({ open, defaultOpen, onOpenChange, sheet = false, fallbackFocusRef, onSettle, onTrace, className, children, ...rest }: InspectorRootProps) {
+  const { value, onFocusCapture } = useInspectorCore({ open, defaultOpen, onOpenChange, fallbackFocusRef, onSettle, onTrace, className }, { managesFocus: true, parts: undefined });
+  const { surface } = value;
 
   return (
     <InspectorContext.Provider value={value}>
       <div className="q-inspector-slot" data-sheet={sheet ? '' : undefined}>
         <Surface
           {...rest}
-          ref={rootRef}
+          ref={surface.rootRef}
           tabIndex={-1}
           className={['q-inspector', className].filter(Boolean).join(' ')}
-          shape={open ? 'open' : 'closed'}
-          handleRef={handleRef}
-          onSettle={surfaceOnSettle}
-          onTrace={surfaceOnTrace}
+          shape={value.open ? 'open' : 'closed'}
+          handleRef={surface.handleRef}
+          onSettle={surface.onSettle}
+          onTrace={surface.onTrace}
           onFocusCapture={onFocusCapture}
         >
           {children}
@@ -262,24 +273,19 @@ export function InspectorRoot({ open: openProp, defaultOpen = false, onOpenChang
 export interface InspectorTriggerProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
 export const InspectorTrigger = forwardRef<HTMLButtonElement, InspectorTriggerProps>(function Trigger({ className, ...rest }, ref) {
-  const { open, setOpen, modal, triggerId, panelId, triggerRef } = useRequiredContext();
+  const { open, setOpen, triggerId, panelId, triggerRef, parts } = useRequiredContext();
 
   const setRef = useCallback(
     (node: HTMLButtonElement | null) => {
       triggerRef.current = node;
-      if (typeof ref === 'function') ref(node);
-      else if (ref) ref.current = node;
+      assignRef(ref, node);
     },
     [ref, triggerRef],
   );
 
-  const shared = { type: 'button' as const, className: ['q-inspector-trigger', className].filter(Boolean).join(' ') };
+  if (parts) return <parts.Trigger {...rest} className={className} ref={setRef} />;
 
-  if (modal) {
-    return <Dialog.Trigger {...rest} {...shared} ref={setRef} />;
-  }
-
-  return <button {...mergeProps<'button'>({ onClick: () => setOpen(!open) }, rest)} {...shared} ref={setRef} id={triggerId} aria-expanded={open} aria-controls={panelId} />;
+  return <button {...mergeProps<'button'>({ onClick: () => setOpen(!open) }, rest)} type="button" className={['q-inspector-trigger', className].filter(Boolean).join(' ')} ref={setRef} id={triggerId} aria-expanded={open} aria-controls={panelId} />;
 });
 
 export interface InspectorPanelProps extends HTMLAttributes<HTMLDivElement> {
@@ -291,9 +297,7 @@ export interface InspectorPanelProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export const InspectorPanel = forwardRef<HTMLDivElement, InspectorPanelProps>(function Panel({ label, initialFocus, className, children, ...rest }, ref) {
-  const context = useRequiredContext();
-  const { open, setOpen, modal, triggerId, panelId, panelRef, invalidateClose, initialFocusRef, surface } = context;
-  const scope = useScopeAttributes();
+  const { setOpen, panelId, panelRef, invalidateClose, initialFocusRef, parts } = useRequiredContext();
 
   useIsomorphicLayoutEffect(() => {
     initialFocusRef.current = initialFocus;
@@ -302,83 +306,18 @@ export const InspectorPanel = forwardRef<HTMLDivElement, InspectorPanelProps>(fu
   const setRef = useCallback(
     (node: HTMLDivElement | null) => {
       panelRef.current = node;
-      if (typeof ref === 'function') ref(node);
-      else if (ref) ref.current = node;
+      assignRef(ref, node);
     },
     [panelRef, ref],
   );
 
   const onInputCapture = useCallback((_: FormEvent<HTMLDivElement>) => invalidateClose(), [invalidateClose]);
 
-  const classes = ['q-inspector-panel', className].filter(Boolean).join(' ');
-
-  // Keeps one identity across renders. Base UI stores the popup element in state, and a new
-  // callback here would hand it null and then the node again on every render.
-  const popupRef = useRef<React.Ref<HTMLDivElement> | undefined>(undefined);
-  const setPopup = useCallback(
-    (node: HTMLDivElement | null) => {
-      surface.rootRef.current = node;
-      const forwarded = popupRef.current;
-      if (typeof forwarded === 'function') forwarded(node);
-      else if (forwarded) (forwarded as React.RefObject<HTMLDivElement | null>).current = node;
-    },
-    [surface.rootRef],
-  );
-
-  // Keeps a modal's closed shape on top of its trigger, wherever the trigger is now.
-  const refreshOrigin = useCallback(() => {
-    const root = surface.rootRef.current;
-    const trigger = context.triggerRef.current;
-    if (!root) return;
-    if (!trigger?.isConnected) {
-      root.dataset['origin'] = 'lost';
-      return;
-    }
-    const rect = trigger.getBoundingClientRect();
-    delete root.dataset['origin'];
-    root.style.setProperty('--q-origin-x', `${rect.left}px`);
-    root.style.setProperty('--q-origin-y', `${rect.top}px`);
-    root.style.setProperty('--q-origin-width', `${rect.width}px`);
-    root.style.setProperty('--q-origin-height', `${rect.height}px`);
-  }, [context.triggerRef, surface.rootRef]);
-
-  if (modal) {
+  if (parts) {
     return (
-      <Dialog.Portal keepMounted>
-        <Dialog.Backdrop className="q-inspector-backdrop" {...scope} />
-        <Dialog.Popup
-          aria-label={label}
-          initialFocus={initialFocus === false ? false : initialFocus}
-          finalFocus={() => {
-            const trigger = context.triggerRef.current;
-            if (canHoldFocus(trigger)) return true;
-            return surface.fallbackFocusRef?.current ?? true;
-          }}
-          render={(props) => {
-            // keepMounted hides the popup with the `hidden` attribute, which has no box to
-            // read. The closed shape uses `visibility` instead, so it stays measurable.
-            const { hidden: _hidden, ...popup } = props as typeof props & { hidden?: boolean };
-            popupRef.current = (popup as { ref?: React.Ref<HTMLDivElement> }).ref;
-            return (
-              <Surface
-                {...popup}
-                ref={setPopup}
-                className={['q-inspector', 'q-inspector--modal', surface.className].filter(Boolean).join(' ')}
-                shape={open ? 'open' : 'closed'}
-                handleRef={surface.handleRef}
-                onSettle={surface.onSettle}
-                onTrace={surface.onTrace}
-                beforeCapture={refreshOrigin}
-                {...scope}
-              />
-            );
-          }}
-        >
-          <div {...rest} ref={setRef} id={panelId} className={classes} onInputCapture={onInputCapture}>
-            {children}
-          </div>
-        </Dialog.Popup>
-      </Dialog.Portal>
+      <parts.Panel {...rest} label={label} initialFocus={initialFocus} className={className} ref={setRef} onInputCapture={onInputCapture}>
+        {children}
+      </parts.Panel>
     );
   }
 
@@ -389,16 +328,7 @@ export const InspectorPanel = forwardRef<HTMLDivElement, InspectorPanelProps>(fu
   };
 
   return (
-    <div
-      {...mergeProps<'div'>({ onKeyDown, onInputCapture }, rest)}
-      ref={setRef}
-      id={panelId}
-      role="region"
-      aria-label={label}
-      aria-labelledby={label ? undefined : triggerId}
-      className={classes}
-      tabIndex={-1}
-    >
+    <div {...mergeProps<'div'>({ onKeyDown, onInputCapture }, rest)} ref={setRef} id={panelId} role="region" aria-label={label} className={['q-inspector-panel', className].filter(Boolean).join(' ')} tabIndex={-1}>
       {children}
     </div>
   );

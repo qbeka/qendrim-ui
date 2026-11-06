@@ -64,6 +64,9 @@ export class Recorder {
   }
 
   mark(type: string, detail?: unknown) {
+    // Off means off. A stored focus event holds a DOM element, which would keep it alive
+    // and show up as a leak in the library.
+    if (!this.running) return;
     this.events.push({ t: performance.now(), type, detail });
   }
 

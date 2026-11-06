@@ -61,7 +61,7 @@ function DirectPopover() {
 }
 
 function QSelect() {
-  return <Select data-probe="trigger" aria-label="Sample" items={ITEMS} defaultValue="a" />;
+  return <Select ref={(node) => { if (node) node.dataset['probe'] = 'trigger'; }} aria-label="Sample" items={ITEMS} defaultValue="a" />;
 }
 
 function DirectSelect() {

@@ -85,7 +85,7 @@ The content box itself reflows at most once per retarget. It is not resized on e
 | F4 | Closing moves focus out of the panel when the request happens, but only if focus was inside it. If the user already moved focus elsewhere, the surface leaves it alone. |
 | F5 | Reopening during a close returns focus to the element that had it. |
 | F6 | If the focus target is gone, focus goes to the next valid owner: trigger, then the declared fallback, then the surface root. Each step is logged with its reason. |
-| F7 | Modal behavior is an explicit prop. Layout never changes it. A panel at the bottom of a small screen stays nonmodal unless you asked for modal. |
+| F7 | Modal behavior is an explicit choice in code: `ModalInspector` instead of `Inspector`. Layout never changes it. A panel at the bottom of a small screen stays nonmodal. |
 
 A close panel is `inert` from the moment of the close request, so a user cannot tab into something that is leaving.
 

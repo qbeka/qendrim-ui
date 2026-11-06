@@ -1,4 +1,4 @@
-import { ActionBar, Button, Field, Input, Inspector, Select, Tabs, Timeline, Tooltip } from '@qbeka/react';
+import { ActionBar, Button, Field, Input, ModalInspector, Select, Tabs, Timeline, Tooltip } from '@qbeka/react';
 import { useMemo, useRef, useState, type RefObject } from 'react';
 import { balanceCents, describeBalance, PAYERS, RECEIPTS, SPLITS, type Receipt, type ReceiptState } from './receipts-data';
 
@@ -12,7 +12,7 @@ function ReviewPanel({ receipt, onChange, onDecide }: { receipt: Receipt; onChan
     <div className="ex-review">
       <div className="ex-review-head">
         <h2>{receipt.merchant}</h2>
-        <Inspector.Close className="q-button" data-variant="ghost" aria-label="Close review">Close</Inspector.Close>
+        <ModalInspector.Close className="q-button" data-variant="ghost">Close</ModalInspector.Close>
       </div>
       <Tabs.Root defaultValue="edit">
         <Tabs.List aria-label="Receipt sections">
@@ -57,18 +57,18 @@ function ReceiptRow({ receipt, selected, onSelect, onChange, onDecide, fallbackF
   return (
     <div className={`ex-receipt${selected ? ' is-selected' : ''}`} data-testid={`receipt-${receipt.id}`}>
       <input type="checkbox" className="ex-receipt-check" checked={selected} onChange={(e) => onSelect(e.target.checked)} aria-label={`Select ${receipt.merchant}`} />
-      <Inspector.Root modal open={open} onOpenChange={setOpen} fallbackFocusRef={fallbackFocusRef}>
-        <Inspector.Trigger className="ex-receipt-trigger">
+      <ModalInspector.Root open={open} onOpenChange={setOpen} fallbackFocusRef={fallbackFocusRef}>
+        <ModalInspector.Trigger className="ex-receipt-trigger">
           <span className="ex-row-name"><span className="d-visually-hidden">Review </span>{receipt.merchant}</span>
           <span className="ex-row-meta">Oct {receipt.day}</span>
           <span className="ex-row-meta">{receipt.paidBy === 'you' ? 'You paid' : 'Sam paid'}</span>
           <span className="ex-row-meta ex-row-budget">${receipt.amount}</span>
           <span className="ex-pill" data-state={receipt.state}>{receipt.state}</span>
-        </Inspector.Trigger>
-        <Inspector.Panel label={`Review ${receipt.merchant}`}>
+        </ModalInspector.Trigger>
+        <ModalInspector.Panel label={`Review ${receipt.merchant}`}>
           <ReviewPanel receipt={receipt} onChange={onChange} onDecide={decide} />
-        </Inspector.Panel>
-      </Inspector.Root>
+        </ModalInspector.Panel>
+      </ModalInspector.Root>
     </div>
   );
 }

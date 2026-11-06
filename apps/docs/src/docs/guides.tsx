@@ -49,7 +49,7 @@ import '@qbeka/react/css/button.css';`}</Code>
           <li>The panel is one element for its whole life. Nothing is copied or moved to a new parent, so fields keep their text, caret and selection.</li>
           <li>Focus moves when you ask, not when the animation ends. You can type during a move.</li>
           <li>If a focus target is gone, focus goes to the next valid owner.</li>
-          <li>Modal is a choice. A panel at the bottom of a phone stays nonmodal unless you asked for modal.</li>
+          <li>Modal is a choice in code. A panel at the bottom of a phone stays nonmodal unless you used ModalInspector.</li>
           <li>With reduced motion, the same states and focus moves happen with no animation.</li>
         </ul>
         <h2>How a move works</h2>
@@ -90,14 +90,14 @@ import '@qbeka/react/css/button.css';`}</Code>
   }}
 >`}</Code>
         <h2>Portals</h2>
-        <p>Select, Popover, Dialog, Tooltip and the modal Inspector render under <code>&lt;body&gt;</code>. Add <code>isolation: isolate</code> to your app's root element, as Base UI recommends. To put a popup somewhere else, pass <code>container</code>. A nonmodal Inspector never portals.</p>
+        <p>Select, Popover, Dialog, Tooltip and ModalInspector render under <code>&lt;body&gt;</code>. Add <code>isolation: isolate</code> to your app's root element, as Base UI recommends. To put a popup somewhere else, pass <code>container</code>. Inspector never portals.</p>
         <p>If a recipe is on <code>&lt;html&gt;</code>, popups inherit it. If a recipe covers part of a page, wrap that part in <code>Scope</code>, which copies the recipe onto its popups.</p>
         <h2>Focus restoration</h2>
         <table>
           <thead><tr><th>Component</th><th>On open</th><th>On close</th><th>If the target is gone</th></tr></thead>
           <tbody>
             <tr><td>Inspector</td><td>First field, or the field you last used</td><td>Trigger, only if focus was inside</td><td>Your fallback, then the surface</td></tr>
-            <tr><td>Inspector, modal</td><td>First tabbable, from Base UI</td><td>Trigger</td><td>Your fallback</td></tr>
+            <tr><td>ModalInspector</td><td>First tabbable, from Base UI</td><td>Trigger</td><td>Your fallback</td></tr>
             <tr><td>Dialog, Popover, Select</td><td>Base UI defaults</td><td>Trigger</td><td>Set <code>finalFocus</code></td></tr>
             <tr><td>ActionBar</td><td>Does not move focus</td><td>Your fallback, only if focus was inside</td><td>Your fallback</td></tr>
           </tbody>
@@ -105,7 +105,7 @@ import '@qbeka/react/css/button.css';`}</Code>
         <h2>Disabled states</h2>
         <p><code>disabled</code> on Button, Input, Select and Tabs uses Base UI's handling. A <code>pending</code> Button is different. It ignores clicks and stays focusable, so a keyboard user keeps their place during a save.</p>
         <h2>Server and client</h2>
-        <p>Every component file starts with <code>'use client'</code>. In a Next.js server component you can import and render them, with server-rendered props passed through. The first HTML is complete: a closed Inspector is hidden by CSS from <code>data-shape</code>, so it needs no JavaScript to look right.</p>
+        <p>Every component file starts with <code>'use client'</code>. You can import and render them from a Next.js server component, including compound parts such as <code>Field.Root</code>. Props must be serializable there, so pass functions from a client component. The first HTML is complete: a closed Inspector is hidden by CSS from <code>data-shape</code>, so it needs no JavaScript to look right.</p>
         <p>Measurement and animation only start after hydration. Tokens and CSS have no JavaScript, so they are safe in a server layout.</p>
       </>
     ),
