@@ -25,5 +25,9 @@ export default defineConfig({
   },
   server: { port: 5171, strictPort: true },
   preview: { port: 5171, strictPort: true },
-  build: { sourcemap: false, chunkSizeWarningLimit: 900 },
+  build: {
+    sourcemap: false,
+    chunkSizeWarningLimit: 900,
+    rollupOptions: { input: { docs: resolve(__dirname, 'index.html'), project: resolve(__dirname, 'project/index.html') } },
+  },
 });
