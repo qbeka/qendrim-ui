@@ -79,7 +79,7 @@ export function Stage() {
   const [announcement, setAnnouncement] = useState('');
 
   const scroller = useRef<HTMLDivElement>(null);
-  const column = useRef<HTMLDivElement>(null);
+  const ruler = useRef<HTMLDivElement>(null);
   const list = useRef<HTMLDivElement>(null);
   const line = useRef<SVGPathElement>(null);
   const marks = useRef<SVGPathElement>(null);
@@ -286,17 +286,14 @@ export function Stage() {
   }, []);
 
   // Surface hears about window resizes. Here the column stands in for the window, so while a
-  // panel is moving, a new column width is passed on in the same way. Height is ignored: it
-  // changes on every frame of a move, because the panel itself is what makes the column tall.
+  // panel is moving, a new column width is passed on in the same way. This watches a ruler with
+  // no height, not the column: a panel writes its height from its own observer, and that would
+  // resize the column in the same pass and leave a notification undelivered.
   useEffect(() => {
-    const node = column.current;
+    const node = ruler.current;
     if (!node) return undefined;
-    let width = node.getBoundingClientRect().width;
-    const observer = new ResizeObserver(([entry]) => {
-      const next = entry?.borderBoxSize[0]?.inlineSize ?? width;
-      if (next === width) return;
-      width = next;
-      if (node.querySelector('[data-q-surface][data-phase="moving"]')) window.dispatchEvent(new Event('resize'));
+    const observer = new ResizeObserver(() => {
+      if (list.current?.querySelector('[data-q-surface][data-phase="moving"]')) window.dispatchEvent(new Event('resize'));
     });
     observer.observe(node);
     return () => observer.disconnect();
@@ -369,7 +366,8 @@ export function Stage() {
 
       <div className="body" data-inspect={inspect || undefined}>
         <div className="scroller" ref={scroller}>
-          <div className="column" ref={column} data-narrow={narrow || undefined}>
+          <div className="column" data-narrow={narrow || undefined}>
+            <div ref={ruler} aria-hidden="true" />
             <div className="list" ref={list}>
               {rows.map((row) => (
                 <ProjectRow key={row.id} row={row} open={active === row.id} selected={target === row.id} quiet={scripted} extras={extras[row.id] ?? NO_EXTRAS} onRequest={request} onEdit={edit} onEditExtra={editExtra} onRemoveExtra={removeExtra} onTrace={onTrace} />
