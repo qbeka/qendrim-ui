@@ -2,7 +2,7 @@
   "tarball": "qbeka-react-0.1.0.tgz",
   "tarballSha": "1916c74bc964ef5a5dcf7c2935cb9a3d1eef66972e97b71cd55e2d69d008f3c3",
   "tarballBytes": 35335,
-  "publint": "Running publint v0.3.25 for /Users/qendrimbeka/Coding_Projects/qendrim-ui/consumers/.work/qbeka-react-0.1.0.tgz...\nUnpacking tarball...\nLinting...\nAll good!",
+  "publint": "Running publint v0.3.25 for consumers/.work/qbeka-react-0.1.0.tgz...\nUnpacking tarball...\nLinting...\nAll good!",
   "versions": {
     "vite": "8.3.6",
     "pluginReact": "6.2.1",

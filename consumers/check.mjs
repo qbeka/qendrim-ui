@@ -172,7 +172,7 @@ await browser.close();
 
 const publint = (() => {
   try {
-    return run('npx', ['publint', tarball], root).trim();
+    return run('npx', ['publint', tarball], root).trim().replaceAll(`${root}/`, '');
   } catch (error) {
     return String(error.stdout ?? error.message);
   }
