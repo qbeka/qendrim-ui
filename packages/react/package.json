@@ -103,5 +103,14 @@
     "base-ui",
     "accessibility",
     "animation"
-  ]
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/*/index.d.ts"
+      ]
+    }
+  }
 }

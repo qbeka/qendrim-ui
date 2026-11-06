@@ -21,7 +21,7 @@ const BASE = `http://127.0.0.1:${PORT}`;
 const value = (flag, fallback) => (args.includes(flag) ? Number(args[args.indexOf(flag) + 1]) : fallback);
 const RUNS = smoke ? 1 : value('--runs', 7);
 const WARMUP_RUNS = smoke ? 0 : 1; // Dropped whole, before any result is read.
-const IMPLS = ['surface', 'motion-height', 'motion-layout', 'native-grid'];
+const IMPLS = ['surface', 'motion-height', 'motion-measured', 'motion-layout', 'native-grid'];
 const FOUNDATION = ['dialog', 'popover', 'select'];
 const FOUNDATION_ROUNDS = smoke ? 5 : 20;
 const LEAK_CYCLES = smoke ? 50 : value('--leak-cycles', 500);
@@ -127,7 +127,7 @@ for (const impl of LEAK_IMPLS) {
 }
 writeFileSync(join(outDir, 'raw-leaks.json'), `${JSON.stringify(leaks, null, 1)}\n`);
 
-const METRICS = ['latencyFromRestMedian', 'latencyReversalMedian', 'latencyTypingMedian', 'layoutCount', 'recalcStyleCount', 'layoutMs', 'recalcStyleMs', 'scriptMs', 'taskMs', 'frameP50', 'frameP95', 'frameMax', 'longFrames'];
+const METRICS = ['latencyFromRestMedian', 'turnaroundMedian', 'missedTurns', 'latencyTypingMedian', 'layoutCount', 'recalcStyleCount', 'layoutMs', 'recalcStyleMs', 'scriptMs', 'taskMs', 'frameP50', 'frameP95', 'frameMax', 'longFrames'];
 
 const summary = { label, timing: {}, foundation: {}, leaks: {} };
 for (const [impl, runs] of Object.entries(timing)) {

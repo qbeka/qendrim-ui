@@ -155,6 +155,122 @@ export function SpecialFixtures() {
       {name === 'actionbar' ? <ActionBarCase /> : null}
       {name === 'selection' ? <SelectionCase /> : null}
       {name === 'defer' ? <DeferCase /> : null}
+      {name ? VARIANTS[name] : null}
     </main>
   );
 }
+
+const VARIANT_CSS = `
+.v { background: #e4e4e0; }
+.v-right { position: absolute; right: 0; top: 60px; height: 80px; }
+.v-right[data-shape='a'] { width: 100px; } .v-right[data-shape='b'] { width: 400px; }
+.v-center { margin-inline: auto; height: 80px; }
+.v-center[data-shape='a'] { width: 100px; } .v-center[data-shape='b'] { width: 400px; }
+.v-bottom { position: fixed; bottom: 0; left: 20px; width: 300px; }
+.v-bottom[data-shape='a'] { height: 60px; } .v-bottom[data-shape='b'] { height: 320px; }
+.v-rtl[data-shape='a'] { width: 100px; height: 80px; } .v-rtl[data-shape='b'] { width: 400px; height: 80px; }
+.v-box[data-shape='a'] { width: 120px; height: 60px; border-radius: 4px; }
+.v-box[data-shape='b'] { width: 300px; height: 240px; border-radius: 30px; }
+.v-all { transition: all 200ms; }
+.v-mixed { border-radius: 12px 12px 0 0; }
+.v-mixed[data-shape='a'] { width: 120px; height: 60px; } .v-mixed[data-shape='b'] { width: 300px; height: 240px; border-radius: 0; }
+.v-pad { padding: 40px; }
+.v-min { min-height: 300px; }
+.v-content-box { width: 300px; padding: 20px; box-sizing: content-box; }
+.v-scroll[data-shape='a'] { height: 150px; overflow: auto; } .v-scroll[data-shape='b'] { height: 260px; overflow: auto; }
+`;
+
+function Variant({ className, wrapper, style, children }: { className: string; wrapper?: CSSProperties; style?: CSSProperties; children?: React.ReactNode }) {
+  const [shape, setShape] = useState('a');
+  return (
+    <div style={{ position: 'relative', ...wrapper }}>
+      <style>{VARIANT_CSS}</style>
+      <button type="button" data-testid="toggle" onClick={() => setShape((s) => (s === 'a' ? 'b' : 'a'))}>Toggle</button>
+      <Surface data-testid="surface" className={`v ${className}`} shape={shape} style={style}>{children ?? <div data-testid="inner" style={{ height: 40 }}>Text that wraps at its own width</div>}</Surface>
+    </div>
+  );
+}
+
+function Grow({ className }: { className: string }) {
+  const [tall, setTall] = useState(false);
+  return (
+    <div>
+      <style>{VARIANT_CSS}</style>
+      <button type="button" data-testid="grow" onClick={() => setTall((t) => !t)}>Grow</button>
+      <Surface data-testid="surface" className={`v ${className}`} shape="a"><div style={{ height: tall ? 180 : 60 }}>Content</div></Surface>
+    </div>
+  );
+}
+
+function FocusHoles() {
+  const [triggerGone, setTriggerGone] = useState(false);
+  const [disabled, setDisabled] = useState(false);
+  const [fieldGone, setFieldGone] = useState(false);
+  const fallback = useRef<HTMLButtonElement>(null);
+  const initial = useRef<HTMLInputElement>(null);
+  return (
+    <div>
+      <button type="button" ref={fallback} data-testid="f-fallback">Fallback</button>
+      <button type="button" data-testid="f-remove-trigger" onClick={() => setTriggerGone(true)}>Remove trigger</button>
+      <button type="button" data-testid="f-disable" onClick={() => setDisabled(true)}>Disable</button>
+      <button type="button" data-testid="f-remove-field" onClick={() => setFieldGone(true)}>Remove field</button>
+      <Inspector.Root fallbackFocusRef={fallback} className="sp-inspector" data-testid="f-root">
+        {triggerGone ? null : <Inspector.Trigger data-testid="f-trigger" disabled={disabled}>Row</Inspector.Trigger>}
+        <Inspector.Panel label="Holes" initialFocus={initial}>
+          <input aria-label="First" data-testid="f-first" />
+          <input aria-label="Preferred" data-testid="f-preferred" ref={initial} />
+          {fieldGone ? null : <input aria-label="Doomed" data-testid="f-doomed" />}
+        </Inspector.Panel>
+      </Inspector.Root>
+    </div>
+  );
+}
+
+function ModalScroll() {
+  const [open, setOpen] = useState(false);
+  return (
+    <ModalInspector.Root open={open} onOpenChange={setOpen}>
+      <ModalInspector.Trigger data-testid="ms-trigger">Open</ModalInspector.Trigger>
+      <ModalInspector.Panel label="Long modal">
+        <input aria-label="Field" data-testid="ms-input" />
+        <Long n={80} />
+        <ModalInspector.Close data-testid="ms-close">Close</ModalInspector.Close>
+      </ModalInspector.Panel>
+    </ModalInspector.Root>
+  );
+}
+
+function TimelineEdges() {
+  const [a, setA] = useState(0);
+  const [b, setB] = useState(0);
+  return (
+    <div>
+      <Timeline label="Stepped" min={0} max={95} step={10} value={a} onValueChange={setA} rate={400} />
+      <output data-testid="stepped">{a}</output>
+      <Timeline label="Seek" min={0} max={1000} value={b} onValueChange={setB} rate={100} markers={[{ value: 600, label: 'Six hundred' }]} />
+      <output data-testid="seek">{b}</output>
+    </div>
+  );
+}
+
+export const VARIANTS: Record<string, React.ReactNode> = {
+  right: <Variant className="v-right" wrapper={{ height: 200 }} />,
+  center: <Variant className="v-center" />,
+  bottom: <Variant className="v-bottom" />,
+  rtl: <div dir="rtl"><Variant className="v-rtl" /></div>,
+  scaled: <Variant className="v-box" wrapper={{ transform: 'scale(0.5)', transformOrigin: 'top left' }} />,
+  zoomed: <Variant className="v-box" wrapper={{ zoom: 2 } as CSSProperties} />,
+  mirrored: <Variant className="v-box" wrapper={{ transform: 'scaleX(-1)' }} />,
+  box: <Variant className="v-box" />,
+  all: <Variant className="v-box v-all" />,
+  mixed: <Variant className="v-mixed" />,
+  scroll: <Variant className="v-scroll"><Long n={40} /></Variant>,
+  inline: <Variant className="v-box" style={{ overflow: 'auto', outline: '1px solid red', boxShadow: 'none' }} />,
+  inlinewidth: <Variant className="v-box-free" style={{ width: 320, borderRadius: 20, overflow: 'auto' }}><div style={{ height: 60 }}>Inline</div></Variant>,
+  pad: <Grow className="v-pad" />,
+  min: <Grow className="v-min" />,
+  contentbox: <Grow className="v-content-box" />,
+  holes: <FocusHoles />,
+  modalscroll: <ModalScroll />,
+  timeline: <TimelineEdges />,
+};

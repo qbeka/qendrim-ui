@@ -20,7 +20,7 @@ Defined in `apps/docs/src/harness/detect.ts`.
 | Detector | Reports | Threshold |
 |---|---|---|
 | Stale final state | At the end, the rendered state or the field's visibility disagrees with the last user request. | Exact |
-| Geometry jump | A frame just after a request that is much faster than its neighbors. | Over 60 px, and over 3 times the faster of the two neighbor medians. Four frames on each side. Three frames checked after each request. |
+| Geometry jump | A frame much faster than its neighbors, on height, width, x, y or the field's offset inside the box, at any moment. | Over 60 px, and over 3 times the faster of the two neighbor medians. Four frames on each side. Frames within 80 ms of a viewport resize are skipped. |
 | Focus lost | Focus on `<body>` after the surface owned focus. | 2 consecutive samples |
 | Text stretch | The field is drawn at a size that differs from its layout size. | Over 1 percent |
 | Duplicate interactive | More than one reachable copy of the field. | Exact |
@@ -52,10 +52,11 @@ Same interaction, same class names and CSS, in `apps/docs/src/pages/FoundationCo
 |---|---|
 | `surface` | This library's Inspector |
 | `motion-height` | `motion.div` with `animate={{ height: 'auto' }}`, spring with `visualDuration` 0.32 and no bounce |
+| `motion-measured` | Motion animating a numeric height measured by ResizeObserver. About 30 more lines. |
 | `motion-layout` | `motion.div` with `layout`, conditional panel in `AnimatePresence`, same spring |
 | `native-grid` | CSS transition on `grid-template-rows`, 320 ms |
 
-The spring period for `surface` is 320 ms with damping 1. All four get the same content. Baselines get a plain focus rule and a plain guard on deferred close, so that the comparison is about geometry. Their fixture value is lifted to the page.
+`surface` and all the Motion baselines use the same equation: a period of 320 ms with critical damping, which is stiffness 385.5 and damping 39.27. All five get the same content. Every baseline gets a plain focus rule, a plain removal rule and a plain guard on deferred close, so that the comparison is about geometry. The field's value is lifted to the page.
 
 The baselines are good code. A baseline passing a scenario is a result to report, not a problem.
 
@@ -69,7 +70,7 @@ Chromium, headless, 1280 by 800, device scale 2, recorder off. Each run is a fre
 
 1. Warmup: 4 toggles, not measured.
 2. 6 full moves from rest, 900 ms apart. Measures click to first changed frame.
-3. 12 reversals, 110 ms apart, then 700 ms to settle. Measures layout, style, script and task time from Chrome's `Performance.getMetrics`, plus frame callback intervals and click to first changed frame.
+3. 12 reversals, 110 ms apart, then 700 ms to settle. Measures layout, style, script and task time from Chrome's `Performance.getMetrics`, plus frame callback intervals and turnaround.
 4. 6 keystrokes into the field during a reversal. Measures keydown to first frame showing the character.
 
 7 runs per implementation in round-robin order. The first run is dropped whole as a warmup, leaving 6.
@@ -77,6 +78,7 @@ Chromium, headless, 1280 by 800, device scale 2, recorder off. Each run is a fre
 ## Definitions
 
 - **Input latency**: from `event.timeStamp` of the click or keydown to a message delivered after the first animation frame where the page shows a change. It is a lab measure on one machine, and it is not field INP.
+- **Turnaround**: from the click to the first frame that moves against the old direction. A box that ignores the click never turns, and that is counted as a missed turn. A spring that carries velocity turns later on purpose, so a larger number here is not a slower response. It is a different motion.
 - **Frame callback interval**: time between `requestAnimationFrame` timestamps. It does not prove what the display showed.
 - **Layout count, layout ms**: Chrome's counters across the reversal workload.
 - **Reported value**: the median of each run's value, with the minimum and maximum across runs. Samples inside a run are not treated as independent.
@@ -107,7 +109,6 @@ These come from the first baseline, in `results/baseline`, plus a margin. They w
 | `styles.css` | 4,493 bytes | 5,120 bytes |
 | `tokens.css` | 1,102 bytes | 1,280 bytes |
 | Surface, click to first change from rest | 12.6 ms | 20 ms |
-| Surface, click to first change reversing | 9.3 ms | 16 ms |
 | Surface, key to first change mid-move | 8.5 ms | 16 ms |
 | Surface, layouts in the reversal workload | 139 | 150 |
 | Surface, main thread task time in the reversal workload | 59.3 ms | 75 ms |
@@ -128,4 +129,17 @@ These come from the first baseline, in `results/baseline`, plus a margin. They w
 |---|---|
 | A run lost to a closed browser is repeated and logged in the manifest. | A browser closed mid-run during the first baseline attempt. Repeating only on a lost browser cannot select for good numbers. |
 | The ActionBar criterion was reworded from "score of 0". | The bar's own entrance creates raw entries, all marked as following input, which CLS excludes. The requirement is about surrounding content, so the test now checks that. |
+| An independent review on a clean clone changed the detectors, the baselines and one metric, after the first baseline and before any final run. See the table below. | The review found the suite was blind to the worst engine bug, and that the comparison was tilted toward the library. |
 | The first baseline used 3 runs, 200 leak cycles and 2 leak runs. | It only sets budgets. The final run uses the full protocol above. |
+
+## What the independent review changed
+
+| Found | Change |
+|---|---|
+| The jump detector read height only, and only near a request. The worst bug, a 355 px jump in position, was invisible to it. | It now reads height, width, x, y and the field's offset on every frame. |
+| `motion-height` and `native-grid` ignored the fallback ref they were given, so they failed the removal scenario for a harness reason. | All baselines now have the plain removal rule. |
+| `motion-layout` had no focus rule, despite this file saying that it did. | It now has the same rule as the others. |
+| The growth-at-rest scenario tested something `height: auto` cannot do. A 30 line Motion version passed. | That version is now a baseline, `motion-measured`. |
+| `visualDuration: 0.32` is a period of 384 ms, not 320 ms. | Motion baselines now use explicit stiffness and damping, for the same equation. |
+| Click to first change, reversing, was empty: a moving box changes on the next frame whether or not it heard the click. | Replaced by turnaround, with missed turns counted. |
+| No seeded mutant covered translate, width, radius, the content lock or velocity on a content retarget. | Added browser continuity tests and mutants for these. |

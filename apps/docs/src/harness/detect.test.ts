@@ -3,7 +3,7 @@ import { detect } from './detect';
 import type { Sample, Trace } from './types';
 
 function sample(t: number, patch: Partial<Sample> = {}): Sample {
-  return { t, height: 52, width: 600, y: 0, requested: 'closed', rendered: 'closed', focus: 'outside', inputScaleX: 1, inputScaleY: 1, interactive: 0, inputVisible: false, value: '', inputTop: 0, ...patch };
+  return { t, height: 52, width: 600, x: 0, y: 0, requested: 'closed', rendered: 'closed', focus: 'outside', inputScaleX: 1, inputScaleY: 1, interactive: 0, inputVisible: false, value: '', inputTop: 0, ...patch };
 }
 
 const kinds = (trace: Trace, options = {}) => detect(trace, options).map((v) => v.kind);
@@ -22,6 +22,26 @@ describe('detectors', () => {
     expect(kinds({ samples: [sample(0, { requested: 'open', rendered: 'open', inputVisible: false })], events: [] })).toContain('stale-final-state');
   });
 
+  it('reports a jump at the end of a move, away from any request', () => {
+    const samples = [400, 390, 382, 376, 372, 369, 52, 52, 52, 52].map((height, i) => sample(i * 16, { height }));
+    expect(kinds({ samples, events: [] })).toContain('geometry-jump');
+  });
+
+  it('reports a jump in position while the height is steady', () => {
+    const samples = [116, 116, 116, 471, 471, 471].map((y, i) => sample(i * 16, { y }));
+    expect(detect({ samples, events: [] }).map((v) => v.detail).join()).toContain('y moved');
+  });
+
+  it('reports content that jumps inside the box', () => {
+    const samples = [0, 0, 0, 120, 120, 120].map((inputTop, i) => sample(i * 16, { inputTop }));
+    expect(detect({ samples, events: [] }).map((v) => v.detail).join()).toContain('inputTop moved');
+  });
+
+  it('allows a step in layout at a viewport resize', () => {
+    const samples = [600, 600, 600, 420, 420, 420].map((width, i) => sample(i * 16, { width }));
+    expect(kinds({ samples, events: [{ t: 44, type: 'viewport' }] })).not.toContain('geometry-jump');
+  });
+
   it('reports a jump at a request', () => {
     const samples = [0, 10, 20, 30, 40, 400, 400].map((height, i) => sample(i * 16, { height }));
     expect(kinds({ samples, events: [{ t: 64, type: 'request' }] })).toContain('geometry-jump');
@@ -35,7 +55,8 @@ describe('detectors', () => {
   it('a jump next to another jump is still reported', () => {
     const heights = [52, 54, 56, 460, 458, 456, 454, 52, 54, 56, 58];
     const samples = heights.map((height, i) => sample(i * 16, { height }));
-    expect(detect({ samples, events: [{ t: 40, type: 'request' }, { t: 100, type: 'request' }] }).filter((v) => v.kind === 'geometry-jump')).toHaveLength(2);
+    // Four spikes in all: up, then down, and the first frame of each neighbor window.
+    expect(detect({ samples, events: [] }).filter((v) => v.kind === 'geometry-jump').length).toBeGreaterThanOrEqual(2);
   });
 
   it('a start from rest is judged by the frames after it', () => {

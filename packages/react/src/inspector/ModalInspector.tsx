@@ -37,6 +37,7 @@ const ModalPanel = forwardRef<HTMLDivElement, InspectorPanelProps>(function Pane
     }
     const rect = trigger.getBoundingClientRect();
     delete root.dataset['origin'];
+    // Physical left and top, in the closed shape too, so right-to-left pages line up.
     root.style.setProperty('--q-origin-x', `${rect.left}px`);
     root.style.setProperty('--q-origin-y', `${rect.top}px`);
     root.style.setProperty('--q-origin-width', `${rect.width}px`);
@@ -45,7 +46,15 @@ const ModalPanel = forwardRef<HTMLDivElement, InspectorPanelProps>(function Pane
 
   return (
     <Dialog.Portal keepMounted>
-      <Dialog.Backdrop className="q-inspector-backdrop" {...scope} />
+      {/*
+        Our own element, not Dialog.Backdrop. Base UI ends its closing phase at once unless
+        preventUnmountOnClose is called from its own event, which a parent setting `open`
+        never does. This fades with the requested state, so it reverses with the panel.
+        Dialog.Backdrop stays as a clear hit area, because Base UI only treats a press on
+        its own backdrop as a request to close.
+      */}
+      <div className="q-inspector-backdrop" data-open={open ? '' : undefined} aria-hidden {...scope} />
+      <Dialog.Backdrop className="q-inspector-hit-area" />
       <Dialog.Popup
         aria-label={label}
         initialFocus={initialFocus === false ? false : initialFocus}
@@ -94,16 +103,11 @@ export interface ModalInspectorRootProps extends Omit<HTMLAttributes<HTMLDivElem
  * that modal is always a choice in code. Layout can never turn it on.
  */
 export function ModalInspectorRoot({ open, defaultOpen, onOpenChange, fallbackFocusRef, onSettle, onTrace, className, children, ...rest }: ModalInspectorRootProps) {
-  const actionsRef = useRef<Dialog.Root.Actions | null>(null);
-  const { value } = useInspectorCore(
-    { open, defaultOpen, onOpenChange, fallbackFocusRef, onSettle, onTrace, className },
-    // Base UI waits for the unmount action, so the popup stays until the move has finished.
-    { managesFocus: false, parts: PARTS, onClosedSettle: () => actionsRef.current?.unmount() },
-  );
+  const { value } = useInspectorCore({ open, defaultOpen, onOpenChange, fallbackFocusRef, onSettle, onTrace, className }, { managesFocus: false, parts: PARTS });
 
   return (
     <InspectorContext.Provider value={value}>
-      <Dialog.Root open={value.open} onOpenChange={(next) => value.setOpen(next)} modal actionsRef={actionsRef}>
+      <Dialog.Root open={value.open} onOpenChange={(next) => value.setOpen(next)} modal>
         <div {...rest} className="q-inspector-slot">
           {children}
         </div>

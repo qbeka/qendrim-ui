@@ -23,6 +23,22 @@ export function usePlainFocus(open: boolean, triggerRef: RefObject<HTMLElement |
   }, [open, panelRef, triggerRef]);
 }
 
+/**
+ * The same spring equation as Surface: a period of 320 ms and critical damping. These
+ * numbers are the angular frequency squared and twice the frequency.
+ */
+export const SPRING = { type: 'spring', stiffness: 385.5, damping: 39.27, mass: 1 } as const;
+
+/** The plain removal rule: if focus is inside when the box goes, send it to the fallback. */
+export function useRemovalFocus(boxRef: RefObject<HTMLElement | null>, fallbackFocusRef: ImplProps['fallbackFocusRef']) {
+  useLayoutEffect(() => {
+    const box = boxRef.current;
+    return () => {
+      if (box?.contains(document.activeElement)) queueMicrotask(() => fallbackFocusRef.current?.focus());
+    };
+  }, [boxRef, fallbackFocusRef]);
+}
+
 export function useGuardedDeferredClose(setOpen: (open: boolean) => void, open: boolean, deferCloseRef: ImplProps['deferCloseRef']) {
   const latest = useRef(0);
   const wasOpen = useRef(open);

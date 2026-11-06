@@ -16,8 +16,8 @@ export const THRESHOLDS = {
   jumpMinPx: 60,
   /** And this many times the fastest neighboring frame, scaled by the time between frames. */
   jumpRatio: 3,
-  /** Frames after a request in which a jump can appear. */
-  jumpWindowFrames: 3,
+  /** Time on each side of a viewport resize in which a step in layout is expected. */
+  resizeGuardMs: 80,
   /** Shortest frame used when turning a step into a speed. Two samples can land 1 ms apart. */
   minFrameMs: 8,
   /** Frames on each side of a candidate used as the speed reference. */
@@ -38,8 +38,6 @@ export interface Violation {
 
 export interface DetectOptions {
   expectedValue?: string;
-  /** Ignore height changes on these event types. Used when jumps are not under test. */
-  requestEvents?: readonly string[];
 }
 
 function detectFinalState(samples: Sample[]): Violation[] {
@@ -56,10 +54,14 @@ function detectFinalState(samples: Sample[]): Violation[] {
   return violations;
 }
 
-function frameSpeed(samples: Sample[], index: number): number {
+type Channel = 'height' | 'width' | 'x' | 'y' | 'inputTop';
+
+const CHANNELS: readonly Channel[] = ['height', 'width', 'x', 'y', 'inputTop'];
+
+function frameSpeed(samples: Sample[], index: number, channel: Channel): number {
   const a = samples[index - 1] as Sample;
   const b = samples[index] as Sample;
-  return Math.abs(b.height - a.height) / Math.max(b.t - a.t, THRESHOLDS.minFrameMs);
+  return Math.abs(b[channel] - a[channel]) / Math.max(b.t - a.t, THRESHOLDS.minFrameMs);
 }
 
 function median(values: number[]): number {
@@ -70,38 +72,36 @@ function median(values: number[]): number {
 }
 
 /**
- * A jump is a spike: one frame much faster than the frames around it. Comparing only with
- * the frames before a request would flag every start from rest, because a spring moves
- * quickly in its first frames while the frames before it are still. Continuous motion has
- * neighbors of a similar speed on at least one side, and a jump does not.
+ * A jump is a spike: one frame much faster than the frames around it, on any channel, at any
+ * moment of a move. The end of a move counts, which is where a release to the wrong size
+ * shows. A median on each side stops another spike nearby from hiding this one. The larger
+ * side is the reference, so a start from rest is judged by the frames after it. Frames next
+ * to a viewport resize are skipped, because layout may change in one step there.
  */
-function detectJumps({ samples, events }: Trace, requestEvents: readonly string[]): Violation[] {
+function detectJumps({ samples, events }: Trace): Violation[] {
+  const resizes = events.filter((e) => e.type === 'viewport').map((e) => e.t);
   const violations: Violation[] = [];
-  for (const event of events) {
-    if (!requestEvents.includes(event.type)) continue;
-    const firstAfter = samples.findIndex((s) => s.t >= event.t);
-    if (firstAfter < 1) continue;
-
-    const end = Math.min(samples.length, firstAfter + THRESHOLDS.jumpWindowFrames);
-    for (let i = firstAfter; i < end; i += 1) {
-      const before: number[] = [];
-      const after: number[] = [];
-      for (let n = Math.max(1, i - THRESHOLDS.jumpNeighborFrames); n < i; n += 1) before.push(frameSpeed(samples, n));
-      for (let n = i + 1; n <= Math.min(samples.length - 1, i + THRESHOLDS.jumpNeighborFrames); n += 1) after.push(frameSpeed(samples, n));
-      // A median on each side, so another spike close by cannot hide this one. The larger
-      // side is the reference, so a start from rest is judged by the frames after it.
-      const neighborSpeed = Math.max(median(before), median(after));
+  for (const channel of CHANNELS) {
+    for (let i = 1; i < samples.length; i += 1) {
       const a = samples[i - 1] as Sample;
       const b = samples[i] as Sample;
-      const step = Math.abs(b.height - a.height);
+      const step = Math.abs(b[channel] - a[channel]);
+      if (step <= THRESHOLDS.jumpMinPx) continue;
+      if (resizes.some((t) => t >= a.t - THRESHOLDS.resizeGuardMs && t <= b.t + THRESHOLDS.resizeGuardMs)) continue;
+
+      const before: number[] = [];
+      const after: number[] = [];
+      for (let n = Math.max(1, i - THRESHOLDS.jumpNeighborFrames); n < i; n += 1) before.push(frameSpeed(samples, n, channel));
+      for (let n = i + 1; n <= Math.min(samples.length - 1, i + THRESHOLDS.jumpNeighborFrames); n += 1) after.push(frameSpeed(samples, n, channel));
+      const neighborSpeed = Math.max(median(before), median(after));
+
       // After a stalled frame, a time-based animation catches up in one step. That step
       // covers the stall too, so the gap before it counts as part of its duration.
       const previous = samples[i - 2];
       const span = Math.max(b.t - a.t, previous ? a.t - previous.t : 0, THRESHOLDS.minFrameMs);
-      const allowed = Math.max(THRESHOLDS.jumpMinPx, THRESHOLDS.jumpRatio * neighborSpeed * span);
+      const allowed = THRESHOLDS.jumpRatio * neighborSpeed * span;
       if (step > allowed) {
-        violations.push({ kind: 'geometry-jump', at: b.t, detail: `${step.toFixed(1)} px in one frame after ${event.type}, allowed ${allowed.toFixed(1)}` });
-        break;
+        violations.push({ kind: 'geometry-jump', at: b.t, detail: `${channel} moved ${step.toFixed(1)} px in one frame, allowed ${Math.max(allowed, THRESHOLDS.jumpMinPx).toFixed(1)}` });
       }
     }
   }
@@ -137,10 +137,9 @@ function detectDuplicates(samples: Sample[]): Violation[] {
 }
 
 export function detect(trace: Trace, options: DetectOptions = {}): Violation[] {
-  const requestEvents = options.requestEvents ?? ['request', 'grow'];
   const violations = [
     ...detectFinalState(trace.samples),
-    ...detectJumps(trace, requestEvents),
+    ...detectJumps(trace),
     ...detectFocusLoss(trace.samples),
     ...detectStretch(trace.samples),
     ...detectDuplicates(trace.samples),

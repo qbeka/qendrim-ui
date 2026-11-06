@@ -69,10 +69,15 @@ export const Timeline = forwardRef<HTMLDivElement, TimelineProps>(function Timel
     let frame = 0;
     let last = performance.now();
     let position = latest.current.value >= max ? min : latest.current.value;
+    let emitted = position;
     const tick = (now: number) => {
+      // A value we did not emit came from the user, so playback continues from there.
+      if (latest.current.value !== emitted) position = latest.current.value;
       position = Math.min(position + speed * Math.max(now - last, 0) * 0.001, max);
       last = now;
-      change(step > 0 ? Math.round(position / step) * step : position);
+      const snapped = step > 0 ? min + Math.round((position - min) / step) * step : position;
+      emitted = position >= max ? max : Math.min(snapped, max);
+      change(emitted);
       if (position >= max) setPlaying(false);
       else frame = requestAnimationFrame(tick);
     };

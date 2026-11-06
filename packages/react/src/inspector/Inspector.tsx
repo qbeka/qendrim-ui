@@ -20,7 +20,7 @@ import {
   type RefObject,
 } from 'react';
 import type { TraceEvent } from '../core/engine.js';
-import { moveFocus } from '../core/focus.js';
+import { canHoldFocus, moveFocus } from '../core/focus.js';
 import type { IntentToken } from '../core/machine.js';
 import { Surface, useIsomorphicLayoutEffect, type SurfaceHandle } from '../surface/Surface.js';
 
@@ -105,11 +105,10 @@ interface CoreConfig {
   /** Base UI owns focus for a modal, so the nonmodal policy stands down. */
   managesFocus: boolean;
   parts: InspectorParts | undefined;
-  onClosedSettle?: () => void;
 }
 
 /** State, intent and focus shared by both roots. */
-export function useInspectorCore(options: InspectorCoreOptions, { managesFocus, parts, onClosedSettle }: CoreConfig) {
+export function useInspectorCore(options: InspectorCoreOptions, { managesFocus, parts }: CoreConfig) {
   const { open: openProp, defaultOpen = false, onOpenChange, fallbackFocusRef, onSettle, onTrace, className } = options;
   const [uncontrolled, setUncontrolled] = useState(defaultOpen);
   const open = openProp ?? uncontrolled;
@@ -121,12 +120,14 @@ export function useInspectorCore(options: InspectorCoreOptions, { managesFocus, 
   const rootRef = useRef<HTMLDivElement | null>(null);
   const handleRef = useRef<SurfaceHandle | null>(null);
   const initialFocusRef = useRef<RefObject<HTMLElement | null> | false | undefined>(undefined);
-  const lastFocused = useRef<HTMLElement | null>(null);
+  const lastFocused = useRef<HTMLElement | null>(null); // Last field used in the panel.
+  const lastOwned = useRef<HTMLElement | null>(null); // Last element focused anywhere in the surface.
+  const settledClosed = useRef(!open);
   const pendingToken = useRef<IntentToken | null>(null);
 
-  const latest = useRef({ onOpenChange, onSettle, onTrace, fallbackFocusRef, onClosedSettle, controlled: openProp !== undefined });
+  const latest = useRef({ onOpenChange, onSettle, onTrace, fallbackFocusRef, controlled: openProp !== undefined });
   useIsomorphicLayoutEffect(() => {
-    latest.current = { onOpenChange, onSettle, onTrace, fallbackFocusRef, onClosedSettle, controlled: openProp !== undefined };
+    latest.current = { onOpenChange, onSettle, onTrace, fallbackFocusRef, controlled: openProp !== undefined };
   });
 
   const setOpen = useCallback((next: boolean) => {
@@ -172,26 +173,54 @@ export function useInspectorCore(options: InspectorCoreOptions, { managesFocus, 
   // Focus policy, rules F3, F4 and F5 in docs/CONTRACT.md.
   const wasOpen = useRef(open);
   useIsomorphicLayoutEffect(() => {
-    if (wasOpen.current === open || !managesFocus) return;
+    if (wasOpen.current === open) return;
     wasOpen.current = open;
     const panel = panelRef.current;
     if (!panel) return;
 
     if (open) {
       panel.removeAttribute('inert');
+      if (!managesFocus) return;
       const initial = initialFocusRef.current;
       if (initial === false) return;
-      const remembered = lastFocused.current;
+      // F5 is about changing your mind during a close. A fresh open starts from the top.
+      const remembered = settledClosed.current ? null : lastFocused.current;
+      settledClosed.current = false;
       traceFocus(remembered ? 'reopen' : 'open', [remembered, initial?.current, panel.querySelector<HTMLElement>(FIRST_FIELD), panel]);
       return;
     }
 
-    const active = panel.ownerDocument.activeElement;
-    if (panel.contains(active) && active !== panel) lastFocused.current = active as HTMLElement;
-    if (panel.contains(active)) traceFocus('close', [triggerRef.current, latest.current.fallbackFocusRef?.current, rootRef.current]);
+    if (managesFocus) {
+      const { ownerDocument: doc } = panel;
+      const active = doc.activeElement;
+      if (panel.contains(active) && active !== panel) lastFocused.current = active as HTMLElement;
+      // Safari does not focus a button on click, so pressing Close from a field leaves focus
+      // on <body>. The user was still working in the panel, so it counts as inside.
+      const leftInPanel = active === doc.body && !!lastOwned.current && panel.contains(lastOwned.current);
+      if (panel.contains(active) || leftInPanel) traceFocus('close', [triggerRef.current, latest.current.fallbackFocusRef?.current, rootRef.current]);
+    }
     // Set last. Inert on the element holding focus would drop focus to <body>.
     panel.setAttribute('inert', '');
   }, [open, managesFocus, traceFocus]);
+
+  // Rule F6, for part of a surface that goes away while the surface stays: a removed trigger,
+  // a removed field, a control that became disabled. The browser sends focus to <body>.
+  useIsomorphicLayoutEffect(() => {
+    const root = rootRef.current;
+    if (!managesFocus || !root) return undefined;
+    const observer = new MutationObserver(() => {
+      const owned = lastOwned.current;
+      if (!owned || canHoldFocus(owned)) return;
+      const { activeElement, body } = root.ownerDocument;
+      if (activeElement && activeElement !== body && activeElement !== owned) return;
+      lastOwned.current = null;
+      const panel = panelRef.current;
+      const inPanel = wasOpen.current ? panel?.querySelector<HTMLElement>(FIRST_FIELD) : null;
+      traceFocus('recover', [inPanel, triggerRef.current, latest.current.fallbackFocusRef?.current, root]);
+    });
+    observer.observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: ['disabled'] });
+    return () => observer.disconnect();
+  }, [managesFocus, traceFocus]);
 
   // Rule F6, for a surface removed from the page. A layout effect cleanup runs before
   // React removes the node, so this is the last moment to see that focus was inside.
@@ -207,7 +236,7 @@ export function useInspectorCore(options: InspectorCoreOptions, { managesFocus, 
   }, [traceFocus]);
 
   const surfaceOnSettle = useCallback((shape: string) => {
-    if (shape === 'closed') latest.current.onClosedSettle?.();
+    if (shape === 'closed') settledClosed.current = true;
     latest.current.onSettle?.(shape);
   }, []);
 
@@ -232,6 +261,7 @@ export function useInspectorCore(options: InspectorCoreOptions, { managesFocus, 
   );
 
   const onFocusCapture = useCallback((event: React.FocusEvent<HTMLDivElement>) => {
+    lastOwned.current = event.target as HTMLElement;
     const panel = panelRef.current;
     if (panel?.contains(event.target) && event.target !== panel) lastFocused.current = event.target as HTMLElement;
   }, []);

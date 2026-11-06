@@ -18,7 +18,7 @@ const correctness = existsSync(correctnessPath) ? read(correctnessPath) : null;
 const kb = (bytes) => `${(bytes / 1024).toFixed(1)} KB`;
 const range = (s, digits = 1) => (s.median === null ? 'n/a' : `${s.median.toFixed(digits)} (${s.min.toFixed(digits)} to ${s.max.toFixed(digits)})`);
 
-const NAMES = { surface: 'Qendrim Surface', 'motion-height': 'Motion, height', 'motion-layout': 'Motion, layout', 'native-grid': 'CSS grid track' };
+const NAMES = { surface: 'Qendrim Surface', 'motion-height': 'Motion, height auto', 'motion-measured': 'Motion, measured', 'motion-layout': 'Motion, layout', 'native-grid': 'CSS grid track' };
 
 const sections = [];
 
@@ -71,7 +71,7 @@ sections.push({
   columns: ['Measure', ...Object.keys(summary.timing).map((i) => NAMES[i])],
   rows: [
     ['Click to first change, from rest (ms)', 'latencyFromRestMedian'],
-    ['Click to first change, reversing (ms)', 'latencyReversalMedian'],
+    ['Click to changed direction, mid-move (ms)', 'turnaroundMedian'],
     ['Key to first change, mid-move (ms)', 'latencyTypingMedian'],
     ['Layouts in the reversal workload', 'layoutCount', 0],
     ['Layout time (ms)', 'layoutMs'],

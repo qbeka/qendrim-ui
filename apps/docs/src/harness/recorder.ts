@@ -63,6 +63,8 @@ export class Recorder {
     this.source = source;
   }
 
+  private readonly onResize = () => this.mark('viewport');
+
   mark(type: string, detail?: unknown) {
     // Off means off. A stored focus event holds a DOM element, which would keep it alive
     // and show up as a leak in the library.
@@ -73,6 +75,7 @@ export class Recorder {
   start() {
     if (this.running) return;
     this.running = true;
+    window.addEventListener('resize', this.onResize);
     // Sample after the frame, not in it. requestAnimationFrame runs before layout and
     // before ResizeObserver, so a read there can see a size that is never painted. A
     // message posted from the frame is delivered once the frame's rendering work is done.
@@ -90,6 +93,7 @@ export class Recorder {
 
   stop() {
     this.running = false;
+    window.removeEventListener('resize', this.onResize);
     nativeCancel(this.frame);
   }
 
@@ -110,6 +114,7 @@ export class Recorder {
       t: performance.now(),
       height: rect.height,
       width: rect.width,
+      x: rect.left,
       y: rect.top,
       requested: this.source.requested(),
       rendered: this.source.rendered(),

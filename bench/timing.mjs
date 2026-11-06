@@ -12,7 +12,7 @@ const INSTALL_LATENCY = `
   let onFrame = null;
   channel.port1.onmessage = () => { const f = onFrame; onFrame = null; if (f) f(); };
   const nextFrameEnd = (f) => requestAnimationFrame(() => { onFrame = f; channel.port2.postMessage(0); });
-  window.__latency = { geometry: [], value: [], visible: [] };
+  window.__latency = { geometry: [], value: [], turnaround: [], missedTurns: 0 };
   const read = () => document.querySelector('[data-probe="box"]')?.getBoundingClientRect().height ?? 0;
   const follow = (start, changed, into) => {
     let frames = 0;
@@ -22,10 +22,39 @@ const INSTALL_LATENCY = `
     });
     step();
   };
+  // Direction of the last frame, so a reversal can be told from a box that just keeps moving.
+  let lastHeight = 0;
+  let direction = 0;
+  const watch = () => nextFrameEnd(() => {
+    const height = read();
+    if (Math.abs(height - lastHeight) > 0.1) direction = Math.sign(height - lastHeight);
+    else direction = 0;
+    lastHeight = height;
+    watch();
+  });
+  watch();
   document.addEventListener('click', (e) => {
     if (!e.target.closest?.('[data-probe="trigger"]')) return;
+    const start = e.timeStamp;
     const before = read();
-    follow(e.timeStamp, () => Math.abs(read() - before) > 0.5, window.__latency.geometry);
+    if (direction === 0) {
+      follow(start, () => Math.abs(read() - before) > 0.5, window.__latency.geometry);
+      return;
+    }
+    // Turnaround: the first frame that moves against the old direction. A box that ignored
+    // the click would keep moving and never count, so a missed turn is recorded too.
+    const wanted = -direction;
+    let frames = 0;
+    let previous = before;
+    const step = () => nextFrameEnd(() => {
+      const height = read();
+      if (Math.sign(height - previous) === wanted && Math.abs(height - previous) > 0.1) window.__latency.turnaround.push(performance.now() - start);
+      else if (frames++ < 40) {
+        previous = height;
+        step();
+      } else window.__latency.missedTurns += 1;
+    });
+    step();
   }, true);
   document.addEventListener('keydown', (e) => {
     const input = e.target;
@@ -104,7 +133,7 @@ export async function measureImplementation(browser, baseUrl, impl, workload = W
   const fromRest = await page.evaluate(() => [...window.__latency.geometry]);
 
   // Part 2: reversals under load, for layout work and frame callbacks.
-  await page.evaluate(() => { window.__framesOn = true; window.__frames.length = 0; window.__latency.geometry.length = 0; });
+  await page.evaluate(() => { window.__framesOn = true; window.__frames.length = 0; window.__latency.turnaround.length = 0; window.__latency.missedTurns = 0; });
   const before = await metrics(cdp);
   for (let i = 0; i < workload.reversals; i += 1) {
     await click(cdp, x, y);
@@ -113,7 +142,7 @@ export async function measureImplementation(browser, baseUrl, impl, workload = W
   await page.waitForTimeout(700);
   const after = await metrics(cdp);
   const frames = await page.evaluate(() => { window.__framesOn = false; return [...window.__frames]; });
-  const reversals = await page.evaluate(() => [...window.__latency.geometry]);
+  const { turnaround, missedTurns } = await page.evaluate(() => ({ turnaround: [...window.__latency.turnaround], missedTurns: window.__latency.missedTurns }));
 
   // Part 3: typing during a move.
   await page.evaluate(() => { window.__latency.value.length = 0; });
@@ -138,7 +167,8 @@ export async function measureImplementation(browser, baseUrl, impl, workload = W
   const sorted = [...frames].sort((a, b) => a - b);
   return {
     impl,
-    samples: { fromRest, reversals, typing, frames },
+    samples: { fromRest, turnaround, typing, frames },
+    missedTurns,
     layoutCount: delta(after, before, 'LayoutCount'),
     recalcStyleCount: delta(after, before, 'RecalcStyleCount'),
     layoutMs: delta(after, before, 'LayoutDuration') * 1000,
@@ -151,7 +181,7 @@ export async function measureImplementation(browser, baseUrl, impl, workload = W
     longFrames: frames.filter((f) => f > 25).length,
     frameCount: frames.length,
     latencyFromRestMedian: percentile([...fromRest].sort((a, b) => a - b), 0.5),
-    latencyReversalMedian: percentile([...reversals].sort((a, b) => a - b), 0.5),
+    turnaroundMedian: percentile([...turnaround].sort((a, b) => a - b), 0.5),
     latencyTypingMedian: percentile([...typing].sort((a, b) => a - b), 0.5),
   };
 }

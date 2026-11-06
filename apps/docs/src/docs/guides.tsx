@@ -25,7 +25,7 @@ export const GUIDES: Guide[] = [
         <p>Or import the tokens and only the parts you use:</p>
         <Code>{`import '@qbeka/react/css/tokens.css';
 import '@qbeka/react/css/button.css';`}</Code>
-        <p>All library CSS is in the <code>qendrim</code> cascade layer, so your own styles win without a specificity fight.</p>
+        <p>All library CSS is in the <code>qendrim</code> cascade layer. Your styles outside any layer always win, with no specificity fight. If your app uses layers, such as Tailwind 4, declare the order first, so that yours come later: <code>@layer qendrim, base, components, utilities;</code></p>
         <h2>What an import does not do</h2>
         <ul>
           <li>It does not download a font. Set <code>--q-font-sans</code> or <code>--q-font-serif</code> to use your own.</li>
@@ -66,7 +66,8 @@ import '@qbeka/react/css/button.css';`}</Code>
         <ul>
           <li>Continuity through replaced content. The box is continuous. New content appears at once.</li>
           <li>Text reflow. If a retarget changes the width, text wraps to its new width in one frame.</li>
-          <li>Rotated ancestors. A bounding box cannot describe one, so the move goes straight to the target.</li>
+          <li>Rotated or mirrored ancestors. A bounding box cannot describe one, so the move goes straight to the target.</li>
+          <li>Corners that differ, or percentage radii. One number cannot describe them, so they change in one step.</li>
           <li>Displayed frame rate. The channels are continuous in time, and a dropped frame is still dropped.</li>
         </ul>
         <p>The full contract is in <code>docs/CONTRACT.md</code>.</p>

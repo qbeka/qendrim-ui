@@ -9,6 +9,7 @@ for (const path of PAGES) {
     test(`no horizontal page scroll at ${width}: ${path}`, async ({ page }) => {
       await page.setViewportSize({ width, height: 800 });
       await page.goto(path);
+      await page.waitForSelector('main h1');
       await page.waitForTimeout(150);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       expect(overflow).toBeLessThanOrEqual(0);
@@ -27,6 +28,7 @@ test.describe('automated accessibility checks', () => {
             localStorage.setItem('q-docs-recipe', r as string);
           }, [theme, recipe]);
           await page.goto(path);
+          await page.waitForSelector('main h1');
           await page.waitForTimeout(200);
           const results = await new AxeBuilder({ page }).analyze();
           expect(results.violations.map((v) => `${v.id}: ${v.nodes.slice(0, 3).map((n) => n.target.join(' ')).join(' | ')}`)).toEqual([]);

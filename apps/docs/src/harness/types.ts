@@ -18,6 +18,7 @@ export interface Sample {
   t: number;
   height: number;
   width: number;
+  x: number;
   y: number;
   requested: Requested;
   rendered: Requested;

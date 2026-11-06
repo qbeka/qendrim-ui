@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { createEngine, type ChannelValues, type Clock, type Engine, type NaturalBox, type SurfacePort, type TraceEvent } from '../src/core/engine.js';
 
 /** A fake page: a natural box per shape, inline styles as plain data, and a manual clock. */
-function harness(options: { reduced?: boolean; hidden?: boolean; unsupported?: boolean } = {}) {
+function harness(options: { reduced?: boolean; hidden?: boolean; unsupported?: boolean; bottomAnchored?: boolean; rootExtra?: number } = {}) {
   const shapes: Record<string, { y: number; height: number; width: number }> = {
     closed: { y: 100, height: 52, width: 600 },
     open: { y: 100, height: 400, width: 600 },
@@ -24,7 +24,13 @@ function harness(options: { reduced?: boolean; hidden?: boolean; unsupported?: b
 
   const natural = (): NaturalBox => {
     const s = shapes[page.shape] as { y: number; height: number; width: number };
-    return { x: 0, y: s.y, width: s.width, height: s.height + page.extra, radius: 8, contentWidth: s.width, contentHeight: s.height + page.extra, unsupportedTransform: options.unsupported ?? false };
+    return { x: 0, y: s.y, width: s.width, height: s.height + page.extra + (options.rootExtra ?? 0), radius: 8, contentWidth: s.width, contentHeight: s.height + page.extra, unsupportedTransform: options.unsupported ?? false };
+  };
+
+  /** For a box anchored at its bottom edge, layout position depends on the current height. */
+  const layoutY = (height: number) => {
+    const n = natural();
+    return options.bottomAnchored ? n.y + n.height - height : n.y;
   };
 
   const port: SurfacePort = {
@@ -32,13 +38,16 @@ function harness(options: { reduced?: boolean; hidden?: boolean; unsupported?: b
       const n = natural();
       const i = page.inline;
       if (!i) return n;
-      return { x: n.x + (i.dx ?? 0), y: n.y + (i.dy ?? 0), width: i.width ?? n.width, height: i.height ?? n.height, radius: i.radius ?? n.radius };
+      const height = i.height ?? n.height;
+      return { x: n.x + (i.dx ?? 0), y: layoutY(height) + (i.dy ?? 0), width: i.width ?? n.width, height, radius: i.radius ?? n.radius };
     },
     readNatural() {
       page.forcedReads += 1;
       page.inline = null;
       return natural();
     },
+    readOrigin: (_width, height) => ({ x: 0, y: layoutY(height) }),
+    readRestHeight: () => natural().height,
     lockContentWidth: (w) => {
       page.contentLock = w;
     },
@@ -155,6 +164,65 @@ describe('engine', () => {
     const events = h.trace.length;
     h.engine.contentResized(600, 400);
     expect(h.trace.length).toBe(events);
+  });
+
+  it('a bottom-anchored box starts exactly where it was, because the offset uses layout at that size', () => {
+    const b = harness({ bottomAnchored: true });
+    const before = b.port.readVisible();
+    b.request(b.engine, 'sheet');
+    const after = b.port.readVisible();
+    expect(after.y).toBeCloseTo(before.y, 6);
+    expect(after.height).toBeCloseTo(before.height, 6);
+  });
+
+  it('a content change during a move keeps velocity', () => {
+    h.request(h.engine, 'open');
+    h.run(80);
+    h.page.extra = 80;
+    h.engine.contentResized(600, 480);
+    const retarget = h.trace.filter((e) => e.type === 'retarget').at(-1);
+    expect(retarget?.type === 'retarget' && retarget.reason).toBe('content');
+    expect(retarget?.type === 'retarget' && retarget.velocity.height).toBeGreaterThan(100);
+  });
+
+  it('a content change during a move retargets by the change in content height', () => {
+    h.request(h.engine, 'open');
+    h.run(48);
+    h.page.extra = 80;
+    h.engine.contentResized(600, 480);
+    const retarget = h.trace.filter((e) => e.type === 'retarget').at(-1);
+    expect(retarget?.type === 'retarget' && retarget.to.height).toBe(480);
+  });
+
+  it('a height change at rest uses the root height, so padding is counted', () => {
+    const b = harness({ rootExtra: 80 });
+    b.engine.contentResized(600, 52);
+    b.page.extra = 60;
+    b.engine.contentResized(600, 112);
+    expect(b.page.inline).toEqual({ height: 132 });
+    b.run(2000);
+    expect(b.page.inline).toBeNull();
+  });
+
+  it('a root that does not follow its content does not move', () => {
+    const b = harness();
+    b.engine.contentResized(600, 52);
+    // min-height or similar: the content grew and the root did not.
+    b.engine.contentResized(600, 90);
+    expect(b.page.inline).toBeNull();
+  });
+
+  it('a pending viewport change does not outlive a snap', () => {
+    const r = harness();
+    r.request(r.engine, 'open');
+    r.engine.viewportChanged();
+    r.page.reduced = true;
+    r.request(r.engine, 'closed');
+    const reads = r.page.forcedReads;
+    r.page.reduced = false;
+    r.engine.contentResized(600, 52);
+    r.run(100);
+    expect(r.page.forcedReads).toBe(reads);
   });
 
   it('a height change at rest locks the old height and springs to the new one', () => {

@@ -97,26 +97,28 @@
     margin-inline-start: calc(min(36rem, calc(100vw - 2rem)) / -2);
   }
 
-  .q-inspector--modal[data-shape='open'] > [data-q-surface-content] {
+  /* In both shapes, so the panel's scroll position survives a close. */
+  .q-inspector--modal > [data-q-surface-content] {
     max-block-size: 84dvh;
     overflow: auto;
     overscroll-behavior: contain;
   }
 
+  /* Physical properties: the origin comes from getBoundingClientRect, which is physical. */
   .q-inspector--modal[data-shape='closed'] {
-    inset-block-start: var(--q-origin-y, 50dvh);
-    inset-inline-start: var(--q-origin-x, 50%);
-    inline-size: var(--q-origin-width, 0);
-    block-size: var(--q-origin-height, 0);
+    top: var(--q-origin-y, 50dvh);
+    left: var(--q-origin-x, 50%);
+    width: var(--q-origin-width, 0);
+    height: var(--q-origin-height, 0);
     overflow: clip;
   }
 
   /* The row is gone, so there is nothing to return to. Close to the center. */
   .q-inspector--modal[data-shape='closed'][data-origin='lost'] {
-    inset-block-start: 40dvh;
-    inset-inline-start: 50%;
-    inline-size: 0;
-    block-size: 0;
+    top: 40dvh;
+    left: 50%;
+    width: 0;
+    height: 0;
   }
 
   .q-inspector--modal[data-shape='closed'][data-phase='settled'] {
@@ -128,12 +130,21 @@
     inset: 0;
     z-index: var(--q-layer-backdrop);
     background: var(--q-color-scrim);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 180ms linear, visibility 0s linear 180ms;
+  }
+
+  .q-inspector-backdrop[data-open] {
+    opacity: 1;
+    visibility: visible;
     transition: opacity 180ms linear;
   }
 
-  .q-inspector-backdrop[data-starting-style],
-  .q-inspector-backdrop[data-ending-style] {
-    opacity: 0;
+  .q-inspector-hit-area {
+    position: fixed;
+    inset: 0;
+    z-index: var(--q-layer-backdrop);
   }
 
   @media (prefers-reduced-motion: reduce) {
