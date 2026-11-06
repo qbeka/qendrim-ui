@@ -152,6 +152,7 @@ html { scroll-behavior: smooth; }
 .install a, .components-more a { color: inherit; text-underline-offset: 3px; text-decoration-color: var(--line-strong); }
 .components { margin-block-start: 56px; }
 .components h2 { margin-block-end: 12px; }
+.components-wait { min-height: 1400px; }
 .components-more { margin: 12px 0 0; color: var(--muted); font-size: 14px; line-height: 20px; }
 .reading code { font: 0.9em var(--q-font-mono); }
 .reading { scroll-margin-top: 24px; }

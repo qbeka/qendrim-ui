@@ -1,6 +1,9 @@
-import { Gallery } from '../gallery/Gallery';
+import { lazy, Suspense, useEffect } from 'react';
 import { useCopy } from '../lib/useCopy';
 import { Stage } from './Stage';
+
+// The gallery sits below the first screen and brings most of Base UI, so the stage goes first.
+const Gallery = lazy(() => import('../gallery/Gallery').then((m) => ({ default: m.Gallery })));
 
 const REPO = 'https://github.com/qbeka/qendrim-ui';
 const REPORT = `${REPO}/blob/main/docs/REPORT.md`;
@@ -14,26 +17,34 @@ const docs = (path: string) =>
     : `${import.meta.env.BASE_URL}${path.slice(1)}`;
 
 const RESULTS = [
-  ['Interruptions', '0 violations in 8 scenarios', '5 runs each in Chromium, then again in Firefox, WebKit and StrictMode. A careful Motion version with about 30 extra lines also scores 0, so this is a tie. Motion with height auto, Motion layout and CSS grid each fail the content growth scenarios.'],
-  ['Size', 'Surface 4.1 KB, Inspector 6.7 KB', 'Gzipped JavaScript for one import, React excluded. Motion layout is 44.1 KB. If your app already ships Motion, that cost is zero to you.'],
-  ['Input response', '11.5 ms from click to first change', 'Median of 6 runs from rest. Motion is 11.0 to 13.2 ms and the ranges overlap, so the two are level and this is no faster.'],
+  ['Interruptions', '0 violations in 8 scenarios', 'Each scenario ran 5 times in Chromium and also passed in Firefox, WebKit and StrictMode. A careful Motion version with about 30 extra lines also scores 0, so this is a tie. Motion with height auto, Motion layout and CSS grid each fail the content growth scenarios.'],
+  ['Size', 'Surface 4.1 KB, Inspector 6.7 KB', 'These are gzipped JavaScript sizes for one import, with React excluded. Motion layout is 44.1 KB. If your app already ships Motion, that cost is zero to you.'],
+  ['Input response', '11.5 ms from click to first change', 'This is the median of 6 runs from rest. Motion is 11.0 to 13.2 ms and the ranges overlap, so the two are level and this is no faster.'],
   ['Layout work', '163 layouts in the reversal workload', 'That is more than any baseline, since height based Motion does 117 to 124 and Motion layout does 37.'],
-  ['Budgets', '14 of 17 met', 'Frozen before the final run. Surface size, Inspector size and layout count were missed, because of fixes for real bugs. The limits were left where they were.'],
-  ['Browser tests', '507 passed, three full runs in a row', '192 in Chromium, 145 in Firefox, 145 in WebKit and 25 in StrictMode.'],
+  ['Budgets', '14 of 17 met', 'The budgets were frozen before the final run. Surface size, Inspector size and layout count were missed, because of fixes for real bugs. The limits were left where they were.'],
+  ['Browser tests', '507 passed, three full runs in a row', 'That is 192 in Chromium, 145 in Firefox, 145 in WebKit and 25 in StrictMode.'],
   ['Mutation check', '53 of 55 deliberate defects caught', 'I judged the other 2 equivalent, from reading the code.'],
-  ['Clean installs', '5 of 5 apps passed', 'The packed release on React 18.3.1, 19.0.0 and 19.3.1, with Vite 8 and Next 16.'],
+  ['Clean installs', '5 of 5 apps passed', 'The packed release passed on React 18.3.1, 19.0.0 and 19.3.1, with Vite 8 and Next 16.'],
 ];
 
 const LIMITS = [
-  'It is not on npm. The install above uses the v0.1.0 file on the GitHub release.',
+  'The package is not on npm, so the install above uses the v0.1.0 file on the GitHub release.',
   'If your app already ships Motion and one panel needs this, a measured height with Motion is about 30 lines and passes the same scenarios.',
-  'All timing comes from one Apple M5 Pro Mac in headless Chromium, with other work running. This is lab data.',
+  'All timing comes from one Apple M5 Pro Mac in headless Chromium with other work running, so this is lab data.',
   'It has not been tested on real phones, in real Safari or with a screen reader. Automated axe checks passed, and that does not establish full accessibility.',
   'Touch input has no test in the library suite.',
   'One Firefox hang during development is unexplained.',
   'Nobody outside this project has used it.',
   'The projects, people and amounts in the demo are made up. The save in the gallery is simulated.',
 ];
+
+/** The page renders after the browser looks for the hash, so a link to #details lands here. */
+function FollowHash() {
+  useEffect(() => {
+    document.getElementById(window.location.hash.slice(1))?.scrollIntoView({ behavior: 'instant' });
+  }, []);
+  return null;
+}
 
 function CopyInstall() {
   const { state, copy } = useCopy(INSTALL);
@@ -76,7 +87,10 @@ export function Page() {
 
         <section className="components" id="components" aria-labelledby="components-title">
           <h2 id="components-title">Components</h2>
-          <Gallery docsLink={(slug, name) => <a href={docs(`/components/${slug}`)}>{name} API and keyboard map</a>} />
+          <Suspense fallback={<div className="components-wait" />}>
+            <Gallery docsLink={(slug, name) => <a href={docs(`/components/${slug}`)}>{name} API and keyboard map</a>} />
+            <FollowHash />
+          </Suspense>
           <p className="components-more"><a href={docs('/components')}>All 12 components</a></p>
         </section>
 
