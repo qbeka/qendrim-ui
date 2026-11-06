@@ -1,8 +1,11 @@
-import { HAIRLINE } from './hairline';
-import { Replay } from './Replay';
+import { Gallery } from '../gallery/Gallery';
+import { useCopy } from '../lib/useCopy';
+import { Stage } from './Stage';
 
 const REPO = 'https://github.com/qbeka/qendrim-ui';
 const REPORT = `${REPO}/blob/main/docs/REPORT.md`;
+const CONTRACT = `${REPO}/blob/main/docs/CONTRACT.md`;
+const INSTALL = 'npm install https://github.com/qbeka/qendrim-ui/releases/download/v0.1.0/qbeka-react-0.1.0.tgz';
 
 /** The docs are a hash-routed page next to this one when the site is built for a sub-path. */
 const docs = (path: string) =>
@@ -10,87 +13,96 @@ const docs = (path: string) =>
     ? `${import.meta.env.BASE_URL}docs/index.html#${path}`
     : `${import.meta.env.BASE_URL}${path.slice(1)}`;
 
-const STATS = [
-  { value: '0', label: 'violations across 8 interruption scenarios, in 4 browser setups' },
-  { value: '4.1 KB', label: 'Surface, gzipped. Motion layout is 44.1 KB' },
-  { value: '11.5 ms', label: 'click to first change, level with Motion' },
-  { value: '53 of 55', label: 'deliberate bugs caught. The other 2 changed no behavior' },
-];
-
 const RESULTS = [
-  ['Interruptions', 'No violations in 8 scenarios in Chromium, Firefox, WebKit and StrictMode. A careful Motion version with about 30 extra lines also scores 0, so this is what the library does, not something only it can do.'],
-  ['Cost', 'Surface is 4.1 KB gzipped with no other dependency. Inspector is 6.7 KB. Foundation components add at most 418 bytes over Base UI directly.'],
-  ['Timing', 'Level with Motion: 11.5 ms from click to first change, against 11.0 to 13.2 ms. It does more layouts, 163 against 117 to 124 in the same workload.'],
-  ['Budgets', '14 of 17 frozen budgets met. Surface size, Inspector size and layout count were missed, by fixes for real bugs. The limits were left where they were.'],
+  ['Interruptions', '0 violations in 8 scenarios', '5 runs each in Chromium, then again in Firefox, WebKit and StrictMode. A careful Motion version with about 30 extra lines also scores 0, so this is a tie. Motion with height auto, Motion layout and CSS grid each fail the content growth scenarios.'],
+  ['Size', 'Surface 4.1 KB, Inspector 6.7 KB', 'Gzipped JavaScript for one import, React excluded. Motion layout is 44.1 KB. If your app already ships Motion, that cost is zero to you.'],
+  ['Input response', '11.5 ms from click to first change', 'Median of 6 runs from rest. Motion is 11.0 to 13.2 ms and the ranges overlap, so the two are level and this is no faster.'],
+  ['Layout work', '163 layouts in the reversal workload', 'That is more than any baseline, since height based Motion does 117 to 124 and Motion layout does 37.'],
+  ['Budgets', '14 of 17 met', 'Frozen before the final run. Surface size, Inspector size and layout count were missed, because of fixes for real bugs. The limits were left where they were.'],
+  ['Browser tests', '507 passed, three full runs in a row', '192 in Chromium, 145 in Firefox, 145 in WebKit and 25 in StrictMode.'],
+  ['Mutation check', '53 of 55 deliberate defects caught', 'I judged the other 2 equivalent, from reading the code.'],
+  ['Clean installs', '5 of 5 apps passed', 'The packed release on React 18.3.1, 19.0.0 and 19.3.1, with Vite 8 and Next 16.'],
 ];
 
-const VERIFIED = [
-  ['Browser tests', '507 passed across Chromium, Firefox, WebKit and StrictMode, in three full runs in a row. 94 more are skipped by design.'],
-  ['Clean installs', 'The packed release passes in 5 clean apps, on React 18.3.1, 19.0.0 and 19.3.1, with Vite 8 and Next 16.'],
-  ['Broken on purpose', 'Seeded broken fixtures are caught by the same detectors that clear the library.'],
-  ['Limits', 'Measured on one Mac in headless Chromium with other work running. No real phones, real Safari or screen readers were tested, and nobody outside this project has used it.'],
+const LIMITS = [
+  'It is not on npm. The install above uses the v0.1.0 file on the GitHub release.',
+  'If your app already ships Motion and one panel needs this, a measured height with Motion is about 30 lines and passes the same scenarios.',
+  'All timing comes from one Apple M5 Pro Mac in headless Chromium, with other work running. This is lab data.',
+  'It has not been tested on real phones, in real Safari or with a screen reader. Automated axe checks passed, and that does not establish full accessibility.',
+  'Touch input has no test in the library suite.',
+  'One Firefox hang during development is unexplained.',
+  'Nobody outside this project has used it.',
+  'The projects, people and amounts in the demo are made up. The save in the gallery is simulated.',
 ];
+
+function CopyInstall() {
+  const { state, copy } = useCopy(INSTALL);
+  return (
+    <button className="control outline swap" type="button" onClick={copy} data-testid="copy-install">
+      <span data-on={state === 'idle' || undefined}>Copy install</span>
+      <span data-on={state === 'copied' || undefined}>Copied</span>
+      <span data-on={state === 'failed' || undefined}>Copy failed</span>
+    </button>
+  );
+}
+
+const Chevron = () => <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 4L6 8L10 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 export function Page() {
   return (
-    <div className="p-site">
-      <svg className="p-hairline" viewBox="0 0 640 56" preserveAspectRatio="none" aria-hidden><path d={HAIRLINE} /></svg>
-      <div className="p-page">
-        <header>
+    <div className="shell">
+      <header className="topbar">
+        <a className="quiet back" href="https://www.qendrimbeka.com/"><Chevron />Back</a>
+        <nav aria-label="More about Qendrim UI">
+          <a className="quiet" href="#details">Details</a>
+          <a className="quiet" href={REPO}>GitHub</a>
+        </nav>
+      </header>
+
+      <main>
+        <header className="title">
           <h1>Qendrim UI</h1>
-          <p className="p-subtitle">React components for panels that keep working when you change your mind. Reverse one, resize it or refill it mid-move, and your text, focus and place stay put.</p>
-          <div className="p-pills">
-            <a className="p-pill p-dark" href="#replay">Watch the replay</a>
-            <a className="p-pill" href={docs('/')}>Open the docs</a>
-            <a className="p-pill" href={REPO}>GitHub</a>
-          </div>
-          <p className="p-verdict">A careful version built on Motion scored the same on correctness. What this adds is that contract as a small, tested package.</p>
-          <div className="p-stats">
-            {STATS.map((stat) => (
-              <div className="p-stat" key={stat.value}>
-                <div className="p-stat-value">{stat.value}</div>
-                <div className="p-stat-label">{stat.label}</div>
-              </div>
-            ))}
-          </div>
+          <CopyInstall />
+          <p>React components that keep up when you change your mind</p>
         </header>
-        <main>
-          <section aria-labelledby="idea">
-            <h2 id="idea">The idea</h2>
-            <p>Most panels animate well until someone interrupts them. Click twice and the content jumps. Reverse a move and a late animation finishes the wrong one. Type while it opens and the field loses your caret.</p>
-            <p>This library treats each change of mind as a new request, numbered in order. Work from an older request cannot touch the newer one.</p>
-            <ul className="p-dashes">
-              <li>The newest request wins, even when a slow save finishes late.</li>
-              <li>A move starts from what is on screen, at the speed it is already going.</li>
-              <li>The panel is one element, so fields keep their text, caret and selection.</li>
-            </ul>
-          </section>
-          <section id="replay" aria-labelledby="replay-title">
-            <h2 id="replay-title">One panel, interrupted seven ways</h2>
-            <Replay />
-          </section>
-          <section aria-labelledby="results-title">
-            <h2 id="results-title">Results</h2>
-            <ul className="p-rows">
-              {RESULTS.map(([name, text]) => <li key={name}><strong>{name}</strong><p>{text}</p></li>)}
-            </ul>
-          </section>
-          <section aria-labelledby="verified">
-            <h2 id="verified">How it is verified</h2>
-            <ul className="p-rows">
-              {VERIFIED.map(([name, text]) => <li key={name}><strong>{name}</strong><p>{text}</p></li>)}
-            </ul>
-          </section>
-          <section aria-labelledby="go">
-            <h2 id="go">Go further</h2>
-            <ul className="p-rows">
-              <li><strong><a href={docs('/')}>Docs</a></strong><p>Components, live examples, API tables and keyboard maps.</p></li>
-              <li><strong><a href={docs('/workbench')}>Workbench</a></strong><p>This library next to Motion, CSS and deliberately broken fixtures, under the same test.</p></li>
-              <li><strong><a href={REPORT}>Report</a></strong><p>Every measurement, with its method and its limits.</p></li>
-            </ul>
-          </section>
-        </main>
-      </div>
+
+        <Stage />
+
+        <section className="install" aria-labelledby="install-title">
+          <h2 id="install-title">Install</h2>
+          <pre tabIndex={0} aria-label="Install command"><code>{INSTALL}</code></pre>
+          <p>The package is not on npm yet, so this installs the 0.1.0 release file from GitHub. You need React 18.3 or 19, and the <a href={docs('/guide/install')}>install guide</a> covers styles and themes.</p>
+        </section>
+
+        <section className="components" id="components" aria-labelledby="components-title">
+          <h2 id="components-title">Components</h2>
+          <Gallery docsLink={(slug, name) => <a href={docs(`/components/${slug}`)}>{name} API and keyboard map</a>} />
+          <p className="components-more"><a href={docs('/components')}>All 12 components</a></p>
+        </section>
+
+        <section className="reading" id="details" aria-labelledby="details-title">
+          <h2 id="details-title">Details</h2>
+          <p className="prose">Qendrim UI is a small React library for working panels that get interrupted. Each change of mind is a new request, numbered in order, and work from an older request cannot touch the newer one. A move starts from what is on screen, at the speed it is already going. The panel stays one element, so a field keeps its text, caret and selection.</p>
+          <p className="prose">The panel above is the real <code>Inspector</code> running in your browser. <a href={docs('/workbench')}>The workbench</a> runs it next to Motion, CSS and deliberately broken fixtures under the same test.</p>
+
+          <h3>Results</h3>
+          <dl className="results">
+            {RESULTS.map(([name, value, scope]) => <div key={name}><dt>{name}</dt><dd><b>{value}</b>{scope}</dd></div>)}
+          </dl>
+
+          <h3>Limits</h3>
+          <ul className="limits">{LIMITS.map((limit) => <li key={limit}>{limit}</li>)}</ul>
+
+          <h3>Method</h3>
+          <p className="prose">The <a href={REPORT}>report</a> has every measurement with its method, raw data and failures. <a href={CONTRACT}>The contract</a> has the rules and what is not promised.</p>
+        </section>
+
+        <div className="page-end">
+          <a className="quiet back" href="https://www.qendrimbeka.com/"><Chevron />Back</a>
+          <a className="quiet" href={docs('/')}>Docs</a>
+          <a className="quiet" href={REPO}>GitHub</a>
+        </div>
+      </main>
     </div>
   );
 }
