@@ -204,6 +204,11 @@ test.describe('project page', () => {
     });
   }
 
+  test('a link to the details lands on the details', async ({ page }) => {
+    await page.goto(`${PAGE}#details`);
+    await expect(page.getByRole('heading', { level: 2, name: 'Details' })).toBeInViewport();
+  });
+
   test('passes axe at rest and with everything open', async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'axe runs in Chromium.');
     await page.goto(PAGE);
