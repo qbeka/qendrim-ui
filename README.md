@@ -17,7 +17,7 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-Open <http://localhost:5171> and try to break the panel on the home page. `/project/` is the project page with the replay, and `/workbench` runs this library next to Motion, CSS and deliberately broken fixtures.
+Open <http://localhost:5171> and try to break the panel on the home page. `/project/` is the project page with the live demo and the component gallery, and `/workbench` runs this library next to Motion, CSS and deliberately broken fixtures.
 
 ## Install
 
