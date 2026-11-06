@@ -74,4 +74,4 @@ Source: https://ui.shadcn.com/docs/registry. Source distribution is possible lat
 | `@qbeka/react` on npm | 404, so it is free. The `@qbeka` scope must be owned by the npm account that publishes it. |
 | `qendrim-ui` on npm | 404. |
 
-A web search for an unrelated product named Qendrim UI was not run, because the name is the owner's own given name.
+A web search for an unrelated product named Qendrim UI was not run, because the name is the author's own given name.

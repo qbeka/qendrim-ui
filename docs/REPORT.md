@@ -16,7 +16,7 @@ Measured on 2026-11-06 at commit `f3a4d24`, on one Apple M5 Pro Mac on AC power,
 - Frame callback intervals do not prove what the display showed.
 - No real iOS or Android device was used. WebKit on macOS stands in for Safari, and it does not behave exactly like Safari.
 - No screen reader session was run. Automated axe checks passed, and that does not establish full accessibility.
-- Nobody outside this project has used the library. `docs/USABILITY.md` has a task script for when people are available.
+- Nobody outside this project has used the library.
 - Only the eight comparison scenarios ran across all baselines. The library's other behavior tests have no baseline equivalent.
 
 ## Tests
@@ -263,3 +263,27 @@ node scripts/check-budgets.mjs baseline
 ```
 
 `pnpm bench` writes to `results/baseline` by default. Pass `--label` to name a run.
+
+## Where each result comes from
+
+| Artifact | Path | Made by |
+|---|---|---|
+| Final measurement | `results/final/` | `node bench/run.mjs --label final` |
+| Manifest | `results/final/manifest.json` | Same |
+| Raw samples | `results/final/raw-timing.json`, `raw-foundation.json`, `raw-leaks.json`, `sizes.json` | Same |
+| Budget table | `results/final/budgets.json` | `node scripts/check-budgets.mjs final` |
+| First baseline | `results/baseline/` | `node bench/run.mjs --label baseline --runs 3 --leak-cycles 200 --leak-runs 2` |
+| Comparison suite | `results/correctness/` | `bench/correctness`, then `scripts/correctness-summary.mjs` |
+| Clean consumers | `results/consumers/summary.json` | `node consumers/check.mjs` |
+| Workspace against tarball | `results/consumers/workspace-vs-clean.json` | `node bench/workspace-vs-clean.mjs` |
+| Mutation check | `results/mutation/` | `node scripts/mutate.mjs` |
+| Three full passes | `results/e2e/three-passes.txt` | `pnpm test:e2e`, three times |
+| Clean checkout | `results/clean-checkout.txt` | `scripts/verify-clean.sh` |
+| Evidence page data | `apps/docs/public/evidence.json` | `node scripts/evidence.mjs final` |
+| Cover | `media/cover.png` | A screenshot of the real site |
+| Demo, 19 seconds, with no captions | `media/demo.mp4` | `node scripts/record.mjs media` |
+| Walkthrough, 64 seconds, with captions and no voice | `media/walkthrough.mp4` | Same |
+
+The recordings add a dot for the pointer and captions for the viewer. These are in `scripts/record.mjs`, and they are not in the product.
+
+The manifest for `results/final` says `dirty: true`. The earlier consumer step had rewritten `results/consumers/summary.json` when the run started. Source was clean. `bench/lib.mjs` now ignores `results/`.

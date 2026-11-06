@@ -11,7 +11,7 @@ This file was written before the final measurement. It fixes the workload, the m
 | Interruption suite | Does it hold up when interrupted, by the same detectors? | `e2e/scenarios.ts` |
 | Performance measurements | What does it cost? | `bench/` |
 | Heuristic review | Does it read well to its author? | `docs/REPORT.md` |
-| User research | Not done. Nobody outside this project has used it. | `docs/USABILITY.md` has the script. |
+| User research | Not done. Nobody outside this project has used it. | None yet. |
 
 ## Detectors, frozen
 
