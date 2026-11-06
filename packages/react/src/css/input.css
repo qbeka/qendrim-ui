@@ -1,0 +1,33 @@
+@layer qendrim {
+  .q-input {
+    box-sizing: border-box;
+    inline-size: 100%;
+    min-block-size: var(--q-control-height);
+    padding: var(--q-space-1) var(--q-space-2);
+    border: var(--q-border) solid var(--q-color-rule-strong);
+    border-radius: var(--q-radius-control);
+    background: var(--q-color-surface);
+    color: var(--q-color-ink);
+    font: var(--q-text-md) / var(--q-leading) var(--q-font-control);
+  }
+
+  .q-input:focus-visible {
+    outline: 2px solid var(--q-color-focus);
+    outline-offset: -1px;
+  }
+
+  .q-input[data-invalid] {
+    border-color: var(--q-color-danger);
+  }
+
+  .q-input[data-disabled] {
+    opacity: 0.55;
+  }
+
+  /* iOS zooms the page when a focused field is under 16 px. */
+  @media (pointer: coarse) {
+    .q-input {
+      font-size: max(1rem, var(--q-text-md));
+    }
+  }
+}

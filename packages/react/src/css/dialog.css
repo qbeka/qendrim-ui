@@ -1,0 +1,58 @@
+@layer qendrim {
+  .q-dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: var(--q-layer-backdrop);
+    background: var(--q-color-scrim);
+    transition: opacity 160ms linear;
+  }
+
+  .q-dialog-backdrop[data-starting-style],
+  .q-dialog-backdrop[data-ending-style] {
+    opacity: 0;
+  }
+
+  .q-dialog {
+    position: fixed;
+    inset-block-start: 12dvh;
+    inset-inline-start: 50%;
+    z-index: var(--q-layer-modal);
+    box-sizing: border-box;
+    inline-size: min(28rem, calc(100vw - 2rem));
+    max-block-size: 76dvh;
+    margin-inline-start: calc(min(28rem, calc(100vw - 2rem)) / -2);
+    padding: var(--q-space-5);
+    overflow: auto;
+    overscroll-behavior: contain;
+    border: var(--q-border) solid var(--q-color-rule-strong);
+    border-radius: var(--q-radius-panel);
+    background: var(--q-color-surface);
+    box-shadow: var(--q-shadow-popup);
+    color: var(--q-color-ink);
+    font: var(--q-text-md) / var(--q-leading) var(--q-font-control);
+    outline: none;
+    transition: opacity 160ms linear;
+  }
+
+  .q-dialog[data-starting-style],
+  .q-dialog[data-ending-style] {
+    opacity: 0;
+  }
+
+  .q-dialog-title {
+    margin: 0;
+    font: 500 var(--q-text-lg) / var(--q-leading) var(--q-font-content);
+  }
+
+  .q-dialog-description {
+    margin: var(--q-space-1) 0 0;
+    color: var(--q-color-body);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .q-dialog,
+    .q-dialog-backdrop {
+      transition: none;
+    }
+  }
+}

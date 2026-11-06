@@ -1,0 +1,24 @@
+@layer qendrim {
+  .q-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--q-space-1);
+    min-inline-size: 0;
+  }
+
+  .q-field-label {
+    color: var(--q-color-ink);
+    font: 500 var(--q-text-sm) / var(--q-leading) var(--q-font-control);
+  }
+
+  .q-field-description {
+    margin: 0;
+    color: var(--q-color-muted);
+    font: var(--q-text-xs) / var(--q-leading) var(--q-font-control);
+  }
+
+  .q-field-error {
+    color: var(--q-color-danger);
+    font: var(--q-text-xs) / var(--q-leading) var(--q-font-control);
+  }
+}

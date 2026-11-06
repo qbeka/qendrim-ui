@@ -1,6 +1,7 @@
 /**
  * Records one sample per animation frame, plus events. It only reads, once per frame,
- * and its own requestAnimationFrame is taken before any counting wrapper is installed.
+ * after the frame's rendering work. Its own requestAnimationFrame is taken before any
+ * counting wrapper is installed.
  * Reading getBoundingClientRect here can force layout, so timing runs in the benchmarks
  * leave the recorder off. See docs/PREREGISTRATION.md.
  */
@@ -69,9 +70,16 @@ export class Recorder {
   start() {
     if (this.running) return;
     this.running = true;
+    // Sample after the frame, not in it. requestAnimationFrame runs before layout and
+    // before ResizeObserver, so a read there can see a size that is never painted. A
+    // message posted from the frame is delivered once the frame's rendering work is done.
+    const channel = new MessageChannel();
+    channel.port1.onmessage = () => {
+      if (this.running) this.capture();
+    };
     const tick = () => {
       if (!this.running) return;
-      this.capture();
+      channel.port2.postMessage(0);
       this.frame = nativeRaf(tick);
     };
     this.frame = nativeRaf(tick);

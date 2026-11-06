@@ -1,0 +1,137 @@
+@layer qendrim {
+  .q-timeline {
+    display: grid;
+    grid-template-columns: auto minmax(6rem, 1fr) auto;
+    align-items: center;
+    gap: var(--q-space-3);
+    color: var(--q-color-ink);
+    font: var(--q-text-sm) / var(--q-leading) var(--q-font-control);
+  }
+
+  .q-timeline-transport {
+    display: flex;
+    gap: var(--q-space-1);
+  }
+
+  .q-timeline-button {
+    all: unset;
+    display: inline-grid;
+    place-items: center;
+    box-sizing: border-box;
+    inline-size: max(1.75rem, 24px);
+    block-size: max(1.75rem, 24px);
+    border-radius: var(--q-radius-control);
+    color: var(--q-color-ink);
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .q-timeline-button:hover {
+    background: var(--q-color-wash);
+  }
+
+  .q-timeline-button:focus-visible {
+    outline: 2px solid var(--q-color-focus);
+    outline-offset: 1px;
+  }
+
+  .q-timeline-button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .q-timeline-slider {
+    min-inline-size: 0;
+  }
+
+  .q-timeline-control {
+    position: relative;
+    display: flex;
+    align-items: center;
+    block-size: 2rem;
+    touch-action: none;
+  }
+
+  .q-timeline-track {
+    position: relative;
+    inline-size: 100%;
+    block-size: 1px;
+    background: var(--q-color-rule-strong);
+  }
+
+  .q-timeline-indicator {
+    background: var(--q-color-ink);
+  }
+
+  .q-timeline-thumb {
+    inline-size: 0.75rem;
+    block-size: 0.75rem;
+    border: 1.5px solid var(--q-color-ink);
+    border-radius: 50%;
+    background: var(--q-color-surface);
+  }
+
+  .q-timeline-thumb:has(:focus-visible) {
+    outline: 2px solid var(--q-color-focus);
+    outline-offset: 2px;
+  }
+
+  /* The hit area is 24 px. The drawn mark is the small tick in ::before. */
+  .q-timeline-marker {
+    all: unset;
+    position: absolute;
+    inset-block-start: 50%;
+    translate: -50% -50%;
+    inline-size: 24px;
+    block-size: 24px;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .q-timeline-marker::before {
+    content: '';
+    position: absolute;
+    inset-block: 5px;
+    inset-inline-start: 50%;
+    inline-size: 1px;
+    background: var(--q-color-muted);
+  }
+
+  .q-timeline-marker[data-passed]::before {
+    background: var(--q-color-ink);
+  }
+
+  .q-timeline-readout {
+    min-inline-size: 5ch;
+    color: var(--q-color-muted);
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+  }
+
+  @media (pointer: coarse) {
+    .q-timeline-button {
+      inline-size: 44px;
+      block-size: 44px;
+    }
+
+    .q-timeline-control {
+      block-size: 44px;
+    }
+
+    .q-timeline-thumb {
+      inline-size: 1.25rem;
+      block-size: 1.25rem;
+    }
+  }
+
+  @media (max-width: 479.98px) {
+    .q-timeline {
+      grid-template-columns: 1fr auto;
+    }
+
+    .q-timeline-slider {
+      grid-column: 1 / -1;
+      grid-row: 1;
+    }
+  }
+}

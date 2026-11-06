@@ -1,0 +1,44 @@
+/*
+ * Recipes change tokens only. The components are the same in both, which is what keeps a
+ * recipe from turning into a fork.
+ */
+@layer qendrim {
+  /* Studio: dense tools. */
+  :where([data-q-recipe='studio']) {
+    --q-font-content: var(--q-font-sans);
+    --q-font-control: var(--q-font-sans);
+    --q-control-height: 2rem;
+    --q-radius-control: 6px;
+    --q-radius-row: 8px;
+    --q-radius-panel: 12px;
+    --q-text-md: 0.875rem;
+    --q-surface-response: 300;
+    --q-surface-damping: 1;
+  }
+
+  /*
+   * Editorial: reading first. Set --font-geist-serif-regular on your page to use Geist
+   * Serif, or set --q-font-serif yourself. Importing this recipe loads no font.
+   */
+  :where([data-q-recipe='editorial']) {
+    --q-font-content: var(--font-geist-serif-regular, var(--q-font-serif));
+    --q-font-control: var(--font-geist-serif-regular, var(--q-font-serif));
+    --q-control-height: 2.5rem;
+    --q-radius-control: 8px;
+    --q-radius-button: 999px;
+    --q-radius-row: 14px;
+    --q-radius-panel: 18px;
+    --q-text-md: 1rem;
+    --q-text-sm: 0.9375rem;
+    --q-text-xs: 0.8125rem;
+    --q-leading: 1.55;
+    --q-surface-response: 380;
+    --q-surface-damping: 1;
+  }
+
+  @media (pointer: coarse) {
+    :where([data-q-recipe]) {
+      --q-control-height: 2.75rem;
+    }
+  }
+}

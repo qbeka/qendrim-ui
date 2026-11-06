@@ -32,6 +32,22 @@ describe('detectors', () => {
     expect(kinds({ samples, events: [{ t: 64, type: 'request' }] })).not.toContain('geometry-jump');
   });
 
+  it('a jump next to another jump is still reported', () => {
+    const heights = [52, 54, 56, 460, 458, 456, 454, 52, 54, 56, 58];
+    const samples = heights.map((height, i) => sample(i * 16, { height }));
+    expect(detect({ samples, events: [{ t: 40, type: 'request' }, { t: 100, type: 'request' }] }).filter((v) => v.kind === 'geometry-jump')).toHaveLength(2);
+  });
+
+  it('a start from rest is judged by the frames after it', () => {
+    const samples = [54, 54, 54, 54, 96, 136, 176, 214, 250].map((height, i) => sample(i * 16, { height }));
+    expect(kinds({ samples, events: [{ t: 60, type: 'request' }] })).not.toContain('geometry-jump');
+  });
+
+  it('a catch-up step after a stalled frame is not a jump', () => {
+    const samples = [[0, 54], [16, 54], [57, 54], [58, 96], [74, 136], [91, 176], [108, 214]].map(([t, height]) => sample(t as number, { height: height as number }));
+    expect(kinds({ samples, events: [{ t: 50, type: 'request' }] })).not.toContain('geometry-jump');
+  });
+
   it('reports focus that falls to body', () => {
     const samples = [sample(0, { focus: 'input' }), sample(16, { focus: 'body' }), sample(32, { focus: 'body' })];
     expect(kinds({ samples, events: [] })).toContain('focus-lost');

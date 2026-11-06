@@ -1,0 +1,90 @@
+@layer qendrim {
+  .q-actionbar-anchor {
+    position: sticky;
+    inset-block-end: var(--q-space-4);
+    z-index: var(--q-layer-sheet);
+    block-size: 0;
+    pointer-events: none;
+  }
+
+  .q-actionbar {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline: 0;
+    box-sizing: border-box;
+    inline-size: fit-content;
+    max-inline-size: 100%;
+    margin-inline: auto;
+    border: var(--q-border) solid var(--q-color-rule-strong);
+    border-radius: var(--q-radius-panel);
+    background: var(--q-color-surface);
+    box-shadow: var(--q-shadow-popup);
+    color: var(--q-color-ink);
+    pointer-events: auto;
+  }
+
+  .q-actionbar[data-shape='closed'] {
+    block-size: 0;
+    border-color: transparent;
+    box-shadow: none;
+    overflow: clip;
+  }
+
+  .q-actionbar[data-shape='closed'][data-phase='settled'] {
+    visibility: hidden;
+  }
+
+  .q-actionbar-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--q-space-1);
+    padding: var(--q-space-1) var(--q-space-2);
+    font: var(--q-text-md) / 1 var(--q-font-control);
+  }
+
+  .q-actionbar-status {
+    padding-inline: var(--q-space-2);
+    color: var(--q-color-muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .q-actionbar-action {
+    all: unset;
+    box-sizing: border-box;
+    min-block-size: var(--q-control-height);
+    padding-inline: var(--q-space-3);
+    border-radius: var(--q-radius-control);
+    line-height: var(--q-control-height);
+    white-space: nowrap;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .q-actionbar-action:hover {
+    background: var(--q-color-wash);
+  }
+
+  .q-actionbar-action:focus-visible {
+    outline: 2px solid var(--q-color-focus);
+    outline-offset: -2px;
+  }
+
+  .q-actionbar-action[data-disabled] {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .q-visually-hidden {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}

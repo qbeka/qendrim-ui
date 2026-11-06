@@ -19,21 +19,61 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./surface": {
-      "types": "./dist/surface/index.d.ts",
-      "default": "./dist/surface/index.js"
+    "./actionbar": {
+      "types": "./dist/actionbar/index.d.ts",
+      "default": "./dist/actionbar/index.js"
     },
-    "./package.json": "./package.json",
+    "./button": {
+      "types": "./dist/button/index.d.ts",
+      "default": "./dist/button/index.js"
+    },
+    "./dialog": {
+      "types": "./dist/dialog/index.d.ts",
+      "default": "./dist/dialog/index.js"
+    },
+    "./field": {
+      "types": "./dist/field/index.d.ts",
+      "default": "./dist/field/index.js"
+    },
+    "./input": {
+      "types": "./dist/input/index.d.ts",
+      "default": "./dist/input/index.js"
+    },
     "./inspector": {
       "types": "./dist/inspector/index.d.ts",
       "default": "./dist/inspector/index.js"
+    },
+    "./popover": {
+      "types": "./dist/popover/index.d.ts",
+      "default": "./dist/popover/index.js"
     },
     "./scope": {
       "types": "./dist/scope/index.d.ts",
       "default": "./dist/scope/index.js"
     },
+    "./select": {
+      "types": "./dist/select/index.d.ts",
+      "default": "./dist/select/index.js"
+    },
+    "./surface": {
+      "types": "./dist/surface/index.d.ts",
+      "default": "./dist/surface/index.js"
+    },
+    "./tabs": {
+      "types": "./dist/tabs/index.d.ts",
+      "default": "./dist/tabs/index.js"
+    },
+    "./timeline": {
+      "types": "./dist/timeline/index.d.ts",
+      "default": "./dist/timeline/index.js"
+    },
+    "./tooltip": {
+      "types": "./dist/tooltip/index.d.ts",
+      "default": "./dist/tooltip/index.js"
+    },
     "./styles.css": "./dist/styles.css",
-    "./css/*": "./dist/css/*"
+    "./css/*": "./dist/css/*",
+    "./package.json": "./package.json"
   },
   "scripts": {
     "build": "node scripts/build.mjs",

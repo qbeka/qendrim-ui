@@ -1,0 +1,67 @@
+@layer qendrim {
+  .q-select-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--q-space-2);
+    box-sizing: border-box;
+    min-inline-size: 8rem;
+    inline-size: 100%;
+    min-block-size: var(--q-control-height);
+    padding-inline: var(--q-space-2);
+    border: var(--q-border) solid var(--q-color-rule-strong);
+    border-radius: var(--q-radius-control);
+    background: var(--q-color-surface);
+    color: var(--q-color-ink);
+    font: var(--q-text-md) / 1 var(--q-font-control);
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .q-select-trigger:focus-visible {
+    outline: 2px solid var(--q-color-focus);
+    outline-offset: -1px;
+  }
+
+  .q-select-trigger[data-disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .q-select-icon {
+    display: inline-flex;
+    color: var(--q-color-muted);
+  }
+
+  .q-select-popup {
+    min-inline-size: var(--anchor-width);
+    max-block-size: var(--available-height);
+    padding: var(--q-space-1);
+    overflow-y: auto;
+  }
+
+  .q-select-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--q-space-4);
+    min-block-size: var(--q-control-height);
+    padding-inline: var(--q-space-2);
+    border-radius: calc(var(--q-radius-control) - 2px);
+    outline: none;
+    cursor: default;
+  }
+
+  .q-select-item[data-highlighted] {
+    background: var(--q-color-wash);
+  }
+
+  .q-select-item[data-disabled] {
+    opacity: 0.5;
+  }
+
+  .q-select-indicator {
+    display: inline-flex;
+    color: var(--q-color-accent);
+  }
+}
