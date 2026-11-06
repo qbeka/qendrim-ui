@@ -1,0 +1,620 @@
+{
+  "measuredAt": "2026-11-06",
+  "environment": "Apple M5 Pro, 48 GB, Darwin 25.6.0, Chromium 158.0.8127.18, headless. Now drawing from 'AC Power'.",
+  "sections": [
+    {
+      "id": "budgets",
+      "title": "Budgets, frozen before the final run",
+      "note": "14 of 17 met. The misses are real, and the limits were not changed. docs/REPORT.md explains them.",
+      "columns": [
+        "Budget",
+        "Measured",
+        "Limit",
+        "Result"
+      ],
+      "rows": [
+        {
+          "Budget": "Surface import, gzip bytes",
+          "Measured": 4245,
+          "Limit": 4096,
+          "Result": "missed"
+        },
+        {
+          "Budget": "Inspector import, gzip bytes",
+          "Measured": 6838,
+          "Limit": 6500,
+          "Result": "missed"
+        },
+        {
+          "Budget": "ModalInspector import, gzip bytes",
+          "Measured": 30466,
+          "Limit": 31000,
+          "Result": "met"
+        },
+        {
+          "Budget": "Timeline import, gzip bytes",
+          "Measured": 15818,
+          "Limit": 17000,
+          "Result": "met"
+        },
+        {
+          "Budget": "ActionBar import, gzip bytes",
+          "Measured": 12194,
+          "Limit": 12500,
+          "Result": "met"
+        },
+        {
+          "Budget": "Largest foundation cost over Base UI, gzip bytes",
+          "Measured": 418,
+          "Limit": 512,
+          "Result": "met"
+        },
+        {
+          "Budget": "Barrel Button over subpath Button, gzip bytes",
+          "Measured": -33,
+          "Limit": 64,
+          "Result": "met"
+        },
+        {
+          "Budget": "styles.css, gzip bytes",
+          "Measured": 4683,
+          "Limit": 5120,
+          "Result": "met"
+        },
+        {
+          "Budget": "tokens.css, gzip bytes",
+          "Measured": 1102,
+          "Limit": 1280,
+          "Result": "met"
+        },
+        {
+          "Budget": "Click to first change from rest, ms",
+          "Measured": 11.5,
+          "Limit": 20,
+          "Result": "met"
+        },
+        {
+          "Budget": "Key to first change mid-move, ms",
+          "Measured": 11,
+          "Limit": 16,
+          "Result": "met"
+        },
+        {
+          "Budget": "Layouts in the reversal workload",
+          "Measured": 163,
+          "Limit": 150,
+          "Result": "missed"
+        },
+        {
+          "Budget": "Task time in the reversal workload, ms",
+          "Measured": 55.4,
+          "Limit": 75,
+          "Result": "met"
+        },
+        {
+          "Budget": "Frame intervals over 25 ms",
+          "Measured": 0,
+          "Limit": 2,
+          "Result": "met"
+        },
+        {
+          "Budget": "Largest foundation latency over Base UI, ms",
+          "Measured": 1.6,
+          "Limit": 3,
+          "Result": "met"
+        },
+        {
+          "Budget": "Largest foundation task time over Base UI, percent",
+          "Measured": 10.3,
+          "Limit": 15,
+          "Result": "met"
+        },
+        {
+          "Budget": "Largest foundation layout count over Base UI",
+          "Measured": 0,
+          "Limit": 0,
+          "Result": "met"
+        }
+      ]
+    },
+    {
+      "id": "size-foundation",
+      "title": "Comparison 1: foundation components against Base UI",
+      "note": "Gzipped JavaScript for one import, React excluded. esbuild bundle of the installed tarball, minified, ESM, React external, gzip level 9, brotli quality 11.",
+      "columns": [
+        "Component",
+        "This library",
+        "Base UI directly",
+        "Added"
+      ],
+      "rows": [
+        {
+          "Component": "button",
+          "This library": "3.3 KB",
+          "Base UI directly": "3.1 KB",
+          "Added": "156 bytes"
+        },
+        {
+          "Component": "input",
+          "This library": "9.6 KB",
+          "Base UI directly": "9.5 KB",
+          "Added": "65 bytes"
+        },
+        {
+          "Component": "field",
+          "This library": "9.7 KB",
+          "Base UI directly": "9.5 KB",
+          "Added": "127 bytes"
+        },
+        {
+          "Component": "select",
+          "This library": "45.0 KB",
+          "Base UI directly": "44.6 KB",
+          "Added": "418 bytes"
+        },
+        {
+          "Component": "tabs",
+          "This library": "13.5 KB",
+          "Base UI directly": "13.3 KB",
+          "Added": "190 bytes"
+        },
+        {
+          "Component": "popover",
+          "This library": "40.6 KB",
+          "Base UI directly": "40.3 KB",
+          "Added": "367 bytes"
+        },
+        {
+          "Component": "dialog",
+          "This library": "23.8 KB",
+          "Base UI directly": "23.4 KB",
+          "Added": "347 bytes"
+        },
+        {
+          "Component": "tooltip",
+          "This library": "33.5 KB",
+          "Base UI directly": "33.3 KB",
+          "Added": "234 bytes"
+        }
+      ]
+    },
+    {
+      "id": "size-signature",
+      "title": "Signature components and imports",
+      "note": "Gzipped JavaScript, React excluded. Base UI is included where an import uses it.",
+      "columns": [
+        "Import",
+        "Size"
+      ],
+      "rows": [
+        {
+          "Import": "surface",
+          "Size": "4.1 KB"
+        },
+        {
+          "Import": "inspector",
+          "Size": "6.7 KB"
+        },
+        {
+          "Import": "modal inspector",
+          "Size": "29.8 KB"
+        },
+        {
+          "Import": "timeline",
+          "Size": "15.4 KB"
+        },
+        {
+          "Import": "actionbar",
+          "Size": "11.9 KB"
+        },
+        {
+          "Import": "barrel, Button only",
+          "Size": "3.2 KB"
+        },
+        {
+          "Import": "barrel, everything",
+          "Size": "88.3 KB"
+        },
+        {
+          "Import": "motion, layout prop",
+          "Size": "44.1 KB"
+        },
+        {
+          "Import": "motion, height animation",
+          "Size": "44.2 KB"
+        }
+      ]
+    },
+    {
+      "id": "size-shared",
+      "title": "Shared cost",
+      "note": "You pay this once, for React itself, whichever library you choose.",
+      "columns": [
+        "Package",
+        "Size"
+      ],
+      "rows": [
+        {
+          "Package": "react-19",
+          "Size": "67.5 KB"
+        },
+        {
+          "Package": "react-18",
+          "Size": "44.8 KB"
+        }
+      ]
+    },
+    {
+      "id": "size-css",
+      "title": "CSS per import",
+      "note": "Gzipped. Tokens are needed once, by everything.",
+      "columns": [
+        "Import",
+        "Size"
+      ],
+      "rows": [
+        {
+          "Import": "tokens",
+          "Size": "1.1 KB"
+        },
+        {
+          "Import": "surface",
+          "Size": "0.1 KB"
+        },
+        {
+          "Import": "inspector",
+          "Size": "1.4 KB"
+        },
+        {
+          "Import": "button",
+          "Size": "0.7 KB"
+        },
+        {
+          "Import": "input",
+          "Size": "0.4 KB"
+        },
+        {
+          "Import": "field",
+          "Size": "0.2 KB"
+        },
+        {
+          "Import": "select",
+          "Size": "0.8 KB"
+        },
+        {
+          "Import": "tabs",
+          "Size": "0.5 KB"
+        },
+        {
+          "Import": "popover",
+          "Size": "0.5 KB"
+        },
+        {
+          "Import": "dialog",
+          "Size": "0.5 KB"
+        },
+        {
+          "Import": "tooltip",
+          "Size": "0.5 KB"
+        },
+        {
+          "Import": "timeline",
+          "Size": "0.8 KB"
+        },
+        {
+          "Import": "actionbar",
+          "Size": "0.7 KB"
+        },
+        {
+          "Import": "recipes",
+          "Size": "0.5 KB"
+        },
+        {
+          "Import": "styles.css (all)",
+          "Size": "4.6 KB"
+        }
+      ]
+    },
+    {
+      "id": "correctness",
+      "title": "Comparison 2: the interruption suite",
+      "note": "Each scenario ran 5 times per implementation in Chromium. Cells show runs with a violation. The measured Motion baseline is clean on all eight, so this suite does not separate the library from careful Motion code.",
+      "columns": [
+        "Scenario",
+        "Motion, height auto",
+        "Motion, layout",
+        "Motion, measured",
+        "CSS grid track",
+        "Qendrim Surface"
+      ],
+      "rows": [
+        {
+          "Scenario": "a deferred close cannot close a reopened surface",
+          "Motion, height auto": "0 of 5",
+          "Motion, layout": "0 of 5",
+          "Motion, measured": "0 of 5",
+          "CSS grid track": "0 of 5",
+          "Qendrim Surface": "0 of 5"
+        },
+        {
+          "Scenario": "closing during a move with focus inside keeps focus valid",
+          "Motion, height auto": "0 of 5",
+          "Motion, layout": "0 of 5",
+          "Motion, measured": "0 of 5",
+          "CSS grid track": "0 of 5",
+          "Qendrim Surface": "0 of 5"
+        },
+        {
+          "Scenario": "content grows at rest",
+          "Motion, height auto": "5 of 5: geometry-jump",
+          "Motion, layout": "5 of 5: text-stretch",
+          "Motion, measured": "0 of 5",
+          "CSS grid track": "5 of 5: geometry-jump",
+          "Qendrim Surface": "0 of 5"
+        },
+        {
+          "Scenario": "content grows during a move",
+          "Motion, height auto": "5 of 5: geometry-jump",
+          "Motion, layout": "5 of 5: text-stretch",
+          "Motion, measured": "0 of 5",
+          "CSS grid track": "3 of 5: geometry-jump",
+          "Qendrim Surface": "0 of 5"
+        },
+        {
+          "Scenario": "many fast reversals end on the last request",
+          "Motion, height auto": "0 of 5",
+          "Motion, layout": "0 of 5",
+          "Motion, measured": "0 of 5",
+          "CSS grid track": "0 of 5",
+          "Qendrim Surface": "0 of 5"
+        },
+        {
+          "Scenario": "removal during a move with focus inside",
+          "Motion, height auto": "0 of 5",
+          "Motion, layout": "0 of 5",
+          "Motion, measured": "0 of 5",
+          "CSS grid track": "0 of 5",
+          "Qendrim Surface": "0 of 5"
+        },
+        {
+          "Scenario": "reverse twice, then type",
+          "Motion, height auto": "0 of 5",
+          "Motion, layout": "0 of 5",
+          "Motion, measured": "0 of 5",
+          "CSS grid track": "0 of 5",
+          "Qendrim Surface": "0 of 5"
+        },
+        {
+          "Scenario": "viewport changes during a move, then typing continues",
+          "Motion, height auto": "0 of 5",
+          "Motion, layout": "0 of 5",
+          "Motion, measured": "0 of 5",
+          "CSS grid track": "0 of 5",
+          "Qendrim Surface": "0 of 5"
+        }
+      ]
+    },
+    {
+      "id": "timing",
+      "title": "Comparison 2: timing and layout work",
+      "note": "Median of 6 runs, with the lowest and highest run. Lab numbers from one machine.",
+      "columns": [
+        "Measure",
+        "Qendrim Surface",
+        "Motion, height auto",
+        "Motion, measured",
+        "Motion, layout",
+        "CSS grid track"
+      ],
+      "rows": [
+        {
+          "Measure": "Click to first change, from rest (ms)",
+          "Qendrim Surface": "11.5 (10.2 to 12.8)",
+          "Motion, height auto": "12.5 (11.0 to 13.9)",
+          "Motion, measured": "11.0 (8.5 to 14.6)",
+          "Motion, layout": "13.3 (9.9 to 14.4)",
+          "CSS grid track": "28.0 (26.9 to 28.5)"
+        },
+        {
+          "Measure": "Click to changed direction, mid-move (ms)",
+          "Qendrim Surface": "27.8 (27.2 to 33.2)",
+          "Motion, height auto": "30.9 (26.6 to 31.3)",
+          "Motion, measured": "30.2 (29.1 to 33.1)",
+          "Motion, layout": "12.0 (9.5 to 12.8)",
+          "CSS grid track": "25.8 (24.5 to 26.8)"
+        },
+        {
+          "Measure": "Key to first change, mid-move (ms)",
+          "Qendrim Surface": "11.0 (8.2 to 13.3)",
+          "Motion, height auto": "12.1 (8.0 to 14.3)",
+          "Motion, measured": "9.3 (4.9 to 12.8)",
+          "Motion, layout": "10.1 (7.8 to 12.0)",
+          "CSS grid track": "7.6 (5.6 to 9.0)"
+        },
+        {
+          "Measure": "Layouts in the reversal workload",
+          "Qendrim Surface": "163 (163 to 163)",
+          "Motion, height auto": "124 (123 to 133)",
+          "Motion, measured": "117 (117 to 118)",
+          "Motion, layout": "37 (37 to 37)",
+          "CSS grid track": "80 (80 to 87)"
+        },
+        {
+          "Measure": "Layout time (ms)",
+          "Qendrim Surface": "4.4 (3.4 to 4.9)",
+          "Motion, height auto": "4.7 (3.3 to 6.2)",
+          "Motion, measured": "4.2 (3.6 to 5.0)",
+          "Motion, layout": "1.2 (1.0 to 1.3)",
+          "CSS grid track": "4.2 (3.9 to 6.3)"
+        },
+        {
+          "Measure": "Style time (ms)",
+          "Qendrim Surface": "5.3 (4.6 to 6.1)",
+          "Motion, height auto": "5.2 (3.9 to 6.8)",
+          "Motion, measured": "4.8 (4.2 to 5.5)",
+          "Motion, layout": "19.9 (16.4 to 21.8)",
+          "CSS grid track": "4.4 (3.9 to 6.5)"
+        },
+        {
+          "Measure": "Script time (ms)",
+          "Qendrim Surface": "12.0 (10.1 to 13.9)",
+          "Motion, height auto": "12.9 (10.1 to 16.6)",
+          "Motion, measured": "11.7 (10.4 to 13.0)",
+          "Motion, layout": "22.7 (18.6 to 23.9)",
+          "CSS grid track": "7.4 (6.9 to 11.7)"
+        },
+        {
+          "Measure": "Main thread task time (ms)",
+          "Qendrim Surface": "55.4 (46.4 to 64.0)",
+          "Motion, height auto": "60.7 (45.1 to 80.9)",
+          "Motion, measured": "56.3 (49.1 to 65.2)",
+          "Motion, layout": "81.8 (67.9 to 88.7)",
+          "CSS grid track": "45.3 (41.2 to 71.4)"
+        },
+        {
+          "Measure": "Frame callback interval, p95 (ms)",
+          "Qendrim Surface": "16.7 (16.7 to 16.8)",
+          "Motion, height auto": "16.7 (16.7 to 16.8)",
+          "Motion, measured": "16.7 (16.7 to 16.8)",
+          "Motion, layout": "16.7 (16.7 to 16.8)",
+          "CSS grid track": "16.7 (16.7 to 16.8)"
+        }
+      ]
+    },
+    {
+      "id": "foundation-timing",
+      "title": "Comparison 1: timing",
+      "note": "Click to popup on screen, in milliseconds, and task time for 20 open and close cycles.",
+      "columns": [
+        "Case",
+        "Latency, library",
+        "Latency, Base UI",
+        "Task ms, library",
+        "Task ms, Base UI"
+      ],
+      "rows": [
+        {
+          "Case": "dialog",
+          "Latency, library": "10.4 (9.0 to 11.3)",
+          "Latency, Base UI": "9.8 (8.4 to 10.8)",
+          "Task ms, library": "127.6 (123.8 to 137.2)",
+          "Task ms, Base UI": "124.7 (120.1 to 160.8)"
+        },
+        {
+          "Case": "popover",
+          "Latency, library": "12.1 (11.1 to 13.1)",
+          "Latency, Base UI": "10.5 (7.3 to 11.6)",
+          "Task ms, library": "164.0 (151.4 to 177.8)",
+          "Task ms, Base UI": "161.4 (125.6 to 195.9)"
+        },
+        {
+          "Case": "select",
+          "Latency, library": "10.6 (8.7 to 11.1)",
+          "Latency, Base UI": "10.2 (9.7 to 12.6)",
+          "Task ms, library": "205.6 (171.3 to 214.9)",
+          "Task ms, Base UI": "186.5 (161.8 to 222.4)"
+        }
+      ]
+    },
+    {
+      "id": "leaks",
+      "title": "Leak symptoms",
+      "note": "500 mount and unmount cycles, 5 runs. Growth after a forced collection. This shows these resources returned. It does not prove there is no leak.",
+      "columns": [
+        "Measure",
+        "surface",
+        "motion-height",
+        "broken-leak"
+      ],
+      "rows": [
+        {
+          "Measure": "DOM node growth",
+          "surface": "0 (0 to 0)",
+          "motion-height": "0 (0 to 0)",
+          "broken-leak": "0 (0 to 0)"
+        },
+        {
+          "Measure": "Event listener growth",
+          "surface": "0 (0 to 0)",
+          "motion-height": "0 (0 to 0)",
+          "broken-leak": "500 (500 to 500)"
+        },
+        {
+          "Measure": "Heap growth, bytes",
+          "surface": "516716 (515452 to 517696)",
+          "motion-height": "537940 (535436 to 538224)",
+          "broken-leak": "382264 (377872 to 388108)"
+        },
+        {
+          "Measure": "Observers after removal",
+          "surface": "0 (0 to 0)",
+          "motion-height": "0 (0 to 0)",
+          "broken-leak": "551 (551 to 551)"
+        },
+        {
+          "Measure": "Intervals after removal",
+          "surface": "0 (0 to 0)",
+          "motion-height": "0 (0 to 0)",
+          "broken-leak": "551 (551 to 551)"
+        },
+        {
+          "Measure": "Frame calls while removed",
+          "surface": "0 (0 to 0)",
+          "motion-height": "0 (0 to 0)",
+          "broken-leak": "12122 (11571 to 12673)"
+        }
+      ]
+    },
+    {
+      "id": "consumers",
+      "title": "Comparison 3: clean consumers",
+      "note": "The tarball (34.5 KB) installed by npm into apps outside the workspace. Each row passed type checks, a production build and a browser run of reversal, typing and styling.",
+      "columns": [
+        "App",
+        "React",
+        "Bundler",
+        "Result"
+      ],
+      "rows": [
+        {
+          "App": "vite-react-18",
+          "React": "18.3.1",
+          "Bundler": "vite 8.3.6",
+          "Result": "passed"
+        },
+        {
+          "App": "vite-react-19.0",
+          "React": "19.0.0",
+          "Bundler": "vite 8.3.6",
+          "Result": "passed"
+        },
+        {
+          "App": "vite-react-19",
+          "React": "19.3.1",
+          "Bundler": "vite 8.3.6",
+          "Result": "passed"
+        },
+        {
+          "App": "next-react-18",
+          "React": "18.3.1",
+          "Bundler": "next 16.1.6",
+          "Result": "passed"
+        },
+        {
+          "App": "next-react-19",
+          "React": "19.3.1",
+          "Bundler": "next 16.4.5",
+          "Result": "passed"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "All timing is from one Mac in a headless browser. Other work ran on that machine during the runs.",
+    "Input latency here is a lab measure. It is not field INP.",
+    "Frame callback intervals do not prove what the display showed.",
+    "Automated accessibility checks passed, and that does not establish full accessibility. No screen reader session was run.",
+    "No real iOS or Android device was tested. WebKit on macOS stands in for Safari.",
+    "Nobody outside this project has used the library."
+  ]
+}

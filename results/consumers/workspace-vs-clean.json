@@ -1,0 +1,15 @@
+{
+  "method": "consumers/vite/src/main.tsx, built by Vite with React 19.3.1. Clean uses the tarball. Workspace aliases the package to its source. Sizes exclude the Button-only entry.",
+  "clean": {
+    "jsGzip": 145652,
+    "cssGzip": 3496,
+    "jsRaw": 452365
+  },
+  "workspace": {
+    "jsGzip": 144376,
+    "cssGzip": 3496,
+    "jsRaw": 452294
+  },
+  "differenceJsGzip": 1276,
+  "differenceCssGzip": 0
+}

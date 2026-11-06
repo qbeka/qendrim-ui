@@ -22,6 +22,15 @@ const NAMES = { surface: 'Qendrim Surface', 'motion-height': 'Motion, height aut
 
 const sections = [];
 
+const budgets = read(join(dir, 'budgets.json'));
+sections.push({
+  id: 'budgets',
+  title: 'Budgets, frozen before the final run',
+  note: `${budgets.rows.filter((r) => r.passed).length} of ${budgets.rows.length} met. The misses are real, and the limits were not changed. docs/REPORT.md explains them.`,
+  columns: ['Budget', 'Measured', 'Limit', 'Result'],
+  rows: budgets.rows.map((r) => ({ Budget: r.name, Measured: r.value, Limit: r.limit, Result: r.passed ? 'met' : 'missed' })),
+});
+
 sections.push({
   id: 'size-foundation',
   title: 'Comparison 1: foundation components against Base UI',
@@ -58,7 +67,7 @@ if (correctness) {
   sections.push({
     id: 'correctness',
     title: 'Comparison 2: the interruption suite',
-    note: `Each scenario ran ${correctness.runs} times per implementation in Chromium. Cells show runs with a violation. The baselines are ordinary code, and a clean row is a good result for them.`,
+    note: `Each scenario ran ${correctness.runs} times per implementation in Chromium. Cells show runs with a violation. The measured Motion baseline is clean on all eight, so this suite does not separate the library from careful Motion code.`,
     columns: ['Scenario', ...correctness.impls.map((i) => NAMES[i])],
     rows: correctness.scenarios.map((s) => ({ Scenario: s.name, ...Object.fromEntries(correctness.impls.map((i) => [NAMES[i], s.results[i].label])) })),
   });

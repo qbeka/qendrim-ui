@@ -159,6 +159,15 @@ test('under a mirrored ancestor, the move goes straight to the target', async ({
 
 test('with transition: all on the surface, the engine still animates and CSS is restored', async ({ page }) => {
   await open(page, 'all');
+  // Mid-move the engine owns the box, so a CSS transition must not be delaying its writes.
+  const during = await page.evaluate(async () => {
+    (document.querySelector('[data-testid="toggle"]') as HTMLElement).click();
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    return getComputedStyle(document.querySelector('[data-testid="surface"]') as HTMLElement).transitionDuration;
+  });
+  expect(during).toBe('0s');
+  await page.waitForTimeout(800);
   const list = await frames(page, 'toggle', 600);
   expectContinuous(list);
   expect(list.filter((f) => f.height > 70 && f.height < 230).length).toBeGreaterThan(3);

@@ -1,0 +1,107 @@
+{
+  "label": "final",
+  "rows": [
+    {
+      "name": "Surface import, gzip bytes",
+      "value": 4245,
+      "limit": 4096,
+      "passed": false
+    },
+    {
+      "name": "Inspector import, gzip bytes",
+      "value": 6838,
+      "limit": 6500,
+      "passed": false
+    },
+    {
+      "name": "ModalInspector import, gzip bytes",
+      "value": 30466,
+      "limit": 31000,
+      "passed": true
+    },
+    {
+      "name": "Timeline import, gzip bytes",
+      "value": 15818,
+      "limit": 17000,
+      "passed": true
+    },
+    {
+      "name": "ActionBar import, gzip bytes",
+      "value": 12194,
+      "limit": 12500,
+      "passed": true
+    },
+    {
+      "name": "Largest foundation cost over Base UI, gzip bytes",
+      "value": 418,
+      "limit": 512,
+      "passed": true
+    },
+    {
+      "name": "Barrel Button over subpath Button, gzip bytes",
+      "value": -33,
+      "limit": 64,
+      "passed": true
+    },
+    {
+      "name": "styles.css, gzip bytes",
+      "value": 4683,
+      "limit": 5120,
+      "passed": true
+    },
+    {
+      "name": "tokens.css, gzip bytes",
+      "value": 1102,
+      "limit": 1280,
+      "passed": true
+    },
+    {
+      "name": "Click to first change from rest, ms",
+      "value": 11.5,
+      "limit": 20,
+      "passed": true
+    },
+    {
+      "name": "Key to first change mid-move, ms",
+      "value": 11,
+      "limit": 16,
+      "passed": true
+    },
+    {
+      "name": "Layouts in the reversal workload",
+      "value": 163,
+      "limit": 150,
+      "passed": false
+    },
+    {
+      "name": "Task time in the reversal workload, ms",
+      "value": 55.4,
+      "limit": 75,
+      "passed": true
+    },
+    {
+      "name": "Frame intervals over 25 ms",
+      "value": 0,
+      "limit": 2,
+      "passed": true
+    },
+    {
+      "name": "Largest foundation latency over Base UI, ms",
+      "value": 1.6,
+      "limit": 3,
+      "passed": true
+    },
+    {
+      "name": "Largest foundation task time over Base UI, percent",
+      "value": 10.3,
+      "limit": 15,
+      "passed": true
+    },
+    {
+      "name": "Largest foundation layout count over Base UI",
+      "value": 0,
+      "limit": 0,
+      "passed": true
+    }
+  ]
+}
