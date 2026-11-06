@@ -3,7 +3,7 @@
 React components for interfaces that keep working when content, layout and intent change.
 
 ```bash
-npm install @qbeka/react
+npm install https://github.com/qbeka/qendrim-ui/releases/download/v0.1.0/qbeka-react-0.1.0.tgz
 ```
 
 ```tsx

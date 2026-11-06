@@ -4,13 +4,28 @@ React components for panels that keep working when you change your mind. Open on
 
 ![The project inspector open on a row, with its fields and save controls](media/cover.png)
 
-**Demo:** [watch a 20 second recording](media/demo.mp4), or run it locally with `pnpm dev`.
+**[Watch the 19 second replay](media/demo.mp4)**
+
+## Try it
+
+You need Node 22.12 or later and pnpm.
 
 ```bash
-npm install @qbeka/react
+git clone https://github.com/qbeka/qendrim-ui.git
+cd qendrim-ui
+pnpm install --frozen-lockfile
+pnpm dev
 ```
 
-The package is not on npm yet. To try it today, build the tarball with `pnpm --filter @qbeka/react build`, run `pnpm pack` in `packages/react`, and install that file.
+Open <http://localhost:5171> and try to break the panel on the home page. `/workbench` runs this library next to Motion, CSS and deliberately broken fixtures.
+
+## Install
+
+```bash
+npm install https://github.com/qbeka/qendrim-ui/releases/download/v0.1.0/qbeka-react-0.1.0.tgz
+```
+
+The package is not on npm yet, so this installs the 0.1.0 release file from GitHub. You need React 18.3 or 19.
 
 ```tsx
 import { Inspector } from '@qbeka/react/inspector';
@@ -29,19 +44,6 @@ export function ProjectRow() {
 ```
 
 An import downloads no fonts, loads no icon catalog, installs no reset and needs no provider.
-
-## What the measurements say
-
-| | |
-|---|---|
-| **Interruptions** | 0 violations in 8 scenarios, in Chromium, Firefox, WebKit and StrictMode. A Motion version with about 30 extra lines also scores 0, so this is what the library does, not something only it can do. |
-| **Cost** | `Surface` is 4.1 KB gzipped, with no other dependency. Motion's `layout` is 44.1 KB. `Inspector` is 6.7 KB. |
-| **Timing** | Level with Motion: 11.5 ms from click to first change, against 11.0 to 13.2 ms. It does more layouts: 163 against 117 to 124 in the same workload. |
-| **Foundation** | At most 418 bytes over Base UI directly, with no added layouts. |
-| **Packaging** | The tarball passes types, build and a browser run in 5 clean apps, on React 18.3.1, 19.0.0 and 19.3.1, with Vite 8 and Next 16. |
-| **Budgets** | 14 of 17 frozen budgets met. Surface size, Inspector size and layout count were missed, by fixes for real bugs. |
-
-Measured on 2026-11-06 on one Apple M5 Pro Mac in headless Chromium, with other work running. This is lab data. No real phones and no screen reader were tested, and nobody outside this project has used it. [What the numbers leave out](docs/REPORT.md#what-the-numbers-leave-out) has the details.
 
 ## What it is
 
@@ -75,37 +77,25 @@ Many libraries give you good dialogs. Shared layout animation exists too. This l
 
 Two recipes share one set of components: **Studio** for dense tools and **Editorial** for reading pages, each in light and dark. They change tokens only.
 
-## Run it
+## What the measurements say
 
-You need Node 22.12 or later and pnpm.
+| | |
+|---|---|
+| **Interruptions** | 0 violations in 8 scenarios, in Chromium, Firefox, WebKit and StrictMode. A Motion version with about 30 extra lines also scores 0, so this is what the library does, not something only it can do. |
+| **Cost** | `Surface` is 4.1 KB gzipped, with no other dependency. Motion's `layout` is 44.1 KB. `Inspector` is 6.7 KB. |
+| **Timing** | Level with Motion: 11.5 ms from click to first change, against 11.0 to 13.2 ms. It does more layouts: 163 against 117 to 124 in the same workload. |
+| **Foundation** | At most 418 bytes over Base UI directly, with no added layouts. |
+| **Packaging** | The tarball passes types, build and a browser run in 5 clean apps, on React 18.3.1, 19.0.0 and 19.3.1, with Vite 8 and Next 16. |
+| **Budgets** | 14 of 17 frozen budgets met. Surface size, Inspector size and layout count were missed, by fixes for real bugs. |
 
-```bash
-pnpm install --frozen-lockfile
-pnpm dev
-```
+Measured on 2026-11-06 on one Apple M5 Pro Mac in headless Chromium, with other work running. This is lab data. No real phones and no screen reader were tested, and nobody outside this project has used it. [What the numbers leave out](docs/REPORT.md#what-the-numbers-leave-out) has the details.
 
-Open <http://localhost:5171>. Start with the home page and try to break it. The workbench at `/workbench` runs this library next to Motion, CSS and deliberately broken fixtures.
+## Development
 
-## Check it
-
-```bash
-pnpm check
-```
-
-```bash
-pnpm test
-```
+The browser tests need these once:
 
 ```bash
 pnpm exec playwright install chromium firefox webkit
-```
-
-```bash
-pnpm build
-```
-
-```bash
-pnpm test:e2e
 ```
 
 | Command | What it does |

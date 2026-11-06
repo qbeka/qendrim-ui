@@ -14,10 +14,8 @@ export const GUIDES: Guide[] = [
     title: 'Install',
     body: () => (
       <>
-        <p>The package is built and tested as a tarball. It is not published to npm yet, so install that file.</p>
-        <Code>{'pnpm add ./qbeka-react-0.1.0.tgz'}</Code>
-        <p>Once it is published, this becomes:</p>
-        <Code>{'pnpm add @qbeka/react'}</Code>
+        <p>The package is not on npm yet, so this installs the 0.1.0 release file from GitHub.</p>
+        <Code>{'npm install https://github.com/qbeka/qendrim-ui/releases/download/v0.1.0/qbeka-react-0.1.0.tgz'}</Code>
         <p>React and React DOM are peer dependencies. Versions 18.3 and 19 are tested in clean Vite and Next.js apps.</p>
         <h2>Import styles</h2>
         <p>Import everything at once:</p>
