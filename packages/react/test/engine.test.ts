@@ -1,0 +1,299 @@
+import { beforeEach, describe, expect, it } from 'vitest';
+import { createEngine, type ChannelValues, type Clock, type Engine, type NaturalBox, type SurfacePort, type TraceEvent } from '../src/core/engine.js';
+
+/** A fake page: a natural box per shape, inline styles as plain data, and a manual clock. */
+function harness(options: { reduced?: boolean; hidden?: boolean; unsupported?: boolean } = {}) {
+  const shapes: Record<string, { y: number; height: number; width: number }> = {
+    closed: { y: 100, height: 52, width: 600 },
+    open: { y: 100, height: 400, width: 600 },
+    sheet: { y: 300, height: 300, width: 320 },
+  };
+  const page = {
+    shape: 'closed',
+    inline: null as Partial<ChannelValues> | null,
+    forcedReads: 0,
+    contentLock: null as number | null,
+    phase: 'settled',
+    extra: 0,
+    writes: 0,
+    reduced: options.reduced ?? false,
+    hidden: options.hidden ?? false,
+  };
+  let now = 0;
+  let queue: Array<() => void> = [];
+
+  const natural = (): NaturalBox => {
+    const s = shapes[page.shape] as { y: number; height: number; width: number };
+    return { x: 0, y: s.y, width: s.width, height: s.height + page.extra, radius: 8, contentWidth: s.width, contentHeight: s.height + page.extra, unsupportedTransform: options.unsupported ?? false };
+  };
+
+  const port: SurfacePort = {
+    readVisible() {
+      const n = natural();
+      const i = page.inline;
+      if (!i) return n;
+      return { x: n.x + (i.dx ?? 0), y: n.y + (i.dy ?? 0), width: i.width ?? n.width, height: i.height ?? n.height, radius: i.radius ?? n.radius };
+    },
+    readNatural() {
+      page.forcedReads += 1;
+      page.inline = null;
+      return natural();
+    },
+    lockContentWidth: (w) => {
+      page.contentLock = w;
+    },
+    write(values) {
+      page.writes += 1;
+      page.inline = { ...page.inline, ...values };
+    },
+    release() {
+      page.inline = null;
+      page.contentLock = null;
+    },
+    setPhase: (p) => {
+      page.phase = p;
+    },
+    readTiming: () => ({ responseMs: 320, zeta: 1 }),
+    prefersReducedMotion: () => page.reduced,
+    isDocumentHidden: () => page.hidden,
+  };
+
+  const clock: Clock = {
+    now: () => now,
+    frame(callback) {
+      queue.push(callback);
+      return queue.length;
+    },
+    cancel() {
+      queue = [];
+    },
+  };
+
+  const trace: TraceEvent[] = [];
+  const settled: string[] = [];
+  const engine = createEngine({
+    initial: 'closed',
+    port,
+    clock,
+    onSettle: (s) => settled.push(s),
+    onTrace: (e) => trace.push(e),
+  });
+
+  const step = (ms = 16) => {
+    now += ms;
+    const callbacks = queue;
+    queue = [];
+    for (const callback of callbacks) callback();
+  };
+  const run = (ms: number) => {
+    for (let t = 0; t < ms; t += 16) step();
+  };
+  /** A shape change, in the order React runs it. */
+  const request = (e: Engine, shape: string) => {
+    e.capture();
+    page.shape = shape;
+    e.commit(shape);
+  };
+  return { page, port, engine, step, run, request, trace, settled, pendingFrames: () => queue.length };
+}
+
+let h: ReturnType<typeof harness>;
+beforeEach(() => {
+  h = harness();
+});
+
+describe('engine', () => {
+  it('holds the visible box on the first frame of a move', () => {
+    h.request(h.engine, 'open');
+    expect(h.page.inline?.height).toBe(52);
+    expect(h.page.phase).toBe('moving');
+  });
+
+  it('settles on the latest request, releases inline styles and stops the loop', () => {
+    h.request(h.engine, 'open');
+    h.run(2000);
+    expect(h.settled).toEqual(['open']);
+    expect(h.page.inline).toBeNull();
+    expect(h.page.phase).toBe('settled');
+    expect(h.pendingFrames()).toBe(0);
+  });
+
+  it('a reversal continues from the visible height, with the running velocity', () => {
+    h.request(h.engine, 'open');
+    h.run(96);
+    const before = h.page.inline?.height as number;
+    expect(before).toBeGreaterThan(52);
+    h.request(h.engine, 'closed');
+    expect(h.page.inline?.height).toBeCloseTo(before, 6);
+    const retarget = h.trace.filter((e) => e.type === 'retarget').at(-1);
+    expect(retarget?.type === 'retarget' && retarget.velocity.height).toBeGreaterThan(0);
+  });
+
+  it('only the last of many reversals settles', () => {
+    for (const shape of ['open', 'closed', 'open', 'closed', 'open']) {
+      h.request(h.engine, shape);
+      h.run(48);
+    }
+    h.run(2000);
+    expect(h.settled).toEqual(['open']);
+    expect(h.engine.snapshot()).toMatchObject({ desired: 'open', rendered: 'open', phase: 'settled' });
+  });
+
+  it('a height change during a move retargets without a forced read', () => {
+    h.request(h.engine, 'open');
+    h.run(48);
+    const reads = h.page.forcedReads;
+    h.page.extra = 80;
+    h.engine.contentResized(600, 480);
+    expect(h.page.forcedReads).toBe(reads);
+    h.run(2000);
+    expect(h.settled).toEqual(['open']);
+  });
+
+  it('the content change caused by the shape change itself is not counted twice', () => {
+    h.request(h.engine, 'open');
+    const events = h.trace.length;
+    h.engine.contentResized(600, 400);
+    expect(h.trace.length).toBe(events);
+  });
+
+  it('a height change at rest locks the old height and springs to the new one', () => {
+    h.request(h.engine, 'open');
+    h.run(2000);
+    h.page.extra = 60;
+    h.engine.contentResized(600, 460);
+    expect(h.page.inline).toEqual({ height: 400 });
+    h.run(2000);
+    expect(h.page.inline).toBeNull();
+    expect(h.settled).toEqual(['open']);
+  });
+
+  it('a width change at rest does not animate', () => {
+    h.request(h.engine, 'open');
+    h.run(2000);
+    h.engine.contentResized(500, 400);
+    expect(h.page.inline).toBeNull();
+  });
+
+  it('a viewport change during a move is measured at most once per frame', () => {
+    h.request(h.engine, 'open');
+    h.step();
+    const reads = h.page.forcedReads;
+    for (let i = 0; i < 5; i += 1) h.engine.viewportChanged();
+    h.step();
+    expect(h.page.forcedReads).toBe(reads + 1);
+  });
+
+  it('a viewport change at rest does nothing', () => {
+    const reads = h.page.forcedReads;
+    h.engine.viewportChanged();
+    h.run(100);
+    expect(h.page.forcedReads).toBe(reads);
+  });
+
+  it('corrects when the natural box moved at the end, and the correction is bounded', () => {
+    h.request(h.engine, 'open');
+    h.run(40);
+    // A target change no observer reported: a container resized, then keeps changing.
+    h.page.extra = 30;
+    h.run(2000);
+    expect(h.trace.some((e) => e.type === 'retarget' && e.reason === 'correction')).toBe(true);
+    expect(h.settled).toEqual(['open']);
+  });
+
+  it('unmount stops the loop and a late intent is dropped', () => {
+    h.request(h.engine, 'open');
+    const token = h.engine.token();
+    h.run(32);
+    h.engine.destroy();
+    let ran = false;
+    expect(h.engine.ifCurrent(token, () => (ran = true))).toBe(false);
+    expect(ran).toBe(false);
+    expect(h.pendingFrames()).toBe(0);
+    expect(h.page.inline).toBeNull();
+    const events = h.trace.length;
+    h.engine.commit('closed');
+    h.engine.contentResized(1, 1);
+    h.run(100);
+    expect(h.trace.length).toBe(events);
+  });
+
+  it('a stale deferred action does not run', () => {
+    h.request(h.engine, 'open');
+    h.run(2000);
+    const token = h.engine.token();
+    h.request(h.engine, 'closed');
+    let closed = false;
+    expect(h.engine.ifCurrent(token, () => (closed = true))).toBe(false);
+    expect(closed).toBe(false);
+    expect(h.trace.some((e) => e.type === 'stale-intent')).toBe(true);
+  });
+
+  it('invalidate cancels a deferred action and the move still finishes', () => {
+    h.request(h.engine, 'open');
+    const token = h.engine.token();
+    h.engine.invalidate();
+    expect(h.engine.isCurrent(token)).toBe(false);
+    h.run(2000);
+    expect(h.settled).toEqual(['open']);
+  });
+
+  it('a retarget preserves the channel over a random schedule', () => {
+    let seed = 7;
+    const random = () => {
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      return seed / 2 ** 32;
+    };
+    for (let run = 0; run < 50; run += 1) {
+      const local = harness();
+      let shape = 'closed';
+      for (let i = 0; i < 12; i += 1) {
+        shape = shape === 'closed' ? 'open' : 'closed';
+        const before = local.port.readVisible().height;
+        local.request(local.engine, shape);
+        const after = local.page.inline ? (local.page.inline.height as number) : local.port.readVisible().height;
+        expect(after).toBeCloseTo(before, 6);
+        local.run(16 * (1 + Math.floor(random() * 6)));
+      }
+      local.run(3000);
+      expect(local.engine.snapshot().rendered).toBe(shape);
+      expect(local.settled.at(-1)).toBe(shape);
+    }
+  });
+});
+
+describe('engine, moves that skip animation', () => {
+  it('reduced motion reaches the shape in the same task', () => {
+    const r = harness({ reduced: true });
+    r.request(r.engine, 'open');
+    expect(r.settled).toEqual(['open']);
+    expect(r.page.inline).toBeNull();
+    expect(r.trace.some((e) => e.type === 'snap' && e.reason === 'reduced-motion')).toBe(true);
+  });
+
+  it('reduced motion ignores content changes at rest', () => {
+    const r = harness({ reduced: true });
+    r.request(r.engine, 'open');
+    r.engine.contentResized(600, 460);
+    expect(r.page.inline).toBeNull();
+  });
+
+  it('a rotated ancestor goes straight to the target', () => {
+    const r = harness({ unsupported: true });
+    r.request(r.engine, 'open');
+    expect(r.settled).toEqual(['open']);
+  });
+
+  it('a hidden document goes straight to the target', () => {
+    const r = harness({ hidden: true });
+    r.request(r.engine, 'open');
+    expect(r.settled).toEqual(['open']);
+  });
+
+  it('a shape with the same geometry settles at once', () => {
+    const r = harness();
+    r.engine.capture();
+    r.engine.commit('closed-alias');
+    expect(r.settled).toEqual(['closed-alias']);
+  });
+});
