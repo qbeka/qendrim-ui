@@ -3,7 +3,9 @@
   "private": true,
   "type": "module",
   "packageManager": "pnpm@12.10.1",
-  "engines": { "node": ">=22.12.0" },
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "dev": "pnpm --filter @qbeka/react build && pnpm --filter docs dev",
     "build": "pnpm --filter @qbeka/react build && pnpm --filter docs build",
@@ -11,7 +13,8 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "bench:smoke": "node bench/run.mjs --smoke",
-    "bench": "node bench/run.mjs"
+    "bench": "node bench/run.mjs",
+    "check:consumers": "node consumers/check.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",
@@ -19,6 +22,8 @@
     "@types/node": "22.15.3",
     "oxlint": "1.91.0",
     "typescript": "7.0.2",
-    "vitest": "5.1.0"
+    "vitest": "5.1.0",
+    "publint": "0.3.25",
+    "esbuild": "0.28.2"
   }
 }

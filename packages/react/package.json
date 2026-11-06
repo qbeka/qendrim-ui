@@ -80,8 +80,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "peerDependencies": {
-    "react": "^18.2.0 || ^19.0.0",
-    "react-dom": "^18.2.0 || ^19.0.0"
+    "react": "^18.3.0 || ^19.0.0",
+    "react-dom": "^18.3.0 || ^19.0.0"
   },
   "dependencies": {
     "@base-ui/react": "1.9.0"
@@ -91,5 +91,17 @@
     "@types/react-dom": "19.2.3",
     "react": "19.3.1",
     "react-dom": "19.3.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qbeka/qendrim-ui.git",
+    "directory": "packages/react"
+  },
+  "keywords": [
+    "react",
+    "components",
+    "base-ui",
+    "accessibility",
+    "animation"
+  ]
 }
