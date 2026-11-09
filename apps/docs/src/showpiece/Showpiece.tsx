@@ -19,15 +19,6 @@ const keepFocus = (event: MouseEvent) => event.preventDefault();
 const isTextField = (target: EventTarget | null): target is HTMLInputElement | HTMLTextAreaElement =>
   target instanceof HTMLTextAreaElement || (target instanceof HTMLInputElement && target.type === 'text');
 
-function Swap({ on, a, b }: { on: boolean; a: string; b: string }) {
-  return (
-    <span className="sp-swap">
-      <span data-on={!on || undefined}>{a}</span>
-      <span data-on={on || undefined}>{b}</span>
-    </span>
-  );
-}
-
 interface BenchProps {
   spring: SpringSetting;
   rate: number;
@@ -215,6 +206,7 @@ export function Showpiece({ linked = false }: ShowpieceProps) {
   const choose = (next: Layout) => {
     takeOver();
     setStress(false);
+    setTold((value) => (value.afterStress ? { ...value, afterStress: false } : value));
     go(next);
   };
 
@@ -409,10 +401,10 @@ export function Showpiece({ linked = false }: ShowpieceProps) {
           ))}
         </div>
         <span className="sp-divider" aria-hidden="true" />
-        <button type="button" className="sp-btn sp-stress" aria-pressed={stress} onMouseDown={keepFocus} onClick={toggleStress} data-testid="stress" aria-label={stress ? 'Stop interrupting' : `Interrupt ${perSecond} times a second`}>
+        <button type="button" className="sp-btn sp-stress" aria-pressed={stress} onMouseDown={keepFocus} onClick={toggleStress} data-testid="stress">
           <span className="sp-pulse" aria-hidden="true" />
-          <Swap on={stress} a="Interrupt" b="Stop" />
-          <span className="sp-per" aria-hidden="true">{perSecond}/s</span>
+          Interrupt
+          <span className="sp-per"><span aria-hidden="true">{perSecond}/s</span><span className="sp-sr"> {perSecond} times a second</span></span>
         </button>
         <dl className="sp-readout sp-counts" aria-label="Requests so far">
           <div><dt>Requests</dt><dd ref={requestsOut} data-testid="requests">0</dd></div>
