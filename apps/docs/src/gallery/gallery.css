@@ -26,6 +26,8 @@
 .g-specimen { display: grid; align-items: center; min-width: 0; min-height: 292px; }
 .g-piece { position: relative; display: flex; flex-direction: column; min-width: 0; }
 .g-muted { color: var(--q-color-muted); }
+.g-solo { padding: 28px; }
+.g-solo .g-specimen { width: min(100%, 480px); min-height: 0; margin-inline: auto; }
 @container sheet (min-width: 800px) {
   .g-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .g-entry { padding: 28px; }

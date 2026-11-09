@@ -254,6 +254,19 @@ const ENTRIES = [
   { slug: 'actionbar', name: 'ActionBar', text: 'Actions that appear with a selection and take no layout space, so the list never moves', specimen: <ActionBarSpecimen />, code: USAGE.actionbar },
 ];
 
+/** One specimen on its own, for the top of a component's page in the docs. */
+export function Specimen({ slug }: { slug: string }) {
+  const entry = ENTRIES.find((item) => item.slug === slug);
+  if (!entry) return null;
+  return (
+    <div className="g-sheet g-solo" data-testid={`specimen-${entry.slug}`}>
+      <div className="g-specimen">{entry.specimen}</div>
+    </div>
+  );
+}
+
+export const hasSpecimen = (slug: string) => ENTRIES.some((item) => item.slug === slug);
+
 /** Four working specimens on one sheet, each above the code that makes it. */
 export function Gallery({ docsLink }: { docsLink: (slug: string, name: string) => ReactNode }) {
   return (
