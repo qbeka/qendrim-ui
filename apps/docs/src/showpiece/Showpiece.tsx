@@ -11,6 +11,7 @@ const IDLE_FIRST_MS = 1700;
 const IDLE_EVERY_MS = 2900;
 const REDUCED_RATE = 2;
 const NOT_INPUT_KEYS = new Set(['Tab', 'Shift', 'Alt', 'Control', 'Meta']);
+const SLIDER_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'PageUp', 'PageDown']);
 const CHECKS = ['Isolate the old sensor', 'Fit the new float', 'Check it against the pier mark'];
 
 /** Keeps focus where it is when a control is pressed, so a person can keep typing. */
@@ -78,14 +79,14 @@ const Bench = memo(function Bench({ spring, rate, reduced, onSpring, onRate, lin
         <output data-testid="response-out">{spring.response} ms</output>
         <input type="range" min={RESPONSE.min} max={RESPONSE.max} step={RESPONSE.step} value={spring.response} style={fill(spring.response, RESPONSE)} data-testid="response"
           onChange={(event) => onSpring({ ...spring, response: Number(event.target.value) }, false)}
-          onPointerUp={() => onSpring(spring, true)} onKeyUp={() => onSpring(spring, true)} />
+          onPointerUp={() => onSpring(spring, true)} onKeyUp={(event) => { if (SLIDER_KEYS.has(event.key)) onSpring(spring, true); }} />
       </label>
       <label className="show-slider">
         <span>Damping</span>
         <output data-testid="damping-out">{spring.damping.toFixed(2)}</output>
         <input type="range" min={DAMPING.min} max={DAMPING.max} step={DAMPING.step} value={spring.damping} style={fill(spring.damping, DAMPING)} data-testid="damping"
           onChange={(event) => onSpring({ ...spring, damping: Number(event.target.value) }, false)}
-          onPointerUp={() => onSpring(spring, true)} onKeyUp={() => onSpring(spring, true)} />
+          onPointerUp={() => onSpring(spring, true)} onKeyUp={(event) => { if (SLIDER_KEYS.has(event.key)) onSpring(spring, true); }} />
       </label>
 
       <div className="show-code">
