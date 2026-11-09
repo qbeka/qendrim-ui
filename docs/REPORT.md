@@ -5,7 +5,7 @@ Measured on 2026-11-06 at commit `fb8b32c`, on one Apple M5 Pro Mac on AC power,
 ## Summary
 
 - The library works: 12 components, 2 recipes, 2 working applications and a workbench, installed from a real tarball into 5 clean apps.
-- `Surface` costs 4.2 KB of JavaScript, gzipped, with no dependency on Base UI or Motion.
+- `Surface` costs 4.1 KB of JavaScript, gzipped (4,245 bytes), with no dependency on Base UI or Motion.
 - On timing, `Surface` is about level with Motion. It does more layouts.
 - A careful Motion implementation of about 30 extra lines passes the same 8 interruption scenarios. What this library adds is the packaged contract and a far smaller download, not a win that Motion cannot reach.
 - 14 of 17 frozen budgets were met. The 3 misses are reported below and the limits were not changed.
