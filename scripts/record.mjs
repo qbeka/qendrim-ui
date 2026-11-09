@@ -1,4 +1,4 @@
-// Records the demo and the walkthrough from the real site, with real input. A small cursor
+// Records the demo, the walkthrough, the cover and the poster from the real site, with real input. A small cursor
 // and captions are added to the page for the recording only. They are not in the product.
 // Usage: node scripts/record.mjs <out folder>
 import { execFileSync, spawn } from 'node:child_process';
@@ -173,6 +173,20 @@ await session('walkthrough', async (page, say, glide) => {
   await say('Every component has a live example you can edit, its API, its keyboard map and what comes from Base UI.', 6000);
   await say('', 0);
 });
+
+// The cover is a still of the project page just after a move, and the poster is the demo one second in, once the page has drawn.
+{
+  const context = await browser.newContext({ viewport: SIZE, deviceScaleFactor: 2, colorScheme: 'light' });
+  const page = await context.newPage();
+  await page.goto(`${BASE}/project/`);
+  await page.waitForTimeout(600);
+  await page.getByTestId('title').click();
+  await page.getByTestId('layout-editor').click();
+  await page.waitForTimeout(520);
+  await page.screenshot({ path: join(out, 'cover.png') });
+  await context.close();
+}
+execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-ss', '1', '-i', join(out, 'demo.mp4'), '-frames:v', '1', join(out, 'poster.png')]);
 
 await browser.close();
 process.kill(-server.pid);
