@@ -161,7 +161,8 @@
 }
 
 /* ActionBar: the receipts */
-.g-receipts { padding-block-end: 60px; }
+/* The bar hangs up from its anchor, so the anchor sits one bar and a gap below the list. */
+.g-receipts .q-actionbar-anchor { margin-block-start: calc(var(--q-control-height) + 26px); }
 .g-receipts ul { list-style: none; border: 1px solid var(--q-color-rule); border-radius: var(--q-radius-panel); background: var(--q-color-surface); overflow: clip; }
 .g-receipts li + li { border-block-start: 1px solid var(--q-color-rule); }
 .g-receipts li { transition: background-color .12s; }
