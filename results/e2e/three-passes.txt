@@ -1,4 +1,11 @@
+2026-11-09. Commit a005f5b. The project page and docs tests were rewritten, and the library source has not changed since fb8b32c.
+Each pass ran the same four projects as two commands, so that the built site and the development build could take turns on one port.
+pass 1:  100 skipped; 572 passed (3.1m) in Chromium, Firefox and WebKit; 25 passed (10.0s) in StrictMode; 597 passed.
+pass 2:  100 skipped; 572 passed (3.1m) in Chromium, Firefox and WebKit; 25 passed (10.2s) in StrictMode; 597 passed.
+pass 3:  100 skipped; 572 passed (3.4m) in Chromium, Firefox and WebKit; 25 passed (10.2s) in StrictMode; 597 passed.
+Per browser in each pass: 224 Chromium, 174 Firefox, 174 WebKit, 25 StrictMode. Later commits removed one unused method from the docs app and changed documentation.
+
+2026-11-06. Commit 5179667. Later commits changed one test and documentation.
 pass 1:  94 skipped; 507 passed (2.6m);
 pass 2:  94 skipped; 507 passed (2.7m);
 pass 3:  94 skipped; 507 passed (2.7m);
-Commit 5179667. Later commits changed one test and documentation.
