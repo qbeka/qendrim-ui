@@ -160,6 +160,7 @@ export function Showpiece({ linked = false }: ShowpieceProps) {
   const visible = useRef(true);
   const counts = useRef({ requests: 0, interruptions: 0 });
   const previous = useRef<Layout>(nextLayout(initial.layout));
+  const shownBefore = useRef<Layout>(initial.layout);
   const latest = useRef({ layout, mode, stress, spring, rate });
   latest.current = { layout, mode, stress, spring, rate };
 
@@ -190,15 +191,6 @@ export function Showpiece({ linked = false }: ShowpieceProps) {
     }
   }, []);
 
-  /** Any layout request goes through here, so the one before it is remembered. */
-  const go = useCallback((next: Layout | ((current: Layout) => Layout)) => {
-    setLayout((current) => {
-      const target = typeof next === 'function' ? next(current) : next;
-      if (target !== current) previous.current = current;
-      return target;
-    });
-  }, []);
-
   const takeOver = useCallback(() => {
     if (latest.current.mode === 'yours') return;
     setMode('yours');
@@ -209,16 +201,15 @@ export function Showpiece({ linked = false }: ShowpieceProps) {
     takeOver();
     setStress(false);
     setTold((value) => (value.afterStress ? { ...value, afterStress: false } : value));
-    go(next);
+    setLayout(next);
   };
 
   const toggleStress = () => {
     takeOver();
-    setStress((on) => {
-      setAnnouncement(on ? 'Interruptions stopped.' : 'Interrupting the panel.');
-      if (on) setTold({ interruptions: counts.current.interruptions, afterStress: true, stressed: true });
-      return !on;
-    });
+    const on = latest.current.stress;
+    setAnnouncement(on ? 'Interruptions stopped.' : 'Interrupting the panel.');
+    if (on) setTold({ interruptions: counts.current.interruptions, afterStress: true, stressed: true });
+    setStress(!on);
   };
 
   const onSpring = useCallback((next: SpringSetting, settled: boolean) => {
@@ -226,9 +217,9 @@ export function Showpiece({ linked = false }: ShowpieceProps) {
     setSpring(next);
     // Letting go of a setting plays one move with it, there and back on the next change.
     if (settled && !latest.current.stress) {
-      window.requestAnimationFrame(() => go(previous.current));
+      window.requestAnimationFrame(() => setLayout(previous.current));
     }
-  }, [go]);
+  }, []);
 
   const onRate = useCallback((next: number) => {
     setMode('yours');
@@ -253,20 +244,20 @@ export function Showpiece({ linked = false }: ShowpieceProps) {
     if (mode !== 'idle' || reduced) return undefined;
     let timer = 0;
     const step = () => {
-      if (visible.current && document.visibilityState === 'visible') go((current) => nextLayout(current));
+      if (visible.current && document.visibilityState === 'visible') setLayout((current) => nextLayout(current));
       timer = window.setTimeout(step, IDLE_EVERY_MS);
     };
     timer = window.setTimeout(step, IDLE_FIRST_MS);
     return () => clearTimeout(timer);
-  }, [mode, reduced, go]);
+  }, [mode, reduced]);
 
   // The stress control: a new request on a timer, each one landing on a panel still in flight.
   useEffect(() => {
     if (!stress) return undefined;
     const perSecond = reduced ? REDUCED_RATE : rate;
-    const timer = window.setInterval(() => go((current) => otherLayout(current, Math.random())), 1000 / perSecond);
+    const timer = window.setInterval(() => setLayout((current) => otherLayout(current, Math.random())), 1000 / perSecond);
     return () => clearInterval(timer);
-  }, [stress, rate, reduced, go]);
+  }, [stress, rate, reduced]);
 
   // Nothing runs while the stage is off screen or the tab is in the background.
   useEffect(() => {
@@ -313,8 +304,13 @@ export function Showpiece({ linked = false }: ShowpieceProps) {
     };
   }, []);
 
+  // The layout before this one is remembered, so that letting go of a spring setting can go back to it.
   // A field that is not part of the new layout cannot keep focus, so the title takes it.
   useLayoutEffect(() => {
+    if (shownBefore.current !== layout) {
+      previous.current = shownBefore.current;
+      shownBefore.current = layout;
+    }
     const active = document.activeElement;
     if (!(active instanceof HTMLElement) || !note.current?.contains(active)) return;
     const part = active.closest<HTMLElement>('[data-in]');
