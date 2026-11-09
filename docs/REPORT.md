@@ -280,8 +280,8 @@ node scripts/check-budgets.mjs baseline
 | Three full passes | `results/e2e/three-passes.txt` | `pnpm test:e2e`, three times |
 | Clean checkout | `results/clean-checkout.txt` | `scripts/verify-clean.sh` |
 | Evidence page data | `apps/docs/public/evidence.json` | `node scripts/evidence.mjs final` |
-| Cover | `media/cover.png` | A screenshot of the real site |
-| Demo, 19 seconds, with no captions | `media/demo.mp4` | `node scripts/record.mjs media` |
+| Cover and poster | `media/cover.png`, `media/poster.png` | `node scripts/record.mjs media`, from the real site |
+| Demo, 16 seconds, with no captions | `media/demo.mp4` | Same |
 | Walkthrough, 64 seconds, with captions and no voice | `media/walkthrough.mp4` | Same |
 
 The recordings add a dot for the pointer and captions for the viewer. These are in `scripts/record.mjs`, and they are not in the product.
