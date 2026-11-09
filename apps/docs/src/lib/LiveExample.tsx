@@ -67,7 +67,8 @@ export function LiveExample({ code }: { code: string }) {
         <Boundary resetKey={deferred}>{Rendered ? <Rendered.Example /> : null}</Boundary>
       </div>
       {error ? <p className="d-error" role="alert">{error}</p> : null}
-      <div className="d-code">
+      <div className="d-code d-live-code" data-labelled="">
+        <p className="d-code-label">Edit this code and the example above follows</p>
         <textarea aria-label="Example source. Edit it to change the example above." spellCheck={false} value={source} rows={Math.min(source.split('\n').length + 1, 22)} onChange={(e) => setSource(e.target.value)} />
         <CopyButton text={source} />
       </div>
