@@ -30,7 +30,7 @@ const RESULTS = [
   ['Input response', '11.5 ms from click to first change', 'This is the median of 6 runs from rest. Motion is 11.0 to 13.2 ms and the ranges overlap, so the two are level and this is no faster.'],
   ['Layout work', '163 layouts in the reversal workload', 'That is more than any baseline, since height based Motion does 117 to 124 and Motion layout does 37.'],
   ['Budgets', '14 of 17 met', 'The budgets were frozen before the final run. Surface size, Inspector size and layout count were missed, because of fixes for real bugs. The limits were left where they were.'],
-  ['Browser tests', '507 passed, three full runs in a row', 'That is 192 in Chromium, 145 in Firefox, 145 in WebKit and 25 in StrictMode.'],
+  ['Browser tests', '597 passed, three full runs in a row', 'That is 224 in Chromium, 174 in Firefox, 174 in WebKit and 25 in StrictMode.'],
   ['Mutation check', '53 of 55 deliberate defects caught', 'I judged the other 2 equivalent, from reading the code.'],
   ['Clean installs', '5 of 5 apps passed', 'The packed release passed on React 18.3.1, 19.0.0 and 19.3.1, with Vite 8 and Next 16.'],
 ];
