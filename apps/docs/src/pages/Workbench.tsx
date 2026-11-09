@@ -142,7 +142,7 @@ export function Workbench() {
   return (
     <div className="d-wide" style={{ '--q-surface-response': 320 * slow } as React.CSSProperties}>
       <h1>Workbench</h1>
-      <p className="d-lede">Both sides get the same requests at the same moment. The detectors on this page are the ones the browser tests use. Baselines use their own timing, so the slow-down control only changes this library.</p>
+      <p className="d-lede">Both sides get the same requests at the same moment, and the detectors on this page are the ones the browser tests use. Baselines use their own timing, so the speed control only changes this library.</p>
 
       <div className="w-controls" role="group" aria-label="Workbench controls">
         <button type="button" className="q-button" data-variant="primary" data-testid="w-toggle" onClick={() => both((s) => s.toggle())}>Reverse now</button>

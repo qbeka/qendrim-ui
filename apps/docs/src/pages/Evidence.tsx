@@ -31,7 +31,7 @@ export function Evidence() {
   return (
     <div className="d-wide">
       <h1>Evidence</h1>
-      <p className="d-lede">Measurements from recorded runs. The raw samples and a manifest for each run are in the repository, under results.</p>
+      <p className="d-lede">These are measurements from recorded runs. The raw samples and a manifest for each run are in the repository, under results.</p>
       {missing ? <p>No results have been published with this build. Run <code>pnpm bench</code> to produce them.</p> : null}
       {summary ? (
         <>
@@ -43,7 +43,7 @@ export function Evidence() {
               <div className="d-table">
                 <table>
                   <thead><tr>{section.columns.map((c) => <th key={c}>{c}</th>)}</tr></thead>
-                  <tbody>{section.rows.map((row, i) => <tr key={i}>{section.columns.map((c) => <td key={c}>{row[c] ?? 'n/a'}</td>)}</tr>)}</tbody>
+                  <tbody>{section.rows.map((row, i) => <tr key={i}>{section.columns.map((c) => <td key={c} data-result={c === 'Result' ? String(row[c]) : undefined}>{row[c] ?? 'n/a'}</td>)}</tr>)}</tbody>
                 </table>
               </div>
             </section>
