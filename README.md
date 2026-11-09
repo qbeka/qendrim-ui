@@ -2,9 +2,9 @@
 
 React components for panels that keep working when you change your mind. Open one, type in it, reverse it mid-move, resize the window and keep typing. Your text, your caret and your focus stay where they were.
 
-![The project inspector open on a row, with its fields and save controls](media/cover.png)
+![One work order shown as an editor on a plan of four layouts, with the spring controls beside it](media/cover.png)
 
-**[Try it live](https://www.qendrimbeka.com/projects/qendrim-ui/)** or [watch the 19 second recording](media/demo.mp4).
+**[Try it live](https://www.qendrimbeka.com/projects/qendrim-ui/)**, read [the docs](https://www.qendrimbeka.com/projects/qendrim-ui/docs/) or [watch the 16 second recording](media/demo.mp4).
 
 ## Try it
 
@@ -17,7 +17,7 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-Open <http://localhost:5171> and try to break the panel on the home page. `/project/` is the project page with the live demo and the component gallery, and `/workbench` runs this library next to Motion, CSS and deliberately broken fixtures.
+Open <http://localhost:5171> and try to break the panel on the home page: type in it, change its layout before it lands, then interrupt it 24 times a second. `/project/` is the project page with the same panel, the spring controls and the specimen sheet, and `/workbench` runs this library next to Motion, CSS and deliberately broken fixtures.
 
 ## Install
 
