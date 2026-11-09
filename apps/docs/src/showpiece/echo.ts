@@ -95,7 +95,5 @@ export function createEcho({ canvas, target, onFrame }: EchoParts) {
       frame = 0;
       stamps = [];
     },
-    /** How many outlines are on the canvas. The tests read it. */
-    count: () => stamps.length,
   };
 }
