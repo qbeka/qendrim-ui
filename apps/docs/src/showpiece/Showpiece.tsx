@@ -54,33 +54,33 @@ const Bench = memo(function Bench({ spring, rate, reduced, onSpring, onRate, lin
   const fill = (value: number, range: { min: number; max: number }) => ({ '--fill': `${((value - range.min) / (range.max - range.min)) * 100}%` }) as CSSProperties;
 
   return (
-    <aside className="sp-bench" aria-label="Spring settings">
-      <div className="sp-bench-head">
+    <aside className="show-bench" aria-label="Spring settings">
+      <div className="show-bench-head">
         <h2>Spring</h2>
-        <div className="sp-presets" role="group" aria-label="Spring presets">
+        <div className="show-presets" role="group" aria-label="Spring presets">
           {PRESETS.map((item) => (
-            <button key={item.id} type="button" className="sp-btn sp-small" aria-pressed={preset === item.id} onClick={() => onSpring(item.spring, true)} data-testid={`preset-${item.id}`}>{item.label}</button>
+            <button key={item.id} type="button" className="show-btn show-small" aria-pressed={preset === item.id} onClick={() => onSpring(item.spring, true)} data-testid={`preset-${item.id}`}>{item.label}</button>
           ))}
         </div>
       </div>
 
-      <figure className="sp-curve">
+      <figure className="show-curve">
         <svg viewBox={`0 -6 ${CURVE.width} ${CURVE.height + 12}`} preserveAspectRatio="none" role="img" aria-label={over > 0.005 ? `The spring passes its target by ${Math.round(over * 100)} percent, then settles` : 'The spring reaches its target with no overshoot'}>
-          <line className="sp-curve-target" x1="0" x2={CURVE.width} y1={targetY} y2={targetY} />
-          <line className="sp-curve-base" x1="0" x2={CURVE.width} y1={CURVE.height} y2={CURVE.height} />
-          <path className="sp-curve-line" d={curvePath(spring)} data-testid="curve" />
+          <line className="show-curve-target" x1="0" x2={CURVE.width} y1={targetY} y2={targetY} />
+          <line className="show-curve-base" x1="0" x2={CURVE.width} y1={CURVE.height} y2={CURVE.height} />
+          <path className="show-curve-line" d={curvePath(spring)} data-testid="curve" />
         </svg>
         <figcaption><span>0 s</span><span>Step response</span><span>{CURVE.seconds} s</span></figcaption>
       </figure>
 
-      <label className="sp-slider">
+      <label className="show-slider">
         <span>Response</span>
         <output data-testid="response-out">{spring.response} ms</output>
         <input type="range" min={RESPONSE.min} max={RESPONSE.max} step={RESPONSE.step} value={spring.response} style={fill(spring.response, RESPONSE)} data-testid="response"
           onChange={(event) => onSpring({ ...spring, response: Number(event.target.value) }, false)}
           onPointerUp={() => onSpring(spring, true)} onKeyUp={() => onSpring(spring, true)} />
       </label>
-      <label className="sp-slider">
+      <label className="show-slider">
         <span>Damping</span>
         <output data-testid="damping-out">{spring.damping.toFixed(2)}</output>
         <input type="range" min={DAMPING.min} max={DAMPING.max} step={DAMPING.step} value={spring.damping} style={fill(spring.damping, DAMPING)} data-testid="damping"
@@ -88,19 +88,19 @@ const Bench = memo(function Bench({ spring, rate, reduced, onSpring, onRate, lin
           onPointerUp={() => onSpring(spring, true)} onKeyUp={() => onSpring(spring, true)} />
       </label>
 
-      <div className="sp-code">
+      <div className="show-code">
         <pre tabIndex={0} aria-label="CSS for this spring" data-testid="spring-css"><code>{css}</code></pre>
-        <div className="sp-code-end">
-          <button type="button" className="sp-btn sp-small sp-outline" onClick={code.copy} data-testid="copy-css">
-            <span className="sp-swap">
+        <div className="show-code-end">
+          <button type="button" className="show-btn show-small show-outline" onClick={code.copy} data-testid="copy-css">
+            <span className="show-swap">
               <span data-on={code.state === 'idle' || undefined}>Copy CSS</span>
               <span data-on={code.state === 'copied' || undefined}>Copied</span>
               <span data-on={code.state === 'failed' || undefined}>Copy failed</span>
             </span>
           </button>
           {link ? (
-            <button type="button" className="sp-btn sp-small" onClick={copyLink} data-testid="copy-link">
-              <span className="sp-swap">
+            <button type="button" className="show-btn show-small" onClick={copyLink} data-testid="copy-link">
+              <span className="show-swap">
                 <span data-on={linkState === 'idle' || undefined}>Copy link</span>
                 <span data-on={linkState === 'copied' || undefined}>Copied</span>
                 <span data-on={linkState === 'failed' || undefined}>Copy failed</span>
@@ -110,7 +110,7 @@ const Bench = memo(function Bench({ spring, rate, reduced, onSpring, onRate, lin
         </div>
       </div>
 
-      <label className="sp-slider sp-rate">
+      <label className="show-slider show-rate">
         <span>Interruptions</span>
         <output data-testid="rate-out">{reduced ? `${REDUCED_RATE} a second, reduced motion` : `${rate} a second`}</output>
         <input type="range" min={RATE.min} max={RATE.max} step={RATE.step} value={rate} style={fill(rate, RATE)} aria-disabled={reduced || undefined} data-testid="rate"
@@ -297,7 +297,7 @@ export function Showpiece({ linked = false }: ShowpieceProps) {
     const sizes = () => {
       instance.resize();
       for (const slot of planNode.querySelectorAll<HTMLElement>('[data-slot]')) {
-        const out = slot.querySelector('.sp-slot-size');
+        const out = slot.querySelector('.show-slot-size');
         if (out) out.textContent = `${slot.offsetWidth} × ${slot.offsetHeight}`;
       }
     };
@@ -391,81 +391,81 @@ export function Showpiece({ linked = false }: ShowpieceProps) {
   const planStyle = { '--q-surface-response': spring.response, '--q-surface-damping': spring.damping } as CSSProperties;
 
   return (
-    <section className="sp" ref={stage} aria-label="One element in four layouts" data-testid="stage" data-mode={mode} data-stress={stress || undefined}
+    <section className="show" ref={stage} aria-label="One element in four layouts" data-testid="stage" data-mode={mode} data-stress={stress || undefined}
       onPointerDownCapture={onPointerDownCapture} onKeyDownCapture={onKeyDownCapture} onFocusCapture={onFocusCapture} onKeyDown={onKeyDown}>
-      <div className="sp-frame">
-      <div className="sp-bar">
-        <div className="sp-seg" role="group" aria-label="Layout">
+      <div className="show-frame">
+      <div className="show-bar">
+        <div className="show-seg" role="group" aria-label="Layout">
           {LAYOUTS.map((item, index) => (
-            <button key={item.id} type="button" className="sp-btn" aria-pressed={shown === item.id} aria-keyshortcuts={String(index + 1)} onMouseDown={keepFocus} onClick={() => choose(item.id)} data-testid={`layout-${item.id}`}>{item.label}</button>
+            <button key={item.id} type="button" className="show-btn" aria-pressed={shown === item.id} aria-keyshortcuts={String(index + 1)} onMouseDown={keepFocus} onClick={() => choose(item.id)} data-testid={`layout-${item.id}`}>{item.label}</button>
           ))}
         </div>
-        <span className="sp-divider" aria-hidden="true" />
-        <button type="button" className="sp-btn sp-stress" aria-pressed={stress} onMouseDown={keepFocus} onClick={toggleStress} data-testid="stress">
-          <span className="sp-pulse" aria-hidden="true" />
+        <span className="show-divider" aria-hidden="true" />
+        <button type="button" className="show-btn show-stress" aria-pressed={stress} onMouseDown={keepFocus} onClick={toggleStress} data-testid="stress">
+          <span className="show-pulse" aria-hidden="true" />
           Interrupt
-          <span className="sp-per"><span aria-hidden="true">{perSecond}/s</span><span className="sp-sr"> {perSecond} times a second</span></span>
+          <span className="show-per"><span aria-hidden="true">{perSecond}/s</span><span className="show-sr"> {perSecond} times a second</span></span>
         </button>
-        <dl className="sp-readout sp-counts" aria-label="Requests so far">
+        <dl className="show-readout show-counts" aria-label="Requests so far">
           <div><dt>Requests</dt><dd ref={requestsOut} data-testid="requests">0</dd></div>
           <div><dt>Mid-move</dt><dd ref={interruptedOut} data-testid="interruptions">0</dd></div>
         </dl>
       </div>
 
-      <div className="sp-plan" ref={plan} style={planStyle}>
-        <div className="sp-field">
+      <div className="show-plan" ref={plan} style={planStyle}>
+        <div className="show-field">
           {LAYOUTS.map((item) => (
-            <button key={item.id} type="button" tabIndex={-1} aria-hidden="true" className="sp-slot" data-slot={item.id} data-here={shown === item.id || undefined} onMouseDown={keepFocus} onClick={() => choose(item.id)}>
-              <span className="sp-slot-tag"><span className="sp-slot-name">{item.label}</span><span className="sp-slot-size" /></span>
+            <button key={item.id} type="button" tabIndex={-1} aria-hidden="true" className="show-slot" data-slot={item.id} data-here={shown === item.id || undefined} onMouseDown={keepFocus} onClick={() => choose(item.id)}>
+              <span className="show-slot-tag"><span className="show-slot-name">{item.label}</span><span className="show-slot-size" /></span>
             </button>
           ))}
-          <canvas className="sp-echo" ref={canvas} aria-hidden="true" data-testid="echo" />
+          <canvas className="show-echo" ref={canvas} aria-hidden="true" data-testid="echo" />
 
-          <Surface className="sp-note" shape={layout} ref={note} onTrace={onTrace} role="group" aria-label="Work order 118" data-testid="note">
-            <div className="sp-note-body">
-              <span className="sp-ring" aria-hidden="true" />
-              <input ref={titleField} className="sp-title" type="text" aria-label="Title" value={title} onChange={(event) => setTitle(event.target.value)} data-field="Title" data-testid="title" autoComplete="off" spellCheck={false} enterKeyHint="done" />
-              <textarea className="sp-text" aria-label="Notes" value={notes} onChange={(event) => setNotes(event.target.value)} data-field="Notes" data-testid="notes" spellCheck={false} rows={1} />
+          <Surface className="show-note" shape={layout} ref={note} onTrace={onTrace} role="group" aria-label="Work order 118" data-testid="note">
+            <div className="show-note-body">
+              <span className="show-ring" aria-hidden="true" />
+              <input ref={titleField} className="show-title" type="text" aria-label="Title" value={title} onChange={(event) => setTitle(event.target.value)} data-field="Title" data-testid="title" autoComplete="off" spellCheck={false} enterKeyHint="done" />
+              <textarea className="show-text" aria-label="Notes" value={notes} onChange={(event) => setNotes(event.target.value)} data-field="Notes" data-testid="notes" spellCheck={false} rows={1} />
 
-              <div className="sp-part sp-meta" data-in="row">
+              <div className="show-part show-meta" data-in="row">
                 <span>Fri 14 Nov</span>
-                <span className="sp-avatar" aria-label="Mira Okafor" role="img">MO</span>
+                <span className="show-avatar" aria-label="Mira Okafor" role="img">MO</span>
               </div>
 
-              <div className="sp-part sp-foot" data-in="card">
-                <span className="sp-avatar" aria-hidden="true">MO</span>
-                <span className="sp-foot-name">Mira Okafor</span>
-                <span className="sp-foot-due">Fri 14 Nov</span>
+              <div className="show-part show-foot" data-in="card">
+                <span className="show-avatar" aria-hidden="true">MO</span>
+                <span className="show-foot-name">Mira Okafor</span>
+                <span className="show-foot-due">Fri 14 Nov</span>
               </div>
 
-              <dl className="sp-part sp-side" data-in="editor">
-                <div><dt>Status</dt><dd><span className="sp-ring sp-ring-small" aria-hidden="true" />In progress</dd></div>
-                <div><dt>Lead</dt><dd><span className="sp-avatar sp-avatar-small" aria-hidden="true">MO</span>Mira Okafor</dd></div>
+              <dl className="show-part show-side" data-in="editor">
+                <div><dt>Status</dt><dd><span className="show-ring show-ring-small" aria-hidden="true" />In progress</dd></div>
+                <div><dt>Lead</dt><dd><span className="show-avatar show-avatar-small" aria-hidden="true">MO</span>Mira Okafor</dd></div>
                 <div><dt>Due</dt><dd>Fri 14 Nov</dd></div>
                 <div><dt>Site</dt><dd>North pier</dd></div>
               </dl>
-              <p className="sp-part sp-keys" data-in="editor"><kbd>Esc</kbd> makes it smaller and <kbd>{mac ? 'Cmd' : 'Ctrl'}</kbd> <kbd>Enter</kbd> makes it larger</p>
+              <p className="show-part show-keys" data-in="editor"><kbd>Esc</kbd> makes it smaller and <kbd>{mac ? 'Cmd' : 'Ctrl'}</kbd> <kbd>Enter</kbd> makes it larger</p>
 
-              <dl className="sp-part sp-props" data-in="sheet">
+              <dl className="show-part show-props" data-in="sheet">
                 <div><dt>Status</dt><dd>In progress</dd></div>
                 <div><dt>Lead</dt><dd>Mira Okafor</dd></div>
                 <div><dt>Due</dt><dd>Fri 14 Nov</dd></div>
                 <div><dt>Site</dt><dd>North pier</dd></div>
               </dl>
 
-              <fieldset className="sp-part sp-checks" data-in="sheet">
+              <fieldset className="show-part show-checks" data-in="sheet">
                 <legend>Checklist</legend>
                 {CHECKS.map((label, index) => (
                   <label key={label}>
                     <input type="checkbox" checked={checks[index] === true} onChange={(event) => setChecks((list) => list.map((value, at) => (at === index ? event.target.checked : value)))} />
-                    <span className="sp-box" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.2l2 2 4-4.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+                    <span className="show-box" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.2l2 2 4-4.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
                     <span>{label}</span>
                   </label>
                 ))}
               </fieldset>
 
-              <div className="sp-part sp-log" data-in="sheet">
-                <p className="sp-log-head">Activity</p>
+              <div className="show-part show-log" data-in="sheet">
+                <p className="show-log-head">Activity</p>
                 <p>Mira moved this to In progress</p>
                 <p>Dan logged the 4 cm offset</p>
               </div>
@@ -474,9 +474,9 @@ export function Showpiece({ linked = false }: ShowpieceProps) {
         </div>
       </div>
 
-      <div className="sp-strip">
-        <p className="sp-status" data-testid="status">{status}</p>
-        <dl className="sp-readout" aria-label="Focus and caret">
+      <div className="show-strip">
+        <p className="show-status" data-testid="status">{status}</p>
+        <dl className="show-readout" aria-label="Focus and caret">
           <div><dt>Focus</dt><dd ref={focusOut} data-testid="focus">None</dd></div>
           <div><dt>Caret</dt><dd ref={caretOut} data-testid="caret">None</dd></div>
           <div><dt>Field</dt><dd data-testid="same-node">{sameNode ? 'Same node' : 'Replaced'}</dd></div>
@@ -485,7 +485,7 @@ export function Showpiece({ linked = false }: ShowpieceProps) {
 
       <Bench spring={spring} rate={rate} reduced={reduced} onSpring={onSpring} onRate={onRate} link={linked ? link : null} />
       </div>
-      <p className="sp-sr" role="status">{announcement}</p>
+      <p className="show-sr" role="status">{announcement}</p>
     </section>
   );
 }

@@ -311,7 +311,7 @@ test.describe('project page', () => {
       await expect(title(page)).toBeInViewport();
       const inside = await note(page).evaluate((element) => {
         const box = element.getBoundingClientRect();
-        const plan = (element.closest('.sp-plan') as HTMLElement).getBoundingClientRect();
+        const plan = (element.closest('.show-plan') as HTMLElement).getBoundingClientRect();
         return box.left >= plan.left && box.right <= plan.right && box.top >= plan.top && box.bottom <= plan.bottom;
       });
       expect(inside).toBe(true);
