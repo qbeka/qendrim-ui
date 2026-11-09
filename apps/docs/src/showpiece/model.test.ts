@@ -33,7 +33,7 @@ describe('showpiece address', () => {
 describe('showpiece layouts', () => {
   it('goes round all four', () => {
     let layout: Layout = LAYOUTS[0].id;
-    const seen = new Set([layout]);
+    const seen = new Set<Layout>([layout]);
     for (let i = 0; i < 3; i += 1) {
       layout = nextLayout(layout);
       seen.add(layout);
