@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { sampleSpring, springFromResponse } from '../../../../packages/react/src/core/spring';
-import { CURVE, DEFAULT_STATE, LAYOUTS, PRESETS, curvePath, nextLayout, otherLayout, overshoot, parseState, serializeState, springCss, stepLayout } from './model';
+import { CURVE, DEFAULT_STATE, LAYOUTS, PRESETS, curvePath, nextLayout, otherLayout, overshoot, parseState, serializeState, springCss, stepLayout, type Layout } from './model';
 
 describe('showpiece address', () => {
   it('an empty address is the default, and the default writes an empty address', () => {
@@ -32,7 +32,7 @@ describe('showpiece address', () => {
 
 describe('showpiece layouts', () => {
   it('goes round all four', () => {
-    let layout = LAYOUTS[0].id;
+    let layout: Layout = LAYOUTS[0].id;
     const seen = new Set([layout]);
     for (let i = 0; i < 3; i += 1) {
       layout = nextLayout(layout);
