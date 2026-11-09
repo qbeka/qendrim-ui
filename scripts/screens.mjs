@@ -6,7 +6,7 @@ import { chromium } from '@playwright/test';
 
 const out = process.argv[2] ?? 'results/tmp/screens';
 mkdirSync(out, { recursive: true });
-const PORT = 5183;
+const PORT = Number(process.env['SCREENS_PORT'] ?? 5183);
 const BASE = `http://127.0.0.1:${PORT}`;
 const server = spawn('pnpm', ['--filter', 'docs', 'exec', 'vite', 'preview', '--port', String(PORT), '--strictPort', '--host', '127.0.0.1'], { stdio: 'ignore', detached: true });
 for (let i = 0; i < 100; i += 1) {
@@ -33,7 +33,11 @@ async function shot(name, { path, width = 1440, height = 900, theme = 'light', r
 
 const openRow = (id) => (page) => page.getByTestId(`project-${id}`).getByRole('button').first().click();
 
-await shot('home-1440-light', { path: '/', act: (p) => p.locator('.q-inspector-trigger').first().click() });
+await shot('project-1440', { path: '/project/', act: (p) => p.getByTestId('title').click() });
+await shot('project-1440-editor', { path: '/project/', act: (p) => p.getByTestId('layout-editor').click() });
+await shot('project-390-sheet', { path: '/project/', width: 390, height: 844, act: (p) => p.getByTestId('layout-sheet').click() });
+await shot('project-recipes-dark', { path: '/project/', full: true, act: (p) => p.getByTestId('skin-editorial-dark').click() });
+await shot('home-1440-light', { path: '/', act: (p) => p.getByTestId('layout-editor').click() });
 await shot('home-390-dark', { path: '/', width: 390, height: 844, theme: 'dark', full: true });
 await shot('home-320-light', { path: '/', width: 320, height: 700, full: true });
 await shot('projects-1440-light', { path: '/examples/projects', act: openRow('harbor') });
