@@ -26,7 +26,7 @@ Measured on 2026-11-06 at commit `fb8b32c`, on one Apple M5 Pro Mac on AC power,
 | State model and engine, no browser | 48 | `packages/react/test`: 10 machine, 11 spring, 27 engine |
 | Detectors, no browser | 19 | `apps/docs/src/harness/detect.test.ts` |
 | Docs app helpers, no browser | 14 | `apps/docs/src/gallery/usage.test.ts`: 4 usage examples. `apps/docs/src/showpiece/model.test.ts`: 10 for the address, the layouts and the spring curve |
-| Browser tests | 507 in each of 3 full runs: 192 Chromium, 145 Firefox, 145 WebKit, 25 StrictMode | `e2e/` |
+| Browser tests | 597 in each of 3 full runs: 224 Chromium, 174 Firefox, 174 WebKit, 25 StrictMode | `e2e/` |
 | Interruption suite, library | 8 scenarios in each of 3 browsers, and in StrictMode | `e2e/interruption.spec.ts` |
 | Comparison suite | 8 scenarios, 5 implementations, 5 runs each: 200 runs | `bench/correctness` |
 | Negative controls | 9 checks over 6 seeded broken implementations | `e2e/negative-controls.spec.ts` |
@@ -218,7 +218,7 @@ The second pass found more: the new turnaround metric dropped samples, the new d
 | A clean clone could not install: pnpm refused esbuild's build script. | Fixed. The development checkout had hidden this. `results/clean-checkout.txt` now shows every step passing from a fresh clone. |
 | The first mutation run reported 15 of 32, which was false. Vitest writes to stderr, and the script read stdout. | Fixed, by reading each failure's reason. |
 
-After the last library change, the full matrix passed 507 of 507 three times in a row, with no Firefox hang and no WebKit timeouts. See `results/e2e/three-passes.txt`.
+After the last library change, the full matrix passed 507 of 507 three times in a row, with no Firefox hang and no WebKit timeouts. The suite then grew with the project page and the docs site, and the library source did not change. On 2026-11-09 the full matrix passed 597 of 597 three times in a row, again with no hang and no timeouts. See `results/e2e/three-passes.txt`.
 
 ## Mutation check
 
@@ -233,7 +233,7 @@ The first attempts at this check were wrong in two ways. The script read the wro
 
 ## Accessibility and review
 
-axe found no violations on 9 pages in 4 combinations of theme and recipe, plus the open inspector and the open modal. That is automated checking only.
+axe found no violations on 9 pages in 4 combinations of theme and recipe, plus the open inspector and the open modal. It also found none on the project page at rest, in each of its other three layouts, and with the specimen sheet in each of the other three recipe and theme combinations. That is automated checking only.
 
 Visual review by the author, on real renders at 320, 390, 720, 768 and 1440 CSS pixels, in 3 passes: type and layout, interaction, and empty, error and interrupted states. This is a heuristic review. It is not user research. It found a misaligned ghost button, ticks over the thumb, a doubled focus ring, an action bar over the last row and a workbench that failed to report its own broken fixture. All are fixed. 200 percent zoom was approximated by halving the viewport.
 
@@ -278,7 +278,7 @@ node scripts/check-budgets.mjs baseline
 | Clean consumers | `results/consumers/summary.json` | `node consumers/check.mjs` |
 | Workspace against tarball | `results/consumers/workspace-vs-clean.json` | `node bench/workspace-vs-clean.mjs` |
 | Mutation check | `results/mutation/` | `node scripts/mutate.mjs` |
-| Three full passes | `results/e2e/three-passes.txt` | `pnpm test:e2e`, three times |
+| Three full passes | `results/e2e/three-passes.txt` | `pnpm test:e2e`, three times. The 2026-11-09 passes ran the same projects as two commands each, so that both servers could take turns on one port |
 | Clean checkout | `results/clean-checkout.txt` | `scripts/verify-clean.sh` |
 | Evidence page data | `apps/docs/public/evidence.json` | `node scripts/evidence.mjs final` |
 | Cover and poster | `media/cover.png`, `media/poster.png` | `node scripts/record.mjs media`, from the real site |
