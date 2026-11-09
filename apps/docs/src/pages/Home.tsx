@@ -16,12 +16,12 @@ export function Home() {
   return (
     <div className="d-wide d-home">
       <h1>Panels that keep working when you change your mind</h1>
-      <p className="d-lede">Qendrim UI is a React component library. Its panels can be reversed, resized and refilled mid-move, and they keep your text, your focus and your place.</p>
+      <p className="d-lede">Qendrim UI is a React component library whose panels can be reversed, resized and refilled mid-move while keeping your text, your focus and your place</p>
 
       <Showpiece />
 
       <h2>Start</h2>
-      <p>The package is not on npm, so this installs the 0.1.0 release file from GitHub. It needs React 18.3 or 19.</p>
+      <p>The package is not on npm, so this installs the 0.1.0 release file from GitHub and needs React 18.3 or 19</p>
       <div className="d-start">
         <Code label="Install it">{INSTALL}</Code>
         <Code label="Paste a first panel">{FIRST_EXAMPLE}</Code>

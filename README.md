@@ -25,7 +25,7 @@ Open <http://localhost:5171> and try to break the panel on the home page: type i
 npm install https://github.com/qbeka/qendrim-ui/releases/download/v0.1.0/qbeka-react-0.1.0.tgz
 ```
 
-The package is not on npm yet, so this installs the 0.1.0 release file from GitHub. You need React 18.3 or 19.
+The package is not on npm yet, so this installs the 0.1.0 release file from GitHub, and you need React 18.3 or 19.
 
 ```tsx
 import { Inspector } from '@qbeka/react/inspector';
