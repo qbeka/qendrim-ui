@@ -1,0 +1,90 @@
+import { describe, expect, it } from 'vitest';
+import { sampleSpring, springFromResponse } from '../../../../packages/react/src/core/spring';
+import { CURVE, DEFAULT_STATE, LAYOUTS, PRESETS, curvePath, nextLayout, otherLayout, overshoot, parseState, serializeState, springCss, stepLayout } from './model';
+
+describe('showpiece address', () => {
+  it('an empty address is the default, and the default writes an empty address', () => {
+    expect(parseState('')).toEqual(DEFAULT_STATE);
+    expect(serializeState(DEFAULT_STATE)).toBe('');
+  });
+
+  it('round trips a layout, a spring and a rate', () => {
+    const state = { layout: 'sheet', spring: { response: 520, damping: 0.55 }, rate: 40 } as const;
+    expect(parseState(serializeState(state))).toEqual(state);
+  });
+
+  it('clamps and snaps numbers, and ignores what it cannot read', () => {
+    const state = parseState('?layout=poster&response=99999&damping=abc&rate=3.4');
+    expect(state.layout).toBe(DEFAULT_STATE.layout);
+    expect(state.spring.response).toBe(800);
+    expect(state.spring.damping).toBe(DEFAULT_STATE.spring.damping);
+    expect(state.rate).toBe(3);
+    expect(parseState('?response=154').spring.response).toBe(160);
+    expect(parseState('?damping=0.555').spring.damping).toBe(0.56);
+    expect(parseState('?damping=').spring.damping).toBe(DEFAULT_STATE.spring.damping);
+  });
+
+  it('keeps parameters that are not its own', () => {
+    expect(serializeState({ ...DEFAULT_STATE, layout: 'row' }, '?from=home')).toBe('?from=home&layout=row');
+    expect(serializeState(DEFAULT_STATE, '?from=home&layout=row')).toBe('?from=home');
+  });
+});
+
+describe('showpiece layouts', () => {
+  it('goes round all four', () => {
+    let layout = LAYOUTS[0].id;
+    const seen = new Set([layout]);
+    for (let i = 0; i < 3; i += 1) {
+      layout = nextLayout(layout);
+      seen.add(layout);
+    }
+    expect(seen.size).toBe(4);
+    expect(nextLayout(layout)).toBe(LAYOUTS[0].id);
+  });
+
+  it('steps one size at a time and stops at the ends', () => {
+    expect(stepLayout('row', -1)).toBe('row');
+    expect(stepLayout('row', 1)).toBe('card');
+    expect(stepLayout('sheet', 1)).toBe('sheet');
+    expect(stepLayout('sheet', -1)).toBe('editor');
+  });
+
+  it('a stress pick is never the layout it is leaving', () => {
+    for (const { id } of LAYOUTS) {
+      for (const pick of [0, 0.2, 0.5, 0.8, 0.999999, 1]) {
+        const other = otherLayout(id, pick);
+        expect(other).not.toBe(id);
+        expect(LAYOUTS.some((layout) => layout.id === other)).toBe(true);
+      }
+    }
+  });
+});
+
+describe('showpiece spring', () => {
+  it('draws the same curve the engine would follow', () => {
+    const setting = PRESETS[1].spring;
+    const path = curvePath(setting);
+    const points = path.slice(1).split('L').map((pair) => pair.split(' ').map(Number) as [number, number]);
+    expect(points).toHaveLength(CURVE.samples + 1);
+    const spring = springFromResponse(setting.response, setting.damping);
+    for (const index of [0, 12, 30, CURVE.samples]) {
+      const t = (index / CURVE.samples) * CURVE.seconds;
+      const { value } = sampleSpring({ from: 0, velocity: 0, to: 1 }, spring, t);
+      const [x, y] = points[index] as [number, number];
+      expect(x).toBeCloseTo((index / CURVE.samples) * CURVE.width, 0);
+      expect(y).toBeCloseTo(CURVE.height - (value / CURVE.top) * CURVE.height, 0);
+    }
+  });
+
+  it('reports overshoot only below critical damping, and it matches the highest sample', () => {
+    expect(overshoot(1)).toBe(0);
+    const spring = springFromResponse(400, 0.5);
+    let peak = 0;
+    for (let i = 0; i < 4000; i += 1) peak = Math.max(peak, sampleSpring({ from: 0, velocity: 0, to: 1 }, spring, i / 4000).value);
+    expect(overshoot(0.5)).toBeCloseTo(peak - 1, 3);
+  });
+
+  it('writes the two properties the engine reads', () => {
+    expect(springCss({ response: 400, damping: 0.72 })).toBe('.panel {\n  --q-surface-response: 400;\n  --q-surface-damping: 0.72;\n}');
+  });
+});
