@@ -139,7 +139,7 @@ export function Showpiece({ linked = false }: ShowpieceProps) {
   const [stress, setStress] = useState(false);
   const [reduced, setReduced] = useState(false);
   const [mac, setMac] = useState(false);
-  const [told, setTold] = useState({ interruptions: 0, afterStress: false });
+  const [told, setTold] = useState({ interruptions: 0, afterStress: false, stressed: false });
   const [sameNode, setSameNode] = useState(true);
   const [announcement, setAnnouncement] = useState('');
 
@@ -215,7 +215,7 @@ export function Showpiece({ linked = false }: ShowpieceProps) {
     takeOver();
     setStress((on) => {
       setAnnouncement(on ? 'Interruptions stopped.' : 'Interrupting the panel.');
-      if (on) setTold({ interruptions: counts.current.interruptions, afterStress: true });
+      if (on) setTold({ interruptions: counts.current.interruptions, afterStress: true, stressed: true });
       return !on;
     });
   };
@@ -387,7 +387,7 @@ export function Showpiece({ linked = false }: ShowpieceProps) {
   if (stress) status = `It is being interrupted ${perSecond} times a second, so keep typing`;
   else if (mode === 'idle' && !reduced) status = 'It tours its four layouts until you touch it, and then it is yours';
   else if (told.afterStress && told.interruptions > 0) status = `That was ${told.interruptions.toLocaleString('en-US')} interruptions on one element${sameNode ? ', and your text and caret never left it' : ''}`;
-  else if (told.interruptions > 0) status = `You changed course ${told.interruptions.toLocaleString('en-US')} ${told.interruptions === 1 ? 'time' : 'times'}${sameNode ? ' and the field kept your text' : ''}`;
+  else if (told.interruptions > 0) status = `${told.stressed ? 'It has' : 'You'} changed course ${told.interruptions.toLocaleString('en-US')} ${told.interruptions === 1 ? 'time' : 'times'}${sameNode ? ' and the field kept your text' : ''}`;
 
   const planStyle = { '--q-surface-response': spring.response, '--q-surface-damping': spring.damping } as CSSProperties;
 
