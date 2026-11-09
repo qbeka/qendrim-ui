@@ -139,6 +139,7 @@ export function Showpiece({ linked = false }: ShowpieceProps) {
   const [stress, setStress] = useState(false);
   const [reduced, setReduced] = useState(false);
   const [mac, setMac] = useState(false);
+  const [touch, setTouch] = useState(false);
   const [told, setTold] = useState({ interruptions: 0, afterStress: false, stressed: false });
   const [sameNode, setSameNode] = useState(true);
   const [announcement, setAnnouncement] = useState('');
@@ -239,6 +240,7 @@ export function Showpiece({ linked = false }: ShowpieceProps) {
   useEffect(() => {
     firstTitleNode.current = titleField.current;
     setMac(/Mac|iPhone|iPad/.test(navigator.platform));
+    setTouch(matchMedia('(pointer: coarse)').matches);
     const query = matchMedia('(prefers-reduced-motion: reduce)');
     const update = () => setReduced(query.matches);
     update();
@@ -383,7 +385,7 @@ export function Showpiece({ linked = false }: ShowpieceProps) {
   const perSecond = reduced ? REDUCED_RATE : rate;
   // While it is being interrupted the panel has no one layout, so no layout is marked.
   const shown = stress ? null : layout;
-  let status = 'Click the title, start typing and change the layout before it lands';
+  let status = `${touch ? 'Tap' : 'Click'} the title, start typing and change the layout before it lands`;
   if (stress) status = `It is being interrupted ${perSecond} times a second, so keep typing`;
   else if (mode === 'idle' && !reduced) status = 'It tours its four layouts until you touch it, and then it is yours';
   else if (told.afterStress && told.interruptions > 0) status = `That was ${told.interruptions.toLocaleString('en-US')} interruptions on one element${sameNode ? ', and your text and caret never left it' : ''}`;
