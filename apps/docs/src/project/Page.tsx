@@ -1,20 +1,28 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { Scope, type Recipe, type Theme } from '@qbeka/react/scope';
+import { lazy, Suspense, useEffect, useState } from 'react';
+import { FIRST_EXAMPLE, INSTALL } from '../gallery/usage';
 import { useCopy } from '../lib/useCopy';
-import { Stage } from './Stage';
+import { Showpiece } from '../showpiece/Showpiece';
 
-// The gallery sits below the first screen and brings most of Base UI, so the stage goes first.
+// The specimen sheet sits below the first screen and brings most of Base UI, so the stage goes first.
 const Gallery = lazy(() => import('../gallery/Gallery').then((m) => ({ default: m.Gallery })));
 
 const REPO = 'https://github.com/qbeka/qendrim-ui';
 const REPORT = `${REPO}/blob/main/docs/REPORT.md`;
 const CONTRACT = `${REPO}/blob/main/docs/CONTRACT.md`;
-const INSTALL = 'npm install https://github.com/qbeka/qendrim-ui/releases/download/v0.1.0/qbeka-react-0.1.0.tgz';
 
-/** The docs are a hash-routed page next to this one when the site is built for a sub-path. */
+/** The docs are a hash-routed page in the folder next to this one when the site is built for a sub-path. */
 const docs = (path: string) =>
   import.meta.env['VITE_HASH_ROUTES'] === '1'
-    ? `${import.meta.env.BASE_URL}docs/index.html#${path}`
+    ? `${import.meta.env.BASE_URL}docs/#${path}`
     : `${import.meta.env.BASE_URL}${path.slice(1)}`;
+
+const SKINS: ReadonlyArray<{ id: string; recipe: Recipe; theme: Theme; name: string; tone: string; text: string }> = [
+  { id: 'studio-light', recipe: 'studio', theme: 'light', name: 'Studio', tone: 'Light', text: 'Dense tools' },
+  { id: 'studio-dark', recipe: 'studio', theme: 'dark', name: 'Studio', tone: 'Dark', text: 'Dense tools' },
+  { id: 'editorial-light', recipe: 'editorial', theme: 'light', name: 'Editorial', tone: 'Light', text: 'Reading pages' },
+  { id: 'editorial-dark', recipe: 'editorial', theme: 'dark', name: 'Editorial', tone: 'Dark', text: 'Reading pages' },
+];
 
 const RESULTS = [
   ['Interruptions', '0 violations in 8 scenarios', 'Each scenario ran 5 times in Chromium and also passed in Firefox, WebKit and StrictMode. A careful Motion version with about 30 extra lines also scores 0, so this is a tie. Motion with height auto, Motion layout and CSS grid each fail the content growth scenarios.'],
@@ -35,7 +43,7 @@ const LIMITS = [
   'Touch input has no test in the library suite.',
   'One Firefox hang during development is unexplained.',
   'Nobody outside this project has used it.',
-  'The projects, people and amounts in the demo are made up. The save in the gallery is simulated.',
+  'The work order, the crew, the budget and the receipts on this page are made up, and the save in the crew list is simulated.',
 ];
 
 /** The page renders after the browser looks for the hash, so a link to #details lands here. */
@@ -46,11 +54,11 @@ function FollowHash() {
   return null;
 }
 
-function CopyInstall() {
-  const { state, copy } = useCopy(INSTALL);
+function CopyButton({ text, label, testId, className = 'control outline' }: { text: string; label: string; testId: string; className?: string }) {
+  const { state, copy } = useCopy(text);
   return (
-    <button className="control outline swap" type="button" onClick={copy} data-testid="copy-install">
-      <span data-on={state === 'idle' || undefined}>Copy install</span>
+    <button className={`${className} swap`} type="button" onClick={copy} data-testid={testId}>
+      <span data-on={state === 'idle' || undefined}>{label}</span>
       <span data-on={state === 'copied' || undefined}>Copied</span>
       <span data-on={state === 'failed' || undefined}>Copy failed</span>
     </button>
@@ -58,6 +66,45 @@ function CopyInstall() {
 }
 
 const Chevron = () => <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 4L6 8L10 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+
+function Components() {
+  const [skin, setSkin] = useState(SKINS[0] as (typeof SKINS)[number]);
+  const attributes = `<html data-q-recipe="${skin.recipe}" data-q-theme="${skin.theme}">`;
+  return (
+    <section className="components" id="components" aria-labelledby="components-title">
+      <div className="section-head">
+        <h2 id="components-title">Components</h2>
+        <p>Four are this library's own and eight are Base UI primitives with styles, and two recipes in light and dark change tokens only</p>
+      </div>
+
+      <div className="skins" role="group" aria-label="Recipe and theme">
+        {SKINS.map((item) => (
+          <button key={item.id} type="button" className="skin" aria-pressed={skin.id === item.id} onClick={() => setSkin(item)} data-testid={`skin-${item.id}`} data-q-recipe={item.recipe} data-q-theme={item.theme}>
+            <span className="skin-name"><b>{item.name}</b> {item.tone}</span>
+            <span className="skin-letters" aria-hidden="true">Aa</span>
+            <span className="skin-row" aria-hidden="true">
+              <span className="skin-button">Save</span>
+              <span className="skin-ghost">Cancel</span>
+            </span>
+            <span className="skin-text">{item.text}</span>
+          </button>
+        ))}
+      </div>
+      <div className="skin-code">
+        <pre tabIndex={0} aria-label="Attributes for this recipe and theme" data-testid="skin-code"><code>{attributes}</code></pre>
+        <CopyButton text={attributes} label="Copy" testId="copy-skin" />
+      </div>
+
+      <Suspense fallback={<div className="components-wait" />}>
+        <Scope recipe={skin.recipe} theme={skin.theme} className="sheet-scope" data-testid="sheet">
+          <Gallery docsLink={(slug, name) => <a href={docs(`/components/${slug}`)}>{name} API and keyboard map</a>} />
+        </Scope>
+        <FollowHash />
+      </Suspense>
+      <p className="components-more"><a href={docs('/components')}>All 12 components</a> and <a href={docs('/guide/theming')}>the token list</a> are in the docs</p>
+    </section>
+  );
+}
 
 export function Page() {
   return (
@@ -73,31 +120,36 @@ export function Page() {
       <main>
         <header className="title">
           <h1>Qendrim UI</h1>
-          <CopyInstall />
+          <CopyButton text={INSTALL} label="Copy install" testId="copy-install" />
           <p>React components that keep up when you change your mind</p>
         </header>
 
-        <Stage />
+        <Showpiece linked />
 
-        <section className="install" aria-labelledby="install-title">
-          <h2 id="install-title">Install</h2>
-          <pre tabIndex={0} aria-label="Install command"><code>{INSTALL}</code></pre>
-          <p>The package is not on npm yet, so this installs the 0.1.0 release file from GitHub. You need React 18.3 or 19, and the <a href={docs('/guide/install')}>install guide</a> covers styles and themes.</p>
+        <section className="start" id="start" aria-labelledby="start-title">
+          <div className="section-head">
+            <h2 id="start-title">Start</h2>
+            <p>The package is not on npm, so the first line installs the 0.1.0 release file from GitHub, and it needs React 18.3 or 19</p>
+          </div>
+          <ol className="steps">
+            <li>
+              <div className="step-head"><span>Install it</span><CopyButton text={INSTALL} label="Copy" testId="copy-install-step" className="control" /></div>
+              <pre tabIndex={0} aria-label="Install command" data-testid="install-command"><code>{INSTALL}</code></pre>
+            </li>
+            <li>
+              <div className="step-head"><span>Paste a first panel</span><CopyButton text={FIRST_EXAMPLE} label="Copy" testId="copy-example" className="control" /></div>
+              <pre tabIndex={0} aria-label="First example" data-testid="first-example"><code>{FIRST_EXAMPLE}</code></pre>
+            </li>
+          </ol>
+          <p className="start-more">An import downloads no fonts, installs no reset and needs no provider, and <a href={docs('/guide/install')}>the install guide</a> covers styles, layers and themes</p>
         </section>
 
-        <section className="components" id="components" aria-labelledby="components-title">
-          <h2 id="components-title">Components</h2>
-          <Suspense fallback={<div className="components-wait" />}>
-            <Gallery docsLink={(slug, name) => <a href={docs(`/components/${slug}`)}>{name} API and keyboard map</a>} />
-            <FollowHash />
-          </Suspense>
-          <p className="components-more"><a href={docs('/components')}>All 12 components</a></p>
-        </section>
+        <Components />
 
         <section className="reading" id="details" aria-labelledby="details-title">
           <h2 id="details-title">Details</h2>
           <p className="prose">Qendrim UI is a small React library for working panels that get interrupted. Each change of mind is a new request, numbered in order, and work from an older request cannot touch the newer one. A move starts from what is on screen, at the speed it is already going. The panel stays one element, so a field keeps its text, caret and selection.</p>
-          <p className="prose">The panel above is the real <code>Inspector</code> running in your browser. <a href={docs('/workbench')}>The workbench</a> runs it next to Motion, CSS and deliberately broken fixtures under the same test.</p>
+          <p className="prose">The work order at the top is one <code>Surface</code> running in your browser, and its four layouts are plain CSS. The outlines it leaves behind are its measured box, a few frames apart. <a href={docs('/workbench')}>The workbench</a> runs the library next to Motion, CSS and deliberately broken fixtures under the same test.</p>
 
           <h3>Results</h3>
           <dl className="results">
