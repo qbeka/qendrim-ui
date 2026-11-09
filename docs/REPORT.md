@@ -25,6 +25,7 @@ Measured on 2026-11-06 at commit `fb8b32c`, on one Apple M5 Pro Mac on AC power,
 |---|---|---|
 | State model and engine, no browser | 48 | `packages/react/test`: 10 machine, 11 spring, 27 engine |
 | Detectors, no browser | 19 | `apps/docs/src/harness/detect.test.ts` |
+| Docs app helpers, no browser | 14 | `apps/docs/src/gallery/usage.test.ts`: 4 usage examples. `apps/docs/src/showpiece/model.test.ts`: 10 for the address, the layouts and the spring curve |
 | Browser tests | 507 in each of 3 full runs: 192 Chromium, 145 Firefox, 145 WebKit, 25 StrictMode | `e2e/` |
 | Interruption suite, library | 8 scenarios in each of 3 browsers, and in StrictMode | `e2e/interruption.spec.ts` |
 | Comparison suite | 8 scenarios, 5 implementations, 5 runs each: 200 runs | `bench/correctness` |
