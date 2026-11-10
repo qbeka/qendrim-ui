@@ -3,7 +3,7 @@ Each pass ran the same four projects as two commands, so that the built site and
 pass 1:  102 skipped; 630 passed (3.6m) in Chromium, Firefox and WebKit; 25 passed (11.0s) in StrictMode; 655 passed.
 pass 2:  102 skipped; 630 passed (3.6m) in Chromium, Firefox and WebKit; 25 passed (11.0s) in StrictMode; 655 passed.
 pass 3:  102 skipped; 630 passed (3.6m) in Chromium, Firefox and WebKit; 25 passed (10.9s) in StrictMode; 655 passed.
-Per browser in each pass: 244 Chromium, 193 Firefox, 193 WebKit, 25 StrictMode. Later commits wrote this count into the page, shortened two entrance animations, gave the stage on the docs home a frame of its own and changed documentation. One more full pass after those commits also passed 655 of 655.
+Per browser in each pass: 244 Chromium, 193 Firefox, 193 WebKit, 25 StrictMode. Later commits wrote this count into the page, shortened two entrance animations, gave the stage on the docs home a frame of its own, stopped a place under the pointer from lighting up during a hold, and changed documentation and recordings. One more full pass at dc8bae6, after those commits, also passed 655 of 655: 630 and 25.
 
 2026-11-09, earlier in the day. Commit a005f5b. The project page and docs tests were rewritten, and the library source has not changed since fb8b32c.
 Each pass ran the same four projects as two commands, so that the built site and the development build could take turns on one port.
