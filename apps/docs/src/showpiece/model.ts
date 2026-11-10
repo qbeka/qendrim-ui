@@ -132,3 +132,52 @@ export function overshoot(damping: number): number {
 export function springCss({ response, damping }: SpringSetting, selector = '.panel'): string {
   return `${selector} {\n  --q-surface-response: ${response};\n  --q-surface-damping: ${damping};\n}`;
 }
+
+/** A box on the plan, in the plan's own pixels. */
+export interface PlanBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/** Where a held panel sits: under the pointer at the point it was taken, and never off the plan. */
+export function holdOrigin(pointer: { x: number; y: number }, grip: { fx: number; fy: number }, size: { width: number; height: number }, plan: { width: number; height: number }, margin = 4) {
+  const clamp = (value: number, low: number, high: number) => Math.min(Math.max(value, low), Math.max(low, high));
+  return {
+    x: clamp(pointer.x - grip.fx * size.width, margin, plan.width - size.width - margin),
+    y: clamp(pointer.y - grip.fy * size.height, margin, plan.height - size.height - margin),
+  };
+}
+
+/**
+ * The layout a held panel would land in: the one whose place is nearest the panel's center.
+ * Distance is measured to the edge of each place, so a small place inside a big one can win.
+ */
+export function aimLayout(box: PlanBox, places: ReadonlyArray<{ id: Layout; box: PlanBox }>, fallback: Layout): Layout {
+  const cx = box.x + box.width / 2;
+  const cy = box.y + box.height / 2;
+  let best = fallback;
+  let bestScore = Infinity;
+  for (const place of places) {
+    const px = place.box.x + place.box.width / 2;
+    const py = place.box.y + place.box.height / 2;
+    const dx = Math.max(Math.abs(cx - px) - place.box.width / 2, 0);
+    const dy = Math.max(Math.abs(cy - py) - place.box.height / 2, 0);
+    // Inside several places at once, the one whose center is closest wins.
+    const score = Math.hypot(dx, dy) * 1000 + Math.hypot(cx - px, cy - py);
+    if (score < bestScore) {
+      bestScore = score;
+      best = place.id;
+    }
+  }
+  return best;
+}
+
+/** The speed of the box itself, from the engine's own channel velocities, in whole pixels a second. */
+export function travelSpeed(velocity: { dx: number; dy: number }): number {
+  return Math.round(Math.hypot(velocity.dx, velocity.dy));
+}
+
+/** The spring that follows the pointer while the panel is held: short and with no overshoot. */
+export const HOLD_SPRING: SpringSetting = { response: 150, damping: 1 };

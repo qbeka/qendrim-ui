@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { sampleSpring, springFromResponse } from '../../../../packages/react/src/core/spring';
-import { CURVE, DEFAULT_STATE, LAYOUTS, PRESETS, curvePath, nextLayout, otherLayout, overshoot, parseState, serializeState, springCss, stepLayout, type Layout } from './model';
+import { CURVE, DEFAULT_STATE, LAYOUTS, PRESETS, aimLayout, curvePath, holdOrigin, nextLayout, otherLayout, overshoot, parseState, serializeState, springCss, stepLayout, travelSpeed, type Layout } from './model';
 
 describe('showpiece address', () => {
   it('an empty address is the default, and the default writes an empty address', () => {
@@ -86,5 +86,38 @@ describe('showpiece spring', () => {
 
   it('writes the two properties the engine reads', () => {
     expect(springCss({ response: 400, damping: 0.72 })).toBe('.panel {\n  --q-surface-response: 400;\n  --q-surface-damping: 0.72;\n}');
+  });
+});
+
+describe('holding the panel', () => {
+  const places = [
+    { id: 'row', box: { x: 40, y: 46, width: 290, height: 56 } },
+    { id: 'card', box: { x: 40, y: 148, width: 280, height: 176 } },
+    { id: 'editor', box: { x: 380, y: 216, width: 366, height: 256 } },
+    { id: 'sheet', box: { x: 800, y: 46, width: 258, height: 436 } },
+  ] as const;
+
+  it('keeps the point that was taken under the pointer', () => {
+    expect(holdOrigin({ x: 500, y: 300 }, { fx: 0.5, fy: 0.25 }, { width: 200, height: 100 }, { width: 1000, height: 500 })).toEqual({ x: 400, y: 275 });
+  });
+
+  it('never leaves the plan, even when the panel is larger than the plan', () => {
+    expect(holdOrigin({ x: -80, y: 900 }, { fx: 0, fy: 0 }, { width: 200, height: 100 }, { width: 1000, height: 500 })).toEqual({ x: 4, y: 396 });
+    expect(holdOrigin({ x: 300, y: 300 }, { fx: 0.5, fy: 0.5 }, { width: 1200, height: 100 }, { width: 1000, height: 500 }).x).toBe(4);
+  });
+
+  it('aims at the place under the center of the panel', () => {
+    expect(aimLayout({ x: 820, y: 100, width: 280, height: 176 }, places, 'card')).toBe('sheet');
+    expect(aimLayout({ x: 60, y: 40, width: 280, height: 60 }, places, 'card')).toBe('row');
+  });
+
+  it('aims at the nearest place when the panel is over none', () => {
+    expect(aimLayout({ x: 500, y: 20, width: 100, height: 60 }, places, 'card')).toBe('editor');
+    expect(aimLayout({ x: 0, y: 0, width: 10, height: 10 }, [], 'card')).toBe('card');
+  });
+
+  it('reads speed from both axes', () => {
+    expect(travelSpeed({ dx: 300, dy: -400 })).toBe(500);
+    expect(travelSpeed({ dx: 0, dy: 0 })).toBe(0);
   });
 });
