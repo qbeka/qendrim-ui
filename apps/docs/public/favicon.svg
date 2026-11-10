@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    .ghost { fill: none; stroke: #1d3a2a; stroke-opacity: .34; stroke-width: 1.5; }
+    .panel { fill: #1d3a2a; }
+    @media (prefers-color-scheme: dark) { .ghost { stroke: #cfe3d4; } .panel { fill: #cfe3d4; } }
+  </style>
+  <rect class="ghost" x="2.75" y="4.75" width="12.5" height="8.5" rx="2.75" />
+  <rect class="ghost" x="7.75" y="9.75" width="13.5" height="11" rx="3.25" />
+  <rect class="panel" x="13" y="14" width="16" height="14" rx="4" />
+</svg>
