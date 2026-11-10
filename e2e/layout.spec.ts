@@ -27,6 +27,8 @@ test.describe('automated accessibility checks', () => {
             localStorage.setItem('q-docs-theme', t as string);
             localStorage.setItem('q-docs-recipe', r as string);
           }, [theme, recipe]);
+          // axe reads colors as they are at one moment, so the page is held still: no entrance, no tour.
+          await page.emulateMedia({ reducedMotion: 'reduce' });
           await page.goto(path);
           await page.waitForSelector('main h1');
           await page.waitForTimeout(200);
