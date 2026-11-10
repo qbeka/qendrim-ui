@@ -1,11 +1,15 @@
-import { Scope, type Recipe, type Theme } from '@qbeka/react/scope';
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { BudgetFigure, Figure, SizeFigure, SuiteFigure, TallyFigure, TimingFigure } from '../figures/Figures';
 import { FIRST_EXAMPLE, INSTALL } from '../gallery/usage';
 import { useCopy } from '../lib/useCopy';
 import { Showpiece } from '../showpiece/Showpiece';
+import { Plates } from './Plates';
+import { readSkin, skinAttributes, writeSkin, type Skin } from './skins';
 
-// The specimen sheet sits below the first screen and brings most of Base UI, so the stage goes first.
+// The specimen sheet and the fixture figure sit below the first screen and bring most of the
+// code on the page, so each loads when it is about to be seen.
 const Gallery = lazy(() => import('../gallery/Gallery').then((m) => ({ default: m.Gallery })));
+const BreakFigure = lazy(() => import('../figures/BreakFigure').then((m) => ({ default: m.BreakFigure })));
 
 const REPO = 'https://github.com/qbeka/qendrim-ui';
 const REPORT = `${REPO}/blob/main/docs/REPORT.md`;
@@ -17,47 +21,32 @@ const docs = (path: string) =>
     ? `${import.meta.env.BASE_URL}docs/#${path}`
     : `${import.meta.env.BASE_URL}${path.slice(1)}`;
 
-const SKINS: ReadonlyArray<{ id: string; recipe: Recipe; theme: Theme; name: string; tone: string; text: string }> = [
-  { id: 'studio-light', recipe: 'studio', theme: 'light', name: 'Studio', tone: 'Light', text: 'Dense tools' },
-  { id: 'studio-dark', recipe: 'studio', theme: 'dark', name: 'Studio', tone: 'Dark', text: 'Dense tools' },
-  { id: 'editorial-light', recipe: 'editorial', theme: 'light', name: 'Editorial', tone: 'Light', text: 'Reading pages' },
-  { id: 'editorial-dark', recipe: 'editorial', theme: 'dark', name: 'Editorial', tone: 'Dark', text: 'Reading pages' },
-];
-
-const RESULTS = [
-  ['Interruptions', '0 violations in 8 scenarios', 'Each scenario ran 5 times in Chromium and also passed in Firefox, WebKit and StrictMode. A careful Motion version with about 30 extra lines also scores 0, so this is a tie. Motion with height auto, Motion layout and CSS grid each fail the content growth scenarios.'],
-  ['Size', 'Surface 4.1 KB, Inspector 6.7 KB', 'These are gzipped JavaScript sizes for one import, with React excluded. Motion layout is 44.1 KB. If your app already ships Motion, that cost is zero to you.'],
-  ['Input response', '11.5 ms from click to first change', 'This is the median of 6 runs from rest. Motion is 11.0 to 13.2 ms and the ranges overlap, so the two are level and this is no faster.'],
-  ['Layout work', '163 layouts in the reversal workload', 'That is more than any baseline, since height based Motion does 117 to 124 and Motion layout does 37.'],
-  ['Budgets', '14 of 17 met', 'The budgets were frozen before the final run. Surface size, Inspector size and layout count were missed, because of fixes for real bugs. The limits were left where they were.'],
-  ['Browser tests', '597 passed, three full runs in a row', 'That is 224 in Chromium, 174 in Firefox, 174 in WebKit and 25 in StrictMode.'],
-  ['Mutation check', '53 of 55 deliberate defects caught', 'I judged the other 2 equivalent, from reading the code.'],
-  ['Clean installs', '5 of 5 apps passed', 'The packed release passed on React 18.3.1, 19.0.0 and 19.3.1, with Vite 8 and Next 16.'],
-];
-
 const LIMITS = [
-  'The package is not on npm, so the install above uses the v0.1.0 file on the GitHub release.',
-  'If your app already ships Motion and one panel needs this, a measured height with Motion is about 30 lines and passes the same scenarios.',
-  'All timing comes from one Apple M5 Pro Mac in headless Chromium with other work running, so this is lab data.',
-  'It has not been tested on real phones, in real Safari or with a screen reader. Automated axe checks passed, and that does not establish full accessibility.',
+  'The package is not on npm, so the install line uses the v0.1.0 file on the GitHub release.',
+  'A careful Motion version ties it on the interruption suite, and if your app already ships Motion, a measured height there is about 30 lines.',
+  'Three of the 17 frozen budgets were missed, which are Surface size, Inspector size and layout count.',
+  'All timing comes from one Apple M5 Pro Mac in headless Chromium with other work running, so it is lab data.',
+  'It has not been tested on real phones, in real Safari or with a screen reader, and passing automated axe checks does not establish full accessibility.',
   'Touch input has no test in the library suite.',
+  'Surface takes no velocity from outside, so the hold on the sheet at the top is built from ordinary requests and a drag is not part of the library.',
   'One Firefox hang during development is unexplained.',
   'Nobody outside this project has used it.',
   'The work order, the crew, the budget and the receipts on this page are made up, and the save in the crew list is simulated.',
 ];
 
-/** The page renders after the browser looks for the hash, so a link to #details lands here. */
-function FollowHash() {
-  useEffect(() => {
-    document.getElementById(window.location.hash.slice(1))?.scrollIntoView({ behavior: 'instant' });
-  }, []);
-  return null;
-}
+const KEYS: ReadonlyArray<{ keys: string[]; does: string }> = [
+  { keys: ['1', '2', '3', '4'], does: 'Send the panel to Row, Card, Editor or Sheet' },
+  { keys: ['I'], does: 'Start or stop the interruptions' },
+  { keys: ['Esc'], does: 'From a field, make the panel one size smaller, or put a held panel back' },
+  { keys: ['Cmd or Ctrl', 'Enter'], does: 'From a field, make the panel one size larger' },
+  { keys: ['[', ']'], does: 'On the budget timeline, jump to the marker before or after' },
+  { keys: ['?'], does: 'Show this list' },
+];
 
 function CopyButton({ text, label, testId, className = 'control outline' }: { text: string; label: string; testId: string; className?: string }) {
   const { state, copy } = useCopy(text);
   return (
-    <button className={`${className} swap`} type="button" onClick={copy} data-testid={testId}>
+    <button className={`${className} swap`} type="button" onClick={copy} data-testid={testId} data-state={state}>
       <span data-on={state === 'idle' || undefined}>{label}</span>
       <span data-on={state === 'copied' || undefined}>Copied</span>
       <span data-on={state === 'failed' || undefined}>Copy failed</span>
@@ -66,47 +55,113 @@ function CopyButton({ text, label, testId, className = 'control outline' }: { te
 }
 
 const Chevron = () => <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 4L6 8L10 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const Arrow = () => <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8h9M8.5 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-function Components() {
-  const [skin, setSkin] = useState(SKINS[0] as (typeof SKINS)[number]);
-  const attributes = `<html data-q-recipe="${skin.recipe}" data-q-theme="${skin.theme}">`;
+/** Renders its children once the placeholder is near the viewport, and holds their space until then. */
+function Near({ children, height, testId }: { children: ReactNode; height: number; testId?: string }) {
+  const [near, setNear] = useState(false);
+  const mark = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const node = mark.current;
+    if (!node || near) return undefined;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry?.isIntersecting) setNear(true);
+    }, { rootMargin: '900px 0px' });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [near]);
+  const wait = <div className="near-wait" style={{ minHeight: height }} />;
+  return <div ref={mark} data-testid={testId}>{near ? <Suspense fallback={wait}>{children}</Suspense> : wait}</div>;
+}
+
+/** Sections arrive as they are scrolled to. With reduced motion, or with no script, they are simply there. */
+function useReveal() {
+  useEffect(() => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const nodes = [...document.querySelectorAll<HTMLElement>('[data-reveal]')].filter((node) => node.getBoundingClientRect().top > window.innerHeight * 0.92);
+    for (const node of nodes) node.dataset['reveal'] = 'wait';
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        (entry.target as HTMLElement).dataset['reveal'] = 'in';
+        observer.unobserve(entry.target);
+      }
+    }, { rootMargin: '0px 0px -8% 0px' });
+    for (const node of nodes) observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+}
+
+/** The page renders after the browser looks for the hash, so a link to a section lands on it. */
+function useHashOnLoad() {
+  useEffect(() => {
+    document.getElementById(window.location.hash.slice(1))?.scrollIntoView({ behavior: 'instant' });
+  }, []);
+}
+
+function Shortcuts({ dialog }: { dialog: React.RefObject<HTMLDialogElement | null> }) {
   return (
-    <section className="components" id="components" aria-labelledby="components-title">
-      <div className="section-head">
-        <h2 id="components-title">Components</h2>
-        <p>Four are this library's own and eight are Base UI primitives with styles, and two recipes in light and dark change tokens only</p>
+    <dialog className="keys" ref={dialog} aria-labelledby="keys-title" data-testid="keys" onClick={(event) => { if (event.target === event.currentTarget) event.currentTarget.close(); }}>
+      <div className="keys-body">
+        <header>
+          <h2 id="keys-title">Keyboard</h2>
+          <button type="button" className="control" onClick={() => dialog.current?.close()} autoFocus>Close</button>
+        </header>
+        <dl>
+          {KEYS.map((row) => (
+            <div key={row.does}>
+              <dt>{row.keys.map((key) => <kbd key={key}>{key}</kbd>)}</dt>
+              <dd>{row.does}</dd>
+            </div>
+          ))}
+        </dl>
       </div>
-
-      <div className="skins" role="group" aria-label="Recipe and theme">
-        {SKINS.map((item) => (
-          <button key={item.id} type="button" className="skin" aria-pressed={skin.id === item.id} onClick={() => setSkin(item)} data-testid={`skin-${item.id}`} data-q-recipe={item.recipe} data-q-theme={item.theme}>
-            <span className="skin-name"><b>{item.name}</b> {item.tone}</span>
-            <span className="skin-letters" aria-hidden="true">Aa</span>
-            <span className="skin-row" aria-hidden="true">
-              <span className="skin-button">Save</span>
-              <span className="skin-ghost">Cancel</span>
-            </span>
-            <span className="skin-text">{item.text}</span>
-          </button>
-        ))}
-      </div>
-      <div className="skin-code">
-        <pre tabIndex={0} aria-label="Attributes for this recipe and theme" data-testid="skin-code"><code>{attributes}</code></pre>
-        <CopyButton text={attributes} label="Copy" testId="copy-skin" />
-      </div>
-
-      <Suspense fallback={<div className="components-wait" />}>
-        <Scope recipe={skin.recipe} theme={skin.theme} className="sheet-scope" data-testid="sheet">
-          <Gallery docsLink={(slug, name) => <a href={docs(`/components/${slug}`)}>{name} API and keyboard map</a>} />
-        </Scope>
-        <FollowHash />
-      </Suspense>
-      <p className="components-more"><a href={docs('/components')}>All 12 components</a> and <a href={docs('/guide/theming')}>the token list</a> are in the docs</p>
-    </section>
+    </dialog>
   );
 }
 
 export function Page() {
+  const [skin, setSkin] = useState<Skin>(() => readSkin(window.location.search));
+  const keys = useRef<HTMLDialogElement>(null);
+  useReveal();
+  useHashOnLoad();
+
+  const openKeys = useCallback(() => {
+    if (!keys.current?.open) keys.current?.showModal();
+  }, []);
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== '?' || event.metaKey || event.ctrlKey || event.altKey) return;
+      const target = event.target;
+      if (target instanceof HTMLTextAreaElement || (target instanceof HTMLInputElement && target.type === 'text') || (target instanceof HTMLElement && target.isContentEditable)) return;
+      event.preventDefault();
+      openKeys();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [openKeys]);
+
+  // The whole page takes the recipe and the theme, and the address remembers anything but the default.
+  const applySkin = useCallback((next: Skin) => {
+    const root = document.documentElement;
+    root.dataset['qRecipe'] = next.recipe;
+    root.dataset['qTheme'] = next.theme;
+    const search = writeSkin(next, window.location.search);
+    if (search !== window.location.search) window.history.replaceState(window.history.state, '', `${window.location.pathname}${search}${window.location.hash}`);
+    setSkin(next);
+  }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.dataset['qRecipe'] = skin.recipe;
+    root.dataset['qTheme'] = skin.theme;
+    // Only on load. After that applySkin writes them at the moment the plate covers the page.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const attributes = skinAttributes(skin);
+
   return (
     <div className="shell">
       <header className="topbar">
@@ -124,14 +179,51 @@ export function Page() {
           <p>React components that keep up when you change your mind</p>
         </header>
 
-        <Showpiece linked />
+        <Showpiece linked onHelp={openKeys} />
 
-        <section className="start" id="start" aria-labelledby="start-title">
-          <div className="section-head">
+        <section className="chapter" id="details" aria-labelledby="details-title">
+          <h2 className="statement" id="details-title" data-reveal="">Every change of mind is a numbered request, and the panel stays one element through all of them</h2>
+          <div className="columns" data-reveal="">
+            <p className="prose">Qendrim UI is a small React library for working panels that get interrupted. You open one, start typing, and reverse it before it lands. Each request gets a number, and work that belongs to an older number cannot touch a newer one, so a save that finishes late does not close a panel you have reopened.</p>
+            <p className="prose">A move starts from where the panel is on screen, at the speed it is already going, which is why the paths on the sheet above stay smooth when you interrupt it. Nothing is copied or moved to a new parent, so a field keeps its text, its caret and its selection, and focus moves when you ask for it and not when the animation ends.</p>
+          </div>
+
+          <div className="passage" data-reveal="">
+            <h3 className="lead">What happens when a panel is not one element</h3>
+            <p className="prose">The quickest ways to animate a panel are to scale its content, or to show a copy of it while the real one changes. Both look right until someone reverses the move or is typing in it. The test suite keeps one panel of each kind, broken on purpose, to prove that its detector can see the fault. Here they are beside the library, read by that same detector.</p>
+          </div>
+          <div data-reveal="">
+            <Figure id="figure-break" label="Figure 1" wide caption="Both panels get the same clicks, and the lines under them come from the recorder and the detector that the browser tests use">
+              <Near height={520}><BreakFigure /></Near>
+            </Figure>
+          </div>
+          <p className="prose passage" data-reveal="">A panel that is broken on purpose is an easy opponent. The fair comparison is further down, against Motion and plain CSS written with care, and it ends in a tie.</p>
+        </section>
+
+        <section className="chapter" id="components" aria-labelledby="components-title">
+          <div className="section-head" data-reveal="">
+            <h2 id="components-title">Twelve components, and the page they are printed on</h2>
+            <p>Four are this library's own and eight are Base UI primitives with styles, and each plate below changes the tokens for this whole page</p>
+          </div>
+
+          <Plates skin={skin} onSkin={applySkin} />
+          <div className="skin-code">
+            <pre tabIndex={0} aria-label="Attributes for this recipe and theme" data-testid="skin-code"><code>{attributes}</code></pre>
+            <CopyButton text={attributes} label="Copy" testId="copy-skin" />
+          </div>
+
+          <div data-reveal="" data-testid="sheet">
+            <Near height={1500}><Gallery docsLink={(slug, name) => <a href={docs(`/components/${slug}`)}>{name} API and keyboard map</a>} /></Near>
+          </div>
+          <p className="more"><a href={docs('/components')}>All 12 components</a> and <a href={docs('/guide/theming')}>the token list</a> are in the docs</p>
+        </section>
+
+        <section className="chapter" id="start" aria-labelledby="start-title">
+          <div className="section-head" data-reveal="">
             <h2 id="start-title">Start</h2>
             <p>The package is not on npm, so the first line installs the 0.1.0 release file from GitHub, and it needs React 18.3 or 19</p>
           </div>
-          <ol className="steps">
+          <ol className="steps" data-reveal="">
             <li>
               <div className="step-head"><span>Install it</span><CopyButton text={INSTALL} label="Copy" testId="copy-install-step" className="control" /></div>
               <pre tabIndex={0} aria-label="Install command" data-testid="install-command"><code>{INSTALL}</code></pre>
@@ -141,34 +233,76 @@ export function Page() {
               <pre tabIndex={0} aria-label="First example" data-testid="first-example"><code>{FIRST_EXAMPLE}</code></pre>
             </li>
           </ol>
-          <p className="start-more">An import downloads no fonts, installs no reset and needs no provider, and <a href={docs('/guide/install')}>the install guide</a> covers styles, layers and themes</p>
+          <p className="more">An import downloads no fonts, installs no reset and needs no provider, and <a href={docs('/guide/install')}>the install guide</a> covers styles, layers and themes</p>
         </section>
 
-        <Components />
+        <section className="chapter" id="measured" aria-labelledby="measured-title">
+          <h2 className="statement" id="measured-title" data-reveal="">A careful Motion version ties it on correctness, so what this adds is a written contract and a smaller download</h2>
+          <div className="columns" data-reveal="">
+            <p className="prose">The comparison suite runs 8 interruption scenarios, 5 times each, against five implementations of one panel in Chromium. The plain rules for focus, removal and a late close were given to every baseline, so that the comparison is about geometry.</p>
+            <p className="prose">Everything below was measured on the library source on 6 November 2026, on one Apple M5 Pro Mac in headless Chromium with other work running. It is lab data, and <a href={REPORT}>the report</a> has the method, the raw samples and the failures.</p>
+          </div>
 
-        <section className="reading" id="details" aria-labelledby="details-title">
-          <h2 id="details-title">Details</h2>
-          <p className="prose">Qendrim UI is a small React library for working panels that get interrupted. Each change of mind is a new request, numbered in order, and work from an older request cannot touch the newer one. A move starts from what is on screen, at the speed it is already going. The panel stays one element, so a field keeps its text, caret and selection.</p>
-          <p className="prose">The work order at the top is one <code>Surface</code> running in your browser, and its four layouts are plain CSS. The outlines it leaves behind are its measured box, a few frames apart. <a href={docs('/workbench')}>The workbench</a> runs the library next to Motion, CSS and deliberately broken fixtures under the same test.</p>
+          <div data-reveal="">
+            <Figure id="figure-suite" label="Figure 2" wide caption="Each mark is one run and a filled square is a run with a violation, on one panel shape in one layout, where Surface and the measured Motion version were both clean in all 40">
+              <SuiteFigure />
+            </Figure>
+          </div>
+          <p className="prose passage" data-reveal="">The measured Motion version is about 30 lines longer than the obvious one. If your app already ships Motion and one panel needs this, that is the better choice. Where Motion is not already on the page, the difference is the download.</p>
 
-          <h3>Results</h3>
-          <dl className="results">
-            {RESULTS.map(([name, value, scope]) => <div key={name}><dt>{name}</dt><dd><b>{value}</b>{scope}</dd></div>)}
-          </dl>
+          <div data-reveal="">
+            <Figure id="figure-size" label="Figure 3" caption="Gzipped JavaScript for one import with React excluded, bundled by esbuild from the packed release, and if your app already ships Motion that cost is zero to you">
+              <SizeFigure />
+            </Figure>
+          </div>
+          <div data-reveal="">
+            <Figure id="figure-timing" label="Figure 4" wide caption="Median and range of 6 runs, where the ranges of Surface and the Motion versions overlap, so it is level and no faster, and Surface does more layouts than any baseline">
+              <TimingFigure />
+            </Figure>
+          </div>
 
-          <h3>Limits</h3>
-          <ul className="limits">{LIMITS.map((limit) => <li key={limit}>{limit}</li>)}</ul>
+          <div className="passage" data-reveal="">
+            <h3 className="lead">Fourteen budgets met and three missed</h3>
+            <p className="prose">The budgets were frozen before the final run. A later review found that the engine jumped for any box not anchored at its top left corner, and the fix needs a second read of the layout at each request. That is where the extra bytes and the extra layouts came from. The limits were left where they were.</p>
+          </div>
+          <div data-reveal="">
+            <Figure id="figure-budgets" label="Figure 5" wide caption="Each bar is a measurement against its own limit, which is the line, so a bar that crosses the line is a miss">
+              <BudgetFigure />
+            </Figure>
+          </div>
+          <div data-reveal="">
+            <Figure id="figure-tallies" label="Figure 6" wide caption="The suite itself was checked by breaking the library on purpose, one defect at a time, and the packed release was installed into clean apps">
+              <TallyFigure />
+            </Figure>
+          </div>
+        </section>
 
-          <h3>Method</h3>
-          <p className="prose">The <a href={REPORT}>report</a> has every measurement with its method, raw data and failures. <a href={CONTRACT}>The contract</a> has the rules and what is not promised.</p>
+        <section className="chapter" id="limits" aria-labelledby="limits-title">
+          <div className="section-head" data-reveal="">
+            <h2 id="limits-title">Limits</h2>
+            <p>What this page does not show, and what nobody has checked yet</p>
+          </div>
+          <ol className="limits" data-reveal="">{LIMITS.map((limit) => <li key={limit}>{limit}</li>)}</ol>
+        </section>
+
+        <section className="ending" aria-labelledby="ending-title">
+          <h2 className="statement" id="ending-title" data-reveal="">Read how it was measured, or go back up and try to break it</h2>
+          <ul className="doors" data-reveal="">
+            <li><a href={docs('/')}><b>Docs</b><span>All 12 components, the guides and two working apps</span><Arrow /></a></li>
+            <li><a href={docs('/workbench')}><b>Workbench</b><span>The library next to Motion, CSS and broken fixtures under one test</span><Arrow /></a></li>
+            <li><a href={REPORT}><b>Report</b><span>Every measurement with its method, raw data and failures</span><Arrow /></a></li>
+            <li><a href={CONTRACT}><b>Contract</b><span>The rules a panel keeps, and what is not promised</span><Arrow /></a></li>
+            <li><a href={REPO}><b>GitHub</b><span>The source, the test suite and the recorded runs</span><Arrow /></a></li>
+          </ul>
         </section>
 
         <div className="page-end">
           <a className="quiet back" href="https://www.qendrimbeka.com/"><Chevron />Back</a>
-          <a className="quiet" href={docs('/')}>Docs</a>
-          <a className="quiet" href={REPO}>GitHub</a>
+          <button type="button" className="quiet" onClick={() => window.scrollTo({ top: 0 })}>Back to the sheet</button>
+          <button type="button" className="quiet" onClick={openKeys}>Keyboard</button>
         </div>
       </main>
+      <Shortcuts dialog={keys} />
     </div>
   );
 }
