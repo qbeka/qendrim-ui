@@ -25,8 +25,8 @@ Measured on 2026-11-06 at commit `fb8b32c`, on one Apple M5 Pro Mac on AC power,
 |---|---|---|
 | State model and engine, no browser | 48 | `packages/react/test`: 10 machine, 11 spring, 27 engine |
 | Detectors, no browser | 19 | `apps/docs/src/harness/detect.test.ts` |
-| Docs app helpers, no browser | 14 | `apps/docs/src/gallery/usage.test.ts`: 4 usage examples. `apps/docs/src/showpiece/model.test.ts`: 10 for the address, the layouts and the spring curve |
-| Browser tests | 597 in each of 3 full runs: 224 Chromium, 174 Firefox, 174 WebKit, 25 StrictMode | `e2e/` |
+| Docs app helpers, no browser | 37 | `apps/docs/src/gallery/usage.test.ts`: 4 usage examples. `apps/docs/src/showpiece/model.test.ts`: 15 for the address, the layouts, the spring curve and a held panel. `apps/docs/src/showpiece/exposure.test.ts`: 7 for the rules of the trace. `apps/docs/src/figures/results.test.ts`: 6 that check every number the project page draws against the recorded runs. `apps/docs/src/project/skins.test.ts`: 5 for the skins and the address |
+| Browser tests | 655 in each of 3 full runs: 244 Chromium, 193 Firefox, 193 WebKit, 25 StrictMode | `e2e/` |
 | Interruption suite, library | 8 scenarios in each of 3 browsers, and in StrictMode | `e2e/interruption.spec.ts` |
 | Comparison suite | 8 scenarios, 5 implementations, 5 runs each: 200 runs | `bench/correctness` |
 | Negative controls | 9 checks over 6 seeded broken implementations | `e2e/negative-controls.spec.ts` |
@@ -218,7 +218,7 @@ The second pass found more: the new turnaround metric dropped samples, the new d
 | A clean clone could not install: pnpm refused esbuild's build script. | Fixed. The development checkout had hidden this. `results/clean-checkout.txt` now shows every step passing from a fresh clone. |
 | The first mutation run reported 15 of 32, which was false. Vitest writes to stderr, and the script read stdout. | Fixed, by reading each failure's reason. |
 
-After the last library change, the full matrix passed 507 of 507 three times in a row, with no Firefox hang and no WebKit timeouts. The suite then grew with the project page and the docs site, and the library source did not change. On 2026-11-09 the full matrix passed 597 of 597 three times in a row, again with no hang and no timeouts. See `results/e2e/three-passes.txt`.
+After the last library change, the full matrix passed 507 of 507 three times in a row, with no Firefox hang and no WebKit timeouts. The suite then grew with the project page and the docs site, and the library source did not change. On 2026-11-09 the full matrix passed 597 of 597 three times in a row, again with no hang and no timeouts. Later that day the project page and the docs were rebuilt a second time, and the full matrix passed 655 of 655 three times in a row. See `results/e2e/three-passes.txt`.
 
 ## Mutation check
 
@@ -233,9 +233,34 @@ The first attempts at this check were wrong in two ways. The script read the wro
 
 ## Accessibility and review
 
-axe found no violations on 9 pages in 4 combinations of theme and recipe, plus the open inspector and the open modal. It also found none on the project page at rest, in each of its other three layouts, and with the specimen sheet in each of the other three recipe and theme combinations. That is automated checking only.
+axe found no violations on 9 pages in 4 combinations of theme and recipe, plus the open inspector and the open modal. It also found none on the project page at rest, in each of its other three layouts, with each of the other three recipe and theme combinations applied to the whole page, and with the list of keys open. The checks run with reduced motion, so that axe reads a page that is not part way through a fade. That is automated checking only.
 
 Visual review by the author, on real renders at 320, 390, 720, 768 and 1440 CSS pixels, in 3 passes: type and layout, interaction, and empty, error and interrupted states. This is a heuristic review. It is not user research. It found a misaligned ghost button, ticks over the thumb, a doubled focus ring, an action bar over the last row and a workbench that failed to report its own broken fixture. All are fixed. 200 percent zoom was approximated by halving the viewport.
+
+## The project page
+
+The project page and the docs were rebuilt on 2026-11-09. The library source did not change, so the sizes, the timing, the budgets and the comparison suite above still describe it.
+
+- **The hold is made of requests.** `Surface` takes no velocity from outside. On the page, a held panel gets a new place and a new request on every frame the pointer moves, so it follows the hand on the engine's own spring, and the request made on release starts at the speed the engine already has. The page reads that speed from the engine's trace event and shows it. A drag is not part of the library.
+- **The fixture figure uses the suite's own code.** It mounts two of the seeded broken fixtures beside `Inspector`, under the same recorder and detector as `e2e/negative-controls.spec.ts`. It reads each panel's position from the box it sits in, so that scrolling the page is not counted as a jump.
+- **Every number in a figure is checked.** `apps/docs/src/figures/results.test.ts` reads the files under `results/` and fails if a figure disagrees with them.
+
+Long tasks on the built project page, in headless Chromium 158 at 4 times CPU slowdown, on the same Mac with other sessions running at a load average of 3 to 9. A long task is one over 50 ms.
+
+| What was done | Runs | Tasks over 50 ms | Longest task seen |
+|---|---|---|---|
+| Load, then everything under the first screen loading and rendering, 6 seconds | 5, and 6 more that were traced | 0 | 29 to 37 ms in the 6 traced loads |
+| Six layout changes 90 ms apart, with typing | 5 | 0 | not over 50 ms |
+| A hold of 60 pointer moves, and the release | 5 | 0 | not over 50 ms |
+| 24 interruptions a second for about 2 seconds, with typing | 5 | 0 | not over 50 ms |
+| Scrolling the whole page | 5 | 0 | not over 50 ms |
+| The fixture figure, 4 reversals | 5 | 0 | not over 50 ms |
+| A plate changing the recipe and the theme of the whole page | 5, and 4 more that were traced | 0 | 34 to 48 ms in the 4 traced runs, which is close to the line |
+| The Surface specimen changing shape twice | 5 | 0 | not over 50 ms |
+
+The docs home was checked the same way, with 0 tasks over 50 ms in 3 runs and 42 to 46 ms as the longest in 3 traced loads. The first pass of the page had one task of 61 to 83 ms on load. It is now split: the plan, the panel and the spring render a frame apart, each chapter renders in a task of its own, and what is under the first screen loads in idle time.
+
+This is one machine under other load, so it is a check and not a measurement of any phone. No frame rate was measured.
 
 ## Contract coverage
 
@@ -278,11 +303,12 @@ node scripts/check-budgets.mjs baseline
 | Clean consumers | `results/consumers/summary.json` | `node consumers/check.mjs` |
 | Workspace against tarball | `results/consumers/workspace-vs-clean.json` | `node bench/workspace-vs-clean.mjs` |
 | Mutation check | `results/mutation/` | `node scripts/mutate.mjs` |
-| Three full passes | `results/e2e/three-passes.txt` | `pnpm test:e2e`, three times. The 2026-11-09 passes ran the same projects as two commands each, so that both servers could take turns on one port |
+| Three full passes | `results/e2e/three-passes.txt` | `pnpm test:e2e`, three times. The 2026-11-09 passes ran the same projects as two commands each, so that both servers could take turns on one port. `E2E_SERVER` and `E2E_DEV_PORT` in `playwright.config.ts` do that |
 | Clean checkout | `results/clean-checkout.txt` | `scripts/verify-clean.sh` |
 | Evidence page data | `apps/docs/public/evidence.json` | `node scripts/evidence.mjs final` |
 | Cover and poster | `media/cover.png`, `media/poster.png` | `node scripts/record.mjs media`, from the real site |
-| Demo, 16 seconds, with no captions | `media/demo.mp4` | Same |
+| Share card for the project page | `apps/docs/public/og.png` | `node scripts/og.mjs`. It is drawn, with nothing measured in it |
+| Demo, 15 seconds, with no captions | `media/demo.mp4` | Same |
 | Walkthrough, 64 seconds, with captions and no voice | `media/walkthrough.mp4` | Same |
 
 The recordings add a dot for the pointer and captions for the viewer. These are in `scripts/record.mjs`, and they are not in the product.
