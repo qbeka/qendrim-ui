@@ -44,6 +44,7 @@ test.describe('project page', () => {
       errors.push(error.message);
     });
     await page.goto(PAGE);
+    await title(page).waitFor(); // The panel renders a frame after the plan.
     await page.evaluate(() => { (window as unknown as { held: Element | null }).held = document.querySelector('[data-testid="title"]'); });
     await title(page).click();
     await caretToEnd(page);
@@ -82,6 +83,7 @@ test.describe('project page', () => {
 
   test('interrupting many times a second keeps the field, the caret and the text', async ({ page }) => {
     await page.goto(PAGE);
+    await title(page).waitFor(); // The panel renders a frame after the plan.
     await page.evaluate(() => { (window as unknown as { held: Element | null }).held = document.querySelector('[data-testid="title"]'); });
     await title(page).click();
     await caretToEnd(page);
@@ -199,7 +201,7 @@ test.describe('project page', () => {
     await page.waitForTimeout(160);
     expect(await inkOnCanvas(page)).toBeGreaterThan(200);
     await settled(page);
-    await page.waitForTimeout(2600);
+    await page.waitForTimeout(4600); // The drawing eases to its resting strength, and then nothing redraws it.
     const still = await inkOnCanvas(page);
     expect(still).toBeGreaterThan(200);
     await page.waitForTimeout(500);
@@ -247,6 +249,7 @@ test.describe('project page', () => {
   test('holding the panel sends a request for every move, and letting go lands it where it is aimed', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(PAGE);
+    await title(page).waitFor(); // The panel renders a frame after the plan.
     await page.evaluate(() => { (window as unknown as { held: Element | null }).held = document.querySelector('[data-testid="title"]'); });
     await title(page).click();
     await caretToEnd(page);

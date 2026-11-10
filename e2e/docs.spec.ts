@@ -94,4 +94,44 @@ test.describe('docs site', () => {
     expect(await page.evaluate(() => window.location.search)).toBe('');
     await expect(page.locator('.d-start pre').first()).toHaveText('npm install https://github.com/qbeka/qendrim-ui/releases/download/v0.1.0/qbeka-react-0.1.0.tgz');
   });
+
+  test('the evidence page draws the recorded results as figures, above the tables they come from', async ({ page }) => {
+    await page.goto('/evidence');
+    const suite = page.getByTestId('figure-suite');
+    await expect(suite.locator('.fig-suite-foot [role="cell"]')).toHaveText(['0 of 40', '0 of 40', '10 of 40', '10 of 40', '8 of 40']);
+    await expect(suite.locator('.fig-tie')).toHaveText('A tie');
+    await expect(page.getByTestId('figure-budgets').locator('li[data-missed]')).toHaveCount(3);
+    await expect(page.getByTestId('figure-budgets')).toContainText('14 of 17 met');
+    await expect(page.getByRole('heading', { level: 2, name: 'The tables' })).toBeVisible();
+    await expect(page.getByRole('table').first()).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+  });
+
+  test('the docs carry the tab icon and the share card', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', /favicon\.svg$/);
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', 'https://www.qendrimbeka.com/projects/qendrim-ui/og.png');
+    await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://www.qendrimbeka.com/projects/qendrim-ui/docs/');
+  });
+
+  test('the home page lets the panel be held, and counts every move of the hand as a request', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'The project page covers the hold in every browser.');
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/');
+    await page.waitForTimeout(900);
+    const grip = await page.getByTestId('grip').boundingBox();
+    const editor = await page.locator('[data-slot="editor"]').boundingBox();
+    if (!grip || !editor) throw new Error('The grip and the editor place must be on the page.');
+    await page.mouse.move(grip.x + 14, grip.y + 22);
+    await page.mouse.down();
+    for (let step = 1; step <= 16; step += 1) {
+      await page.mouse.move(grip.x + 14 + ((editor.x + editor.width - 20 - grip.x) * step) / 16, grip.y + 22 + ((editor.y + 40 - grip.y) * step) / 16);
+      await page.waitForTimeout(16);
+    }
+    await page.mouse.up();
+    await expect(page.getByTestId('note')).toHaveAttribute('data-shape', 'editor');
+    await expect(page.getByTestId('note')).toHaveAttribute('data-phase', 'settled');
+    expect(Number(await page.getByTestId('requests').textContent())).toBeGreaterThan(5);
+    expect(await page.evaluate(() => window.location.search)).toBe('');
+  });
 });
