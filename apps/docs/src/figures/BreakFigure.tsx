@@ -44,11 +44,13 @@ interface LaneProps {
   tag: string;
   metric: FixtureId;
   own?: boolean;
+  /** Whether the panel starts open. The first press should be the one that shows the fault. */
+  startOpen: boolean;
   testId: string;
 }
 
-const Lane = forwardRef<LaneHandle, LaneProps>(function Lane({ component: Component, name, tag, metric, own = false, testId }, ref) {
-  const [open, setOpenState] = useState(true);
+const Lane = forwardRef<LaneHandle, LaneProps>(function Lane({ component: Component, name, tag, metric, own = false, startOpen, testId }, ref) {
+  const [open, setOpenState] = useState(startOpen);
   const [value, setValue] = useState('Harbor rebuild');
   const [found, setFound] = useState<Violation[]>([]);
   const [frames, setFrames] = useState(0);
@@ -56,9 +58,9 @@ const Lane = forwardRef<LaneHandle, LaneProps>(function Lane({ component: Compon
   const boxLine = useRef<SVGPolylineElement>(null);
   const metricLine = useRef<SVGPolylineElement>(null);
   const marks = useRef<SVGGElement>(null);
-  const openRef = useRef(true);
-  const requested = useRef<Requested>('open');
-  const rendered = useRef<Requested>('open');
+  const openRef = useRef(startOpen);
+  const requested = useRef<Requested>(startOpen ? 'open' : 'closed');
+  const rendered = useRef<Requested>(startOpen ? 'open' : 'closed');
   const deferCloseRef = useRef<((ms: number) => void) | null>(null);
   const fallbackFocusRef = useRef<HTMLElement | null>(null);
   const sleep = useRef(0);
@@ -106,10 +108,18 @@ const Lane = forwardRef<LaneHandle, LaneProps>(function Lane({ component: Compon
   }, [recorder]);
 
   useEffect(() => {
-    recorder.onSample = (_sample: Sample) => {
+    recorder.onSample = (sample: Sample) => {
+      // The recorder reads the viewport. Here the page can scroll under a panel, which is not
+      // the panel moving, so each reading is taken from the stand the panel sits in.
+      const stand = root.current?.getBoundingClientRect();
+      if (stand) {
+        sample.x -= stand.left;
+        sample.y -= stand.top;
+      }
       draw();
       if (recorder.samples.length % 12 === 0) {
-        setFound(detect(recorder.trace()));
+        // Where a move ends up is only known once it has ended, so that check waits for the last reading.
+        setFound(detect(recorder.trace()).filter((violation) => violation.kind !== 'stale-final-state'));
         setFrames(recorder.samples.length);
       }
     };
@@ -195,8 +205,8 @@ export function BreakFigure() {
         <p>Press it again before the panels land, or type in a field while it moves</p>
       </div>
       <div className="brk-lanes">
-        <Lane key={fixture} ref={left} component={entry.component} name={entry.name} tag="A fixture from the test suite, broken on purpose" metric={fixture} testId="break-left" />
-        <Lane key={`own-${fixture}`} ref={right} component={SurfaceImpl} name="One live element" tag="Surface, through Inspector" metric={fixture} own testId="break-right" />
+        <Lane key={fixture} ref={left} component={entry.component} name={entry.name} tag="A fixture from the test suite, broken on purpose" metric={fixture} startOpen={fixture === 'scale'} testId="break-left" />
+        <Lane key={`own-${fixture}`} ref={right} component={SurfaceImpl} name="One live element" tag="Surface, through Inspector" metric={fixture} own startOpen={fixture === 'scale'} testId="break-right" />
       </div>
     </div>
   );
