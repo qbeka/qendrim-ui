@@ -334,7 +334,8 @@
 .show-says { display: flex; align-items: center; justify-content: space-between; gap: 6px 20px; min-height: 44px; padding: 6px 16px; border-block-end: 1px solid var(--show-line); }
 .show-status { min-width: 0; color: var(--show-body); font: 400 15px/20px var(--show-serif); letter-spacing: -0.004em; text-wrap: pretty; }
 
-.show-bench { display: grid; grid-template-columns: minmax(240px, 1fr) repeat(3, minmax(0, .9fr)) minmax(336px, 1.4fr); min-width: 0; }
+/* The band keeps its height before the spring has rendered into it, so nothing above or below it moves. */
+.show-bench { display: grid; grid-template-columns: minmax(240px, 1fr) repeat(3, minmax(0, .9fr)) minmax(336px, 1.4fr); min-width: 0; min-height: 104px; }
 .show-cell { display: grid; align-content: center; min-width: 0; padding: 10px 16px 12px; }
 .show-cell + .show-cell { border-inline-start: 1px solid var(--show-line); }
 .show-cell-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 28px; }
@@ -402,7 +403,7 @@
   }
   .wo-meta :is(.wo-due, .wo-pips) { display: none; }
   .show-legend { left: auto; right: var(--right); width: var(--c-w); }
-  .show-bench { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .show-bench { grid-template-columns: repeat(6, minmax(0, 1fr)); min-height: 187px; }
   .show-cell-spring { grid-column: span 3; }
   .show-code { grid-column: span 3; }
   .show-slider { grid-column: span 2; border-block-start: 1px solid var(--show-line); }
@@ -436,7 +437,7 @@
   .show-slot[data-here]::before { border-color: transparent; }
   .show-grip { width: 40px; right: 0; }
   .show-says { flex-direction: column; align-items: flex-start; padding: 10px 12px; }
-  .show-bench { grid-template-columns: minmax(0, 1fr); }
+  .show-bench { grid-template-columns: minmax(0, 1fr); min-height: 566px; }
   .show-cell-spring, .show-code, .show-slider { grid-column: auto; grid-row: auto; }
   .show-cell { padding: 12px; }
   .show-cell + .show-cell, .show-bench .show-code { border-inline-start: 0; border-block-start: 1px solid var(--show-line); }

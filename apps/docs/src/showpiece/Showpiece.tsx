@@ -294,6 +294,12 @@ export function Showpiece({ linked = false, onHelp }: ShowpieceProps) {
   const [announcement, setAnnouncement] = useState('');
   /** True for the first second, while the sheet draws itself in. */
   const [fresh, setFresh] = useState(true);
+  /**
+   * The sheet renders in three steps, a frame apart: the plan, then the panel, then the spring.
+   * Each is a task of its own, so the first screen never holds a slow phone up, and the stage
+   * is still arriving while they happen.
+   */
+  const [step, setStep] = useState(0);
 
   const stage = useRef<HTMLElement>(null);
   const plan = useRef<HTMLDivElement>(null);
@@ -404,7 +410,23 @@ export function Showpiece({ linked = false, onHelp }: ShowpieceProps) {
   }, []);
 
   useEffect(() => {
-    firstTitleNode.current = titleField.current;
+    if (step >= 2) return undefined;
+    let timer = 0;
+    const frame = requestAnimationFrame(() => {
+      timer = window.setTimeout(() => setStep((current) => current + 1), 0);
+    });
+    return () => {
+      cancelAnimationFrame(frame);
+      clearTimeout(timer);
+    };
+  }, [step]);
+
+  // The field that is there when the panel first renders is the one every later check is made against.
+  useEffect(() => {
+    if (step >= 1 && firstTitleNode.current === null) firstTitleNode.current = titleField.current;
+  }, [step]);
+
+  useEffect(() => {
     setMac(/Mac|iPhone|iPad/.test(navigator.platform));
     setTouch(matchMedia('(pointer: coarse)').matches);
     const query = matchMedia('(prefers-reduced-motion: reduce)');
@@ -752,11 +774,13 @@ export function Showpiece({ linked = false, onHelp }: ShowpieceProps) {
             <canvas className="show-trace" ref={canvas} aria-hidden="true" data-testid="trace" />
             <output className="show-live" ref={live} aria-hidden="true" data-testid="live-size" />
 
+            {step >= 1 ? (
             <Surface className="show-note" shape={held ? `hold-${held.flip}` : layout} ref={note} onTrace={onTrace} style={noteStyle} role="group" aria-label="Work order 118" data-testid="note"
               onPointerDown={onNotePointerDown} onMouseDown={onNoteMouseDown}>
               <Body layout={layout} mac={mac} titleRef={titleField} />
               <span className="show-grip" aria-hidden="true" data-testid="grip"><svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor"><circle cx="2" cy="2" r="1.4" /><circle cx="8" cy="2" r="1.4" /><circle cx="2" cy="8" r="1.4" /><circle cx="8" cy="8" r="1.4" /><circle cx="2" cy="14" r="1.4" /><circle cx="8" cy="14" r="1.4" /></svg></span>
             </Surface>
+            ) : null}
           </div>
         </div>
 
@@ -769,7 +793,7 @@ export function Showpiece({ linked = false, onHelp }: ShowpieceProps) {
               <div><dt>Field</dt><dd data-testid="same-node">{sameNode ? 'Same node' : 'Replaced'}</dd></div>
             </dl>
           </div>
-          <Bench spring={spring} rate={rate} reduced={reduced} onSpring={onSpring} onRate={onRate} link={linked ? link : null} />
+          {step >= 2 ? <Bench spring={spring} rate={rate} reduced={reduced} onSpring={onSpring} onRate={onRate} link={linked ? link : null} /> : <div className="show-bench" aria-hidden="true" />}
         </div>
       </div>
       <p className="show-sr" role="status">{announcement}</p>
