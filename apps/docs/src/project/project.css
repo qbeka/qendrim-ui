@@ -106,10 +106,10 @@ main > .show { animation: arrive .6s var(--ease) .12s backwards; }
   max-width: 940px; margin: 0 0 36px; color: var(--ink);
   font: 400 clamp(30px, 4.3vw, 50px) / 1.08 var(--serif); letter-spacing: -0.035em; text-wrap: balance;
 }
-.columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 56px; max-width: 1000px; }
+.columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 56px; max-width: 1012px; }
 .prose { max-width: var(--reading-width); text-wrap: pretty; }
 .columns .prose { margin: 0; }
-.passage { max-width: var(--reading-width); margin-block: 56px 20px; }
+.passage { max-width: calc(var(--reading-width) + 12px); margin-block: 56px 20px; }
 p.passage { margin-block: 28px 0; }
 .lead { margin: 0 0 10px; color: var(--ink); font: 400 26px/32px var(--serif); letter-spacing: -0.02em; text-wrap: balance; }
 .prose code, .limits code { font: 0.9em var(--mono); }
@@ -137,6 +137,10 @@ p.passage { margin-block: 28px 0; }
  */
 .chapter .fig-plate, .g-entry, .steps { content-visibility: auto; contain-intrinsic-size: auto 420px; }
 .g-entry { contain-intrinsic-size: auto 1000px; }
+/* The same for the text, and for the stage once it has been scrolled away. Each of these is its own box, so it can be watched. */
+.statement, .section-head, .columns, .passage, .limits, .doors { content-visibility: auto; contain-intrinsic-size: auto 220px; }
+.columns, .passage { margin-inline: -6px; padding-inline: 6px; }
+main > .show { content-visibility: auto; contain-intrinsic-size: auto 680px; }
 
 /* Sections arrive as they are reached */
 [data-reveal] { transition: opacity .6s linear, translate .7s var(--ease); }

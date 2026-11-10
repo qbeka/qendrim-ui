@@ -306,14 +306,26 @@ export function Page() {
     return () => window.removeEventListener('keydown', onKey);
   }, [openKeys]);
 
-  // The whole page takes the recipe and the theme, and the address remembers anything but the default.
+  /*
+   * The whole page takes the recipe and the theme, and the address remembers anything but the
+   * default. A theme changes color and a recipe changes type and shape, which costs a layout,
+   * so they go a frame apart and the bookkeeping goes after both. No one task is long, and
+   * all of it happens behind the plate.
+   */
+  const wanted = useRef(skin);
   const applySkin = useCallback((next: Skin) => {
+    wanted.current = next;
     const root = document.documentElement;
-    root.dataset['qRecipe'] = next.recipe;
     root.dataset['qTheme'] = next.theme;
-    const search = writeSkin(next, window.location.search);
-    if (search !== window.location.search) window.history.replaceState(window.history.state, '', `${window.location.pathname}${search}${window.location.hash}`);
-    setSkin(next);
+    requestAnimationFrame(() => {
+      root.dataset['qRecipe'] = wanted.current.recipe;
+      window.setTimeout(() => {
+        const latest = wanted.current;
+        const search = writeSkin(latest, window.location.search);
+        if (search !== window.location.search) window.history.replaceState(window.history.state, '', `${window.location.pathname}${search}${window.location.hash}`);
+        setSkin(latest);
+      }, 0);
+    });
   }, []);
 
   useEffect(() => {
