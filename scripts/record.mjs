@@ -63,44 +63,61 @@ async function session(name, run, { captions = true } = {}) {
 
 await session('demo', async (page, say, glide) => {
   await page.goto(`${BASE}/project/`);
-  await page.waitForTimeout(600);
+  await page.waitForTimeout(900);
   const press = async (locator) => {
     await glide(locator);
     await page.mouse.down();
     await page.mouse.up();
   };
+  /** Holds the panel by its grip and carries it along a path, a frame at a time, as a hand would. */
+  const carry = async (points, { msPerStep = 16 } = {}) => {
+    const grip = await page.getByTestId('grip').boundingBox();
+    let at = { x: grip.x + grip.width / 2, y: grip.y + grip.height / 2 };
+    await page.mouse.move(at.x, at.y, { steps: 14 });
+    await page.mouse.down();
+    for (const [x, y, steps] of points) {
+      for (let step = 1; step <= steps; step += 1) {
+        const t = step / steps;
+        const eased = t * t * (3 - 2 * t);
+        await page.mouse.move(at.x + (x - at.x) * eased, at.y + (y - at.y) * eased);
+        await page.waitForTimeout(msPerStep);
+      }
+      at = { x, y };
+    }
+    await page.mouse.up();
+  };
+  const place = async (id) => page.locator(`[data-slot="${id}"]`).boundingBox();
   const title = page.getByTestId('title');
-  await say('Click the title and type.', 0);
   await press(title);
   await title.evaluate((input) => input.setSelectionRange(input.value.length, input.value.length));
-  await page.waitForTimeout(400);
-  await page.keyboard.type(', before', { delay: 70 });
-  await say('Change the layout and keep typing while it moves.', 0);
-  await press(page.getByTestId('layout-editor'));
-  await page.keyboard.type(' the spring', { delay: 70 });
-  await page.waitForTimeout(500);
-  await say('Change course before it lands.', 0);
-  await press(page.getByTestId('layout-sheet'));
-  await page.waitForTimeout(170);
-  await press(page.getByTestId('layout-row'));
-  await page.waitForTimeout(170);
-  await press(page.getByTestId('layout-editor'));
-  await page.keyboard.type(' tide', { delay: 70 });
-  await page.waitForTimeout(900);
-  await say('Interrupt it 24 times a second. The caret stays in the same field.', 0);
-  await press(page.getByTestId('stress'));
-  await page.waitForTimeout(700);
-  await page.keyboard.type(', and still typing', { delay: 110 });
-  await page.waitForTimeout(700);
-  await press(page.getByTestId('stress'));
-  await page.waitForTimeout(1300);
-  await say('Loosen the spring. The CSS beside it follows.', 0);
-  await press(page.getByTestId('preset-loose'));
-  await page.waitForTimeout(1500);
-  await press(page.getByTestId('layout-card'));
-  await page.waitForTimeout(1800);
-  await say('', 0);
   await page.waitForTimeout(300);
+  await page.keyboard.type(', before', { delay: 60 });
+  // Change the layout and keep typing while it moves.
+  await press(page.getByTestId('layout-editor'));
+  await page.keyboard.type(' the spring', { delay: 60 });
+  await page.waitForTimeout(700);
+  // Hold the panel and carry it across the sheet. Every move of the hand is a request.
+  const sheet = await place('sheet');
+  const row = await place('row');
+  await carry([
+    [row.x + row.width * 0.62, row.y + 150, 26],
+    [sheet.x + sheet.width - 40, sheet.y + 210, 30],
+  ]);
+  await page.keyboard.type(' tide', { delay: 60 });
+  await page.waitForTimeout(1100);
+  // Change course before it lands.
+  await press(page.getByTestId('layout-row'));
+  await page.waitForTimeout(150);
+  await press(page.getByTestId('layout-card'));
+  await page.waitForTimeout(1300);
+  // Interrupt it 24 times a second. The caret stays in the same field.
+  await press(page.getByTestId('stress'));
+  await page.waitForTimeout(500);
+  await page.keyboard.type(', still typing', { delay: 100 });
+  await page.waitForTimeout(500);
+  await press(page.getByTestId('stress'));
+  await page.waitForTimeout(1500);
+  await say('', 0);
 }, { captions: false });
 
 await session('walkthrough', async (page, say, glide) => {
@@ -179,10 +196,14 @@ await session('walkthrough', async (page, say, glide) => {
   const context = await browser.newContext({ viewport: SIZE, deviceScaleFactor: 2, colorScheme: 'light' });
   const page = await context.newPage();
   await page.goto(`${BASE}/project/`);
-  await page.waitForTimeout(600);
+  await page.waitForTimeout(1200);
   await page.getByTestId('title').click();
+  await page.getByTestId('title').evaluate((input) => input.setSelectionRange(input.value.length, input.value.length));
+  await page.getByTestId('layout-sheet').click();
+  await page.waitForTimeout(1600);
   await page.getByTestId('layout-editor').click();
-  await page.waitForTimeout(520);
+  await page.waitForTimeout(1500);
+  await page.mouse.move(40, 400);
   await page.screenshot({ path: join(out, 'cover.png') });
   await context.close();
 }
