@@ -2,9 +2,9 @@
 
 React components for panels that keep working when you change your mind. Open one, type in it, reverse it mid-move, resize the window and keep typing. Your text, your caret and your focus stay where they were.
 
-![One work order shown as an editor on a plan of four layouts, with the spring controls beside it](media/cover.png)
+![One work order as an editor on a drafting sheet of four layouts, with a dimension line for each and the trace of its last move behind it](media/cover.png)
 
-**[Try it live](https://www.qendrimbeka.com/projects/qendrim-ui/)**, read [the docs](https://www.qendrimbeka.com/projects/qendrim-ui/docs/) or [watch the 16 second recording](media/demo.mp4).
+**[Try it live](https://www.qendrimbeka.com/projects/qendrim-ui/)**, read [the docs](https://www.qendrimbeka.com/projects/qendrim-ui/docs/) or [watch the 15 second recording](media/demo.mp4).
 
 ## Try it
 
@@ -17,7 +17,7 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-Open <http://localhost:5171> and try to break the panel on the home page: type in it, change its layout before it lands, then interrupt it 24 times a second. `/project/` is the project page with the same panel, the spring controls and the specimen sheet, and `/workbench` runs this library next to Motion, CSS and deliberately broken fixtures.
+Open <http://localhost:5171> and try to break the panel on the home page: type in it, change its layout before it lands, pick it up by its grip and carry it to another layout, then interrupt it 24 times a second. `/project/` is the project page with the same panel, the specimen sheet, four skins that change the whole page, and the measurements drawn as figures. `/workbench` runs this library next to Motion, CSS and deliberately broken fixtures.
 
 ## Install
 
@@ -107,6 +107,7 @@ pnpm exec playwright install chromium firefox webkit
 | `pnpm bench:smoke` | One short measurement run, to check the harness. |
 | `pnpm bench` | The full measurement. It takes about 30 minutes. |
 | `node scripts/mutate.mjs` | Breaks the code on purpose, one change at a time, and checks that a test notices. |
+| `pnpm og` | Redraws the share card for the project page. |
 
 ## Architecture
 
