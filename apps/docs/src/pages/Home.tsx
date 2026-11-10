@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { FIRST_EXAMPLE, INSTALL } from '../gallery/usage';
 import { Code } from '../lib/Copy';
 import { Link } from '../lib/router';
@@ -12,13 +13,30 @@ const PLACES = [
   { to: '/evidence', title: 'Evidence', text: 'Measurements with their method, their baselines and their limits' },
 ];
 
+/** True from the second frame on. The frame of the site lays out first, and the stage in a task of its own. */
+function useSecondFrame() {
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    let timer = 0;
+    const frame = requestAnimationFrame(() => {
+      timer = window.setTimeout(() => setReady(true), 0);
+    });
+    return () => {
+      cancelAnimationFrame(frame);
+      clearTimeout(timer);
+    };
+  }, []);
+  return ready;
+}
+
 export function Home() {
+  const stage = useSecondFrame();
   return (
     <div className="d-wide d-home">
       <h1>Panels that keep working when you change your mind</h1>
       <p className="d-lede">Qendrim UI is a React component library whose panels can be reversed, resized and refilled mid-move while keeping your text, your focus and your place</p>
 
-      <Showpiece />
+      {stage ? <Showpiece /> : <div className="d-stage-wait" />}
 
       <h2>Start</h2>
       <p>The package is not on npm, so this installs the 0.1.0 release file from GitHub and needs React 18.3 or 19</p>
