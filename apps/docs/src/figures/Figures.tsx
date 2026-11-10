@@ -7,7 +7,7 @@ const number = (value: number) => value.toLocaleString('en-US');
 export function Figure({ id, label, caption, children, wide = false }: { id: string; label: string; caption: ReactNode; children: ReactNode; wide?: boolean }) {
   return (
     <figure className="fig" id={id} data-wide={wide || undefined} data-testid={id}>
-      <div className="fig-plate">{children}</div>
+      <div className="fig-plate" data-block="" data-cold="">{children}</div>
       <figcaption><b>{label}</b>{caption}</figcaption>
     </figure>
   );

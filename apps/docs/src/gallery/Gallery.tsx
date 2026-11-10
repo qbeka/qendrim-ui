@@ -308,7 +308,7 @@ export function Gallery({ docsLink }: { docsLink: (slug: string, name: string) =
     <div className="g-sheet">
       <div className="g-grid">
         {ENTRIES.map((entry, index) => (
-          <article className="g-entry" key={entry.slug} data-testid={`specimen-${entry.slug}`}>
+          <article className="g-entry" key={entry.slug} data-testid={`specimen-${entry.slug}`} data-block="" data-cold="">
             <header className="g-entry-head">
               <p className="g-entry-no" aria-hidden="true">{String(index + 1).padStart(2, '0')}</p>
               <h3>{entry.name}</h3>
