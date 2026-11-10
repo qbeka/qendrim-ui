@@ -1,4 +1,11 @@
-2026-11-09. Commit a005f5b. The project page and docs tests were rewritten, and the library source has not changed since fb8b32c.
+2026-11-09, after the second pass on the project page and the docs. Commit c08bb64. The library source has not changed since fb8b32c.
+Each pass ran the same four projects as two commands, so that the built site and the development build could take turns on one port: E2E_SERVER=built for Chromium, Firefox and WebKit, then E2E_SERVER=dev with E2E_DEV_PORT for StrictMode.
+pass 1:  102 skipped; 630 passed (3.6m) in Chromium, Firefox and WebKit; 25 passed (11.0s) in StrictMode; 655 passed.
+pass 2:  102 skipped; 630 passed (3.6m) in Chromium, Firefox and WebKit; 25 passed (11.0s) in StrictMode; 655 passed.
+pass 3:  102 skipped; 630 passed (3.6m) in Chromium, Firefox and WebKit; 25 passed (10.9s) in StrictMode; 655 passed.
+Per browser in each pass: 244 Chromium, 193 Firefox, 193 WebKit, 25 StrictMode. Later commits wrote this count into the page, shortened two entrance animations and changed documentation.
+
+2026-11-09, earlier in the day. Commit a005f5b. The project page and docs tests were rewritten, and the library source has not changed since fb8b32c.
 Each pass ran the same four projects as two commands, so that the built site and the development build could take turns on one port.
 pass 1:  100 skipped; 572 passed (3.1m) in Chromium, Firefox and WebKit; 25 passed (10.0s) in StrictMode; 597 passed.
 pass 2:  100 skipped; 572 passed (3.1m) in Chromium, Firefox and WebKit; 25 passed (10.2s) in StrictMode; 597 passed.
