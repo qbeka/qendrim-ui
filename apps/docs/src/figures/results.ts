@@ -80,4 +80,4 @@ export const BUDGETS = [
 export const MUTATION = { total: 55, caught: 53, equivalent: 2 } as const;
 export const CLEAN_INSTALLS = { total: 5, passed: 5 } as const;
 /** Three full runs in a row. results/e2e/three-passes.txt has the log. */
-export const BROWSER_TESTS = { total: 597, chromium: 224, firefox: 174, webkit: 174, strictMode: 25, date: '2026-11-09' } as const;
+export const BROWSER_TESTS = { total: 655, chromium: 244, firefox: 193, webkit: 193, strictMode: 25, date: '2026-11-09' } as const;
