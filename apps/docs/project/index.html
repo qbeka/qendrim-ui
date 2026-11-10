@@ -1,12 +1,36 @@
 <!doctype html>
-<html lang="en" data-q-theme="light">
+<html lang="en" data-q-recipe="studio" data-q-theme="light">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="React components that keep up when you change your mind" />
     <title>Qendrim UI</title>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Qendrim UI" />
+    <meta property="og:description" content="React components that keep up when you change your mind" />
+    <meta property="og:url" content="https://www.qendrimbeka.com/projects/qendrim-ui/" />
+    <meta property="og:image" content="https://www.qendrimbeka.com/projects/qendrim-ui/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Qendrim UI, with one panel drawn in four layouts on a drafting sheet and the path of its caret between them" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Qendrim UI" />
+    <meta name="twitter:description" content="React components that keep up when you change your mind" />
+    <meta name="twitter:image" content="https://www.qendrimbeka.com/projects/qendrim-ui/og.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preload" href="/src/fonts/GeistSerif-Regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/src/fonts/Geist-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <script>
+      // A link can carry a recipe and a theme. Set them before the first paint, so the page never flashes the default.
+      (function () {
+        var skin = new URLSearchParams(location.search).get('skin');
+        var match = skin && /^(studio|editorial)-(light|dark)$/.exec(skin);
+        if (match) {
+          document.documentElement.dataset.qRecipe = match[1];
+          document.documentElement.dataset.qTheme = match[2];
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
