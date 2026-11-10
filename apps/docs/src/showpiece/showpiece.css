@@ -198,6 +198,8 @@
 }
 .show[data-held] { cursor: grabbing; }
 .show[data-held] .show-note { user-select: none; -webkit-user-select: none; }
+/* While the panel is held, the place it is aimed at is the only one marked, whatever the pointer is over. */
+.show[data-held] .show-slot { pointer-events: none; }
 
 .show-grip {
   position: absolute; right: 4px; top: 6px; z-index: 1; display: grid; place-items: center; width: 28px; height: 44px; border-radius: 8px;
