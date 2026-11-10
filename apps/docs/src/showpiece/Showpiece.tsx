@@ -292,6 +292,8 @@ export function Showpiece({ linked = false, onHelp }: ShowpieceProps) {
   const [told, setTold] = useState<Told>({ interruptions: 0, afterStress: false, stressed: false, drag: null });
   const [sameNode, setSameNode] = useState(true);
   const [announcement, setAnnouncement] = useState('');
+  /** True for the first second, while the sheet draws itself in. */
+  const [fresh, setFresh] = useState(true);
 
   const stage = useRef<HTMLElement>(null);
   const plan = useRef<HTMLDivElement>(null);
@@ -395,6 +397,11 @@ export function Showpiece({ linked = false, onHelp }: ShowpieceProps) {
   }, []);
 
   const link = useCallback(() => `${window.location.origin}${window.location.pathname}${serializeState({ layout: latest.current.layout, spring: latest.current.spring, rate: latest.current.rate })}`, []);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setFresh(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     firstTitleNode.current = titleField.current;
@@ -717,7 +724,7 @@ export function Showpiece({ linked = false, onHelp }: ShowpieceProps) {
     : undefined;
 
   return (
-    <section className="show" ref={stage} aria-label="One element in four layouts" data-testid="stage" data-mode={mode} data-stress={stress || undefined} data-held={held ? '' : undefined}
+    <section className="show" ref={stage} aria-label="One element in four layouts" data-testid="stage" data-mode={mode} data-stress={stress || undefined} data-held={held ? '' : undefined} data-fresh={fresh ? '' : undefined}
       onPointerDownCapture={onPointerDownCapture} onKeyDownCapture={onKeyDownCapture} onFocusCapture={onFocusCapture} onKeyDown={onKeyDown}>
       <div className="show-frame">
         <div className="show-bar">

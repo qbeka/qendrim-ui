@@ -141,11 +141,14 @@
 /* A dimension line: the line, a witness tick at each end, and the measured number breaking it. */
 .show-dim { position: absolute; background: var(--show-draft); color: var(--show-muted); transition: background-color .16s, color .16s; pointer-events: none; }
 .show-dim::before, .show-dim::after { content: ''; position: absolute; background: inherit; }
-.show-dim-w { left: 0; right: 0; top: -20px; height: 1px; animation: show-dim-w .52s var(--show-ease) .16s backwards; }
+.show-dim-w { left: 0; right: 0; top: -20px; height: 1px; }
+/* The lines draw themselves once, when the sheet first appears, and never again on a change of size. */
+.show[data-fresh] .show-dim-w { animation: show-dim-w .52s var(--show-ease) .16s backwards; }
+.show[data-fresh] .show-dim-h { animation: show-dim-h .52s var(--show-ease) .22s backwards; }
 .show-dim-w::before, .show-dim-w::after { top: -5px; width: 1px; height: 17px; }
 .show-dim-w::before { left: 0; }
 .show-dim-w::after { right: 0; }
-.show-dim-h { top: 0; bottom: 0; left: -20px; width: 1px; animation: show-dim-h .52s var(--show-ease) .22s backwards; }
+.show-dim-h { top: 0; bottom: 0; left: -20px; width: 1px; }
 .show-dim-h::before, .show-dim-h::after { left: -5px; width: 17px; height: 1px; }
 .show-dim-h::before { top: 0; }
 .show-dim-h::after { bottom: 0; }
