@@ -19,8 +19,8 @@
   --font-geist-serif-regular: 'Geist Serif Docs';
   --d-serif: 'Geist Serif Docs', ui-serif, Georgia, serif;
   --d-mono: var(--q-font-mono);
-  --stage-height: 600px;
-  --plan-height: clamp(380px, calc(100svh - 300px), 460px);
+  --stage-height: clamp(560px, calc(100svh - 268px), 660px);
+  --plan-height: clamp(372px, calc(100svh - 236px), 460px);
 }
 
 * { box-sizing: border-box; }
@@ -181,7 +181,16 @@ th, td { padding: 8px 12px 8px 0; border-block-end: 1px solid var(--q-color-rule
 .d-start .d-code { margin: 0; }
 .d-start .d-code:first-child pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 
+/* Figures on the evidence page */
+.d-figures { display: grid; gap: 40px; margin-block: 8px 16px; }
+.d-site .fig figcaption { margin-block-start: 12px; }
+.d-site .fig :where(p, dd) { color: inherit; }
+
 /* Home */
+.d-home > h1 { animation: d-arrive .52s cubic-bezier(0.2, 0, 0, 1) backwards; }
+.d-home > .d-lede { animation: d-arrive .52s cubic-bezier(0.2, 0, 0, 1) .06s backwards; }
+.d-home > .show { animation: d-arrive .6s cubic-bezier(0.2, 0, 0, 1) .12s backwards; }
+@keyframes d-arrive { from { opacity: 0; translate: 0 10px; } }
 .d-home .show { margin-block: 8px 8px; }
 .d-places { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin: 16px 0 0; padding: 0; list-style: none; }
 .d-main .d-places a {
@@ -379,4 +388,5 @@ th, td { padding: 8px 12px 8px 0; border-block-end: 1px solid var(--q-color-rule
 @media (prefers-reduced-motion: reduce) {
   .ex-chevron { transition: none; }
   .d-site *, .d-site *::before, .d-site *::after { transition: none !important; }
+  .d-home > * { animation: none !important; }
 }

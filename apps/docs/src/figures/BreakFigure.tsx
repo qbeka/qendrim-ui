@@ -18,6 +18,9 @@ const FIXTURES = {
 } as const;
 type FixtureId = keyof typeof FIXTURES;
 
+/** Pressing a control leaves focus where it is. A press that took focus out of a panel would read as the panel losing it. */
+const keepFocus = (event: React.MouseEvent) => event.preventDefault();
+
 const WINDOW_MS = 4200;
 const AWAKE_MS = 2600;
 const CHART = { width: 320, height: 64 };
@@ -196,7 +199,7 @@ export function BreakFigure() {
   return (
     <div className="brk" data-testid="break">
       <div className="brk-bar">
-        <button type="button" className="brk-btn brk-primary" onClick={reverse} data-testid="break-reverse">Reverse both</button>
+        <button type="button" className="brk-btn brk-primary" onMouseDown={keepFocus} onClick={reverse} data-testid="break-reverse">Reverse both</button>
         <div className="brk-seg" role="group" aria-label="The broken panel">
           {(Object.keys(FIXTURES) as FixtureId[]).map((id) => (
             <button key={id} type="button" className="brk-btn" aria-pressed={fixture === id} onClick={() => setFixture(id)} data-testid={`break-${id}`}>{FIXTURES[id].label}</button>

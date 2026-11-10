@@ -30,7 +30,7 @@
 .fig-suite-row + .fig-suite-row { border-block-start: 1px solid var(--fig-line); }
 .fig-suite-head { color: var(--fig-muted); font-size: 12.5px; line-height: 18px; }
 .fig-suite-head [data-own] { color: var(--fig-ink); font-weight: 500; }
-.fig-suite-head > * { padding-block: 28px 10px; align-self: end; }
+.fig-suite-head > * { display: flex; align-items: flex-end; align-self: stretch; padding-block: 28px 10px; }
 .fig-suite-name { color: var(--fig-ink); }
 .fig-suite-head .fig-suite-name { color: var(--fig-muted); }
 .fig-suite-cell { display: flex; align-items: center; gap: 8px; min-height: 38px; }
