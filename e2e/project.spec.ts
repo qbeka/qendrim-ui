@@ -582,8 +582,9 @@ test.describe('project page', () => {
 
   test('the page never says it is on npm or that it beats Motion', async ({ page }) => {
     await page.goto(PAGE);
-    await page.getByTestId('figure-tallies').scrollIntoViewIfNeeded();
-    const text = (await page.locator('main').innerText()).replace(/\s+/g, ' ');
+    await page.locator('#limits').waitFor({ state: 'attached' });
+    // The whole text, including the chapters the browser has not rendered yet.
+    const text = ((await page.locator('main').textContent()) ?? '').replace(/\s+/g, ' ');
     expect(text).toContain('The package is not on npm');
     expect(text).toContain('A careful Motion version ties it on the interruption suite');
     expect(text).toContain('so it is level and no faster');
