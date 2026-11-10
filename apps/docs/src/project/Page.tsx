@@ -3,6 +3,7 @@ import { BudgetFigure, Figure, SizeFigure, SuiteFigure, TallyFigure, TimingFigur
 import { FIRST_EXAMPLE, INSTALL } from '../gallery/usage';
 import { useCopy } from '../lib/useCopy';
 import { Showpiece } from '../showpiece/Showpiece';
+import { later, openGate, warm } from './idle';
 import { Plates } from './Plates';
 import { readSkin, skinAttributes, writeSkin, type Skin } from './skins';
 
@@ -57,21 +58,27 @@ function CopyButton({ text, label, testId, className = 'control outline' }: { te
 const Chevron = () => <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 4L6 8L10 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const Arrow = () => <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8h9M8.5 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-/** Renders its children once the placeholder is near the viewport, and holds their space until then. */
-function Near({ children, height, testId }: { children: ReactNode; height: number; testId?: string }) {
-  const [near, setNear] = useState(false);
-  const mark = useRef<HTMLDivElement>(null);
+/**
+ * Renders its children in a quiet moment after the page is in, and holds their space until then.
+ * They are below the first screen, so nobody waits for them, and the first screen does not wait for their code.
+ */
+function Later({ children, height }: { children: ReactNode; height: number }) {
+  const [shown, setShown] = useState(false);
   useEffect(() => {
-    const node = mark.current;
-    if (!node || near) return undefined;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry?.isIntersecting) setNear(true);
-    }, { rootMargin: '900px 0px' });
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [near]);
-  const wait = <div className="near-wait" style={{ minHeight: height }} />;
-  return <div ref={mark} data-testid={testId}>{near ? <Suspense fallback={wait}>{children}</Suspense> : wait}</div>;
+    let live = true;
+    later(() => {
+      if (live) setShown(true);
+    });
+    return () => {
+      live = false;
+    };
+  }, []);
+  // What has just rendered is cold, so the browser is asked to render it too, piece by piece.
+  useEffect(() => {
+    if (shown) later(warm);
+  }, [shown]);
+  const wait = <div className="later-wait" style={{ minHeight: height }} />;
+  return shown ? <Suspense fallback={wait}>{children}</Suspense> : wait;
 }
 
 /** Sections arrive as they are scrolled to. With reduced motion, or with no script, they are simply there. */
@@ -147,30 +154,30 @@ const STAGE_FRAMES = 3;
 const Details = memo(function Details() {
   return (
     <section className="chapter" id="details" aria-labelledby="details-title">
-      <h2 className="statement" id="details-title" data-reveal="">Every change of mind is a numbered request, and the panel stays one element through all of them</h2>
-      <div className="columns" data-reveal="">
+      <h2 className="statement" data-block="" data-cold="" id="details-title" data-reveal="">Every change of mind is a numbered request, and the panel stays one element through all of them</h2>
+      <div className="columns" data-reveal="" data-block="" data-cold="">
         <p className="prose">Qendrim UI is a small React library for working panels that get interrupted. You open one, start typing, and reverse it before it lands. Each request gets a number, and work that belongs to an older number cannot touch a newer one, so a save that finishes late does not close a panel you have reopened.</p>
         <p className="prose">A move starts from where the panel is on screen, at the speed it is already going, which is why the paths on the sheet above stay smooth when you interrupt it. Nothing is copied or moved to a new parent, so a field keeps its text, its caret and its selection, and focus moves when you ask for it and not when the animation ends.</p>
       </div>
 
-      <div className="passage" data-reveal="">
+      <div className="passage" data-reveal="" data-block="" data-cold="">
         <h3 className="lead">What happens when a panel is not one element</h3>
         <p className="prose">The quickest ways to animate a panel are to scale its content, or to show a copy of it while the real one changes. Both look right until someone reverses the move or is typing in it. The test suite keeps one panel of each kind, broken on purpose, to prove that its detector can see the fault. Here they are beside the library, read by that same detector.</p>
       </div>
       <div data-reveal="">
         <Figure id="figure-break" label="Figure 1" wide caption="Both panels get the same clicks, and the lines under them come from the recorder and the detector that the browser tests use">
-          <Near height={520}><BreakFigure /></Near>
+          <Later height={520}><BreakFigure /></Later>
         </Figure>
       </div>
-      <p className="prose passage" data-reveal="">A panel that is broken on purpose is an easy opponent. The fair comparison is further down, against Motion and plain CSS written with care, and it ends in a tie.</p>
+      <p className="prose passage" data-reveal="" data-block="" data-cold="">A panel that is broken on purpose is an easy opponent. The fair comparison is further down, against Motion and plain CSS written with care, and it ends in a tie.</p>
     </section>
   );
 });
 
-const Components = memo(function Components({ skin, onSkin }: { skin: Skin; onSkin: (skin: Skin) => void }) {
+const Components = memo(function Components({ skin, onSkin }: { skin: Skin; onSkin: (skin: Skin, done?: () => void) => void }) {
   return (
     <section className="chapter" id="components" aria-labelledby="components-title">
-      <div className="section-head" data-reveal="">
+      <div className="section-head" data-reveal="" data-block="" data-cold="">
         <h2 id="components-title">Twelve components, and the page they are printed on</h2>
         <p>Four are this library's own and eight are Base UI primitives with styles, and each plate below changes the tokens for this whole page</p>
       </div>
@@ -182,7 +189,7 @@ const Components = memo(function Components({ skin, onSkin }: { skin: Skin; onSk
       </div>
 
       <div data-reveal="" data-testid="sheet">
-        <Near height={1500}><Gallery docsLink={(slug, name) => <a href={docs(`/components/${slug}`)}>{name} API and keyboard map</a>} /></Near>
+        <Later height={1500}><Gallery docsLink={(slug, name) => <a href={docs(`/components/${slug}`)}>{name} API and keyboard map</a>} /></Later>
       </div>
       <p className="more"><a href={docs('/components')}>All 12 components</a> and <a href={docs('/guide/theming')}>the token list</a> are in the docs</p>
     </section>
@@ -192,11 +199,11 @@ const Components = memo(function Components({ skin, onSkin }: { skin: Skin; onSk
 const Start = memo(function Start() {
   return (
     <section className="chapter" id="start" aria-labelledby="start-title">
-      <div className="section-head" data-reveal="">
+      <div className="section-head" data-reveal="" data-block="" data-cold="">
         <h2 id="start-title">Start</h2>
         <p>The package is not on npm, so the first line installs the 0.1.0 release file from GitHub, and it needs React 18.3 or 19</p>
       </div>
-      <ol className="steps" data-reveal="">
+      <ol className="steps" data-reveal="" data-block="" data-cold="">
         <li>
           <div className="step-head"><span>Install it</span><CopyButton text={INSTALL} label="Copy" testId="copy-install-step" className="control" /></div>
           <pre tabIndex={0} aria-label="Install command" data-testid="install-command"><code>{INSTALL}</code></pre>
@@ -214,8 +221,8 @@ const Start = memo(function Start() {
 const Measured = memo(function Measured() {
   return (
     <section className="chapter" id="measured" aria-labelledby="measured-title">
-      <h2 className="statement" id="measured-title" data-reveal="">A careful Motion version ties it on correctness, so what this adds is a written contract and a smaller download</h2>
-      <div className="columns" data-reveal="">
+      <h2 className="statement" data-block="" data-cold="" id="measured-title" data-reveal="">A careful Motion version ties it on correctness, so what this adds is a written contract and a smaller download</h2>
+      <div className="columns" data-reveal="" data-block="" data-cold="">
         <p className="prose">The comparison suite runs 8 interruption scenarios, 5 times each, against five implementations of one panel in Chromium. The plain rules for focus, removal and a late close were given to every baseline, so that the comparison is about geometry.</p>
         <p className="prose">Everything below was measured on the library source on 6 November 2026, on one Apple M5 Pro Mac in headless Chromium with other work running. It is lab data, and <a href={REPORT}>the report</a> has the method, the raw samples and the failures.</p>
       </div>
@@ -225,7 +232,7 @@ const Measured = memo(function Measured() {
           <SuiteFigure />
         </Figure>
       </div>
-      <p className="prose passage" data-reveal="">The measured Motion version is about 30 lines longer than the obvious one. If your app already ships Motion and one panel needs this, that is the better choice. Where Motion is not already on the page, the difference is the download.</p>
+      <p className="prose passage" data-reveal="" data-block="" data-cold="">The measured Motion version is about 30 lines longer than the obvious one. If your app already ships Motion and one panel needs this, that is the better choice. Where Motion is not already on the page, the difference is the download.</p>
 
       <div data-reveal="">
         <Figure id="figure-size" label="Figure 3" caption="Gzipped JavaScript for one import with React excluded, bundled by esbuild from the packed release, and if your app already ships Motion that cost is zero to you">
@@ -238,7 +245,7 @@ const Measured = memo(function Measured() {
         </Figure>
       </div>
 
-      <div className="passage" data-reveal="">
+      <div className="passage" data-reveal="" data-block="" data-cold="">
         <h3 className="lead">Fourteen budgets met and three missed</h3>
         <p className="prose">The budgets were frozen before the final run. A later review found that the engine jumped for any box not anchored at its top left corner, and the fix needs a second read of the layout at each request. That is where the extra bytes and the extra layouts came from. The limits were left where they were.</p>
       </div>
@@ -259,11 +266,11 @@ const Measured = memo(function Measured() {
 const Limits = memo(function Limits() {
   return (
     <section className="chapter" id="limits" aria-labelledby="limits-title">
-      <div className="section-head" data-reveal="">
+      <div className="section-head" data-reveal="" data-block="" data-cold="">
         <h2 id="limits-title">Limits</h2>
         <p>What this page does not show, and what nobody has checked yet</p>
       </div>
-      <ol className="limits" data-reveal="">{LIMITS.map((limit) => <li key={limit}>{limit}</li>)}</ol>
+      <ol className="limits" data-reveal="" data-block="" data-cold="">{LIMITS.map((limit) => <li key={limit}>{limit}</li>)}</ol>
     </section>
   );
 });
@@ -271,8 +278,8 @@ const Limits = memo(function Limits() {
 const Ending = memo(function Ending() {
   return (
     <section className="ending" aria-labelledby="ending-title">
-      <h2 className="statement" id="ending-title" data-reveal="">Read how it was measured, or go back up and try to break it</h2>
-      <ul className="doors" data-reveal="">
+      <h2 className="statement" data-block="" data-cold="" id="ending-title" data-reveal="">Read how it was measured, or go back up and try to break it</h2>
+      <ul className="doors" data-reveal="" data-block="" data-cold="">
         <li><a href={docs('/')}><b>Docs</b><span>All 12 components, the guides and two working apps</span><Arrow /></a></li>
         <li><a href={docs('/workbench')}><b>Workbench</b><span>The library next to Motion, CSS and broken fixtures under one test</span><Arrow /></a></li>
         <li><a href={REPORT}><b>Report</b><span>Every measurement with its method, raw data and failures</span><Arrow /></a></li>
@@ -289,6 +296,13 @@ export function Page() {
   const stage = useStages(STAGES);
   useReveal(stage >= STAGES);
   useHashOnLoad(stage >= STAGES);
+
+  // Once the page is in, what is below the first screen loads and renders in the quiet moments.
+  useEffect(() => {
+    if (stage < STAGES) return;
+    openGate();
+    later(warm);
+  }, [stage]);
 
   const openKeys = useCallback(() => {
     if (!keys.current?.open) keys.current?.showModal();
@@ -308,24 +322,48 @@ export function Page() {
 
   /*
    * The whole page takes the recipe and the theme, and the address remembers anything but the
-   * default. A theme changes color and a recipe changes type and shape, which costs a layout,
-   * so they go a frame apart and the bookkeeping goes after both. No one task is long, and
-   * all of it happens behind the plate.
+   * default. A theme is color, which the browser can change everywhere at once. A recipe is
+   * type and shape, which costs a layout, so it is given to one part of the page on each frame,
+   * from the top down, and to the root last. No one frame is long, and all of it happens
+   * behind the plate, which goes home when `done` is called.
    */
   const wanted = useRef(skin);
-  const applySkin = useCallback((next: Skin) => {
+  const applySkin = useCallback((next: Skin, done?: () => void) => {
     wanted.current = next;
     const root = document.documentElement;
     root.dataset['qTheme'] = next.theme;
-    requestAnimationFrame(() => {
-      root.dataset['qRecipe'] = wanted.current.recipe;
-      window.setTimeout(() => {
-        const latest = wanted.current;
-        const search = writeSkin(latest, window.location.search);
-        if (search !== window.location.search) window.history.replaceState(window.history.state, '', `${window.location.pathname}${search}${window.location.hash}`);
-        setSkin(latest);
-      }, 0);
-    });
+    const finish = () => {
+      const latest = wanted.current;
+      const search = writeSkin(latest, window.location.search);
+      if (search !== window.location.search) window.history.replaceState(window.history.state, '', `${window.location.pathname}${search}${window.location.hash}`);
+      setSkin(latest);
+      done?.();
+    };
+    if (root.dataset['qRecipe'] === next.recipe) {
+      window.setTimeout(finish, 0);
+      return;
+    }
+    const parts = [...document.querySelectorAll<HTMLElement>('.topbar, main > *')];
+    let index = 0;
+    const step = () => {
+      const { recipe, theme } = wanted.current;
+      const part = parts[index];
+      index += 1;
+      if (part) {
+        // The theme goes with it, so that a scope of its own never falls back to the system's.
+        part.dataset['qRecipe'] = recipe;
+        part.dataset['qTheme'] = theme;
+        requestAnimationFrame(step);
+        return;
+      }
+      root.dataset['qRecipe'] = recipe;
+      for (const each of parts) {
+        delete each.dataset['qRecipe'];
+        delete each.dataset['qTheme'];
+      }
+      window.setTimeout(finish, 0);
+    };
+    requestAnimationFrame(step);
   }, []);
 
   useEffect(() => {

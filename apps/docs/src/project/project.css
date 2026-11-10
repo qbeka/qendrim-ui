@@ -13,7 +13,13 @@ html { scroll-behavior: smooth; }
   --ink-pressed: #000;
   --raised: var(--paper);
 
-  /* The library's tokens, set to this page's. */
+}
+/*
+ * The library's tokens, set to this page's. A part of the page can carry a recipe of its own
+ * for a few frames while the page changes, and a recipe scope sets every token again, so the
+ * mapping is given to any such part as well as to the root.
+ */
+:root, :is(.topbar, main > *)[data-q-recipe] {
   --q-color-page: var(--surface);
   --q-color-surface: var(--raised);
   --q-color-wash: var(--wash);
@@ -79,9 +85,9 @@ html, body { transition: background-color .2s; }
   .control.primary:hover { background: var(--ink-hover); color: var(--on-ink); }
   .control.primary:active { background: var(--ink-pressed); color: var(--on-ink); }
 }
-:root[data-q-recipe='editorial'] { --control-height: 40px; }
+[data-q-recipe='editorial']:not(.plate) { --control-height: 40px; }
 @media (pointer: coarse) {
-  :root[data-q-recipe='editorial'] { --control-height: 44px; }
+  [data-q-recipe='editorial']:not(.plate) { --control-height: 44px; }
 }
 button.quiet { appearance: none; margin: 0; border: 0; background: none; font-family: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 
@@ -127,20 +133,18 @@ p.passage { margin-block: 28px 0; }
 .chapter .fig { margin-block: 40px 0; max-width: var(--reading-width); }
 .chapter .fig[data-wide] { max-width: none; }
 .chapter .columns + div > .fig { margin-block-start: 48px; }
-.near-wait { border-radius: 12px; }
+.later-wait { border-radius: 12px; }
 
 /*
- * The heavy pieces under the stage are skipped by the browser until they are about to be seen:
- * the figures, the specimens and the code. The blocks that hold them are left alone, so that
- * a block can still be watched for the moment it scrolls into view, and so that a plate can
- * leave its chapter and cover the page.
+ * A cold block is skipped by the browser while it is off screen. Every block under the stage
+ * starts cold, so the first screen is all there is to lay out, and each one warms up in a
+ * quiet moment soon after. A block is always its own box, so it can be watched for the moment
+ * it scrolls into view.
  */
-.chapter .fig-plate, .g-entry, .steps { content-visibility: auto; contain-intrinsic-size: auto 420px; }
-.g-entry { contain-intrinsic-size: auto 1000px; }
-/* The same for the text, and for the stage once it has been scrolled away. Each of these is its own box, so it can be watched. */
-.statement, .section-head, .columns, .passage, .limits, .doors { content-visibility: auto; contain-intrinsic-size: auto 220px; }
+[data-cold] { content-visibility: auto; contain-intrinsic-size: auto 240px; }
+.fig-plate[data-cold], .steps[data-cold] { contain-intrinsic-size: auto 420px; }
+.g-entry[data-cold] { contain-intrinsic-size: auto 1000px; }
 .columns, .passage { margin-inline: -6px; padding-inline: 6px; }
-main > .show { content-visibility: auto; contain-intrinsic-size: auto 680px; }
 
 /* Sections arrive as they are reached */
 [data-reveal] { transition: opacity .6s linear, translate .7s var(--ease); }

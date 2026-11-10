@@ -4,11 +4,12 @@ import { SKINS, covers, type Skin } from './skins';
 
 interface PlatesProps {
   skin: Skin;
-  onSkin: (skin: Skin) => void;
+  /** Changes the page. It calls `done` once the whole page has changed, which is when the plate may go home. */
+  onSkin: (skin: Skin, done?: () => void) => void;
 }
 
 /** How long a plate rests over the page before it goes back, so the change is seen and not flashed. */
-const REST_MS = 150;
+const REST_MS = 90;
 
 /**
  * Four plates, one for each recipe and theme. Each is one Surface with two layouts: its place
@@ -26,8 +27,9 @@ export function Plates({ skin, onSkin }: PlatesProps) {
   const commit = useCallback((id: string) => {
     if (latest.current.out !== id) return;
     const next = SKINS.find((item) => item.id === id);
-    if (next && next.id !== latest.current.skin.id) onSkin(next);
-    window.setTimeout(() => setOut((current) => (current === id ? null : current)), REST_MS);
+    const home = () => window.setTimeout(() => setOut((current) => (current === id ? null : current)), REST_MS);
+    if (next && next.id !== latest.current.skin.id) onSkin(next, home);
+    else home();
   }, [onSkin]);
 
   // While a plate is out, watch its measured box, and change the page the moment it is hidden.
