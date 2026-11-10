@@ -10,12 +10,17 @@ const layout = (page: Page, id: string) => page.getByTestId(`layout-${id}`);
 const settled = (page: Page) => expect(note(page)).toHaveAttribute('data-phase', 'settled');
 const noSideways = (page: Page) => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth);
 const inkOnCanvas = (page: Page) =>
-  page.getByTestId('echo').evaluate((canvas: HTMLCanvasElement) => {
+  page.getByTestId('trace').evaluate((canvas: HTMLCanvasElement) => {
     const data = canvas.getContext('2d')?.getImageData(0, 0, canvas.width, canvas.height).data ?? new Uint8ClampedArray();
     let count = 0;
     for (let i = 3; i < data.length; i += 4) if ((data[i] as number) > 0) count += 1;
     return count;
   });
+/** The specimen sheet loads when it is about to be seen, so a test that uses it goes there first. */
+const toSpecimens = async (page: Page) => {
+  await page.getByTestId('sheet').scrollIntoViewIfNeeded();
+  await page.getByTestId('specimen-actionbar').waitFor();
+};
 /** Puts the caret at the end. The End key does not do that in every browser on every system. */
 const caretToEnd = (page: Page) => title(page).evaluate((input: HTMLInputElement) => input.setSelectionRange(input.value.length, input.value.length));
 
@@ -185,14 +190,125 @@ test.describe('project page', () => {
     for (const id of ['firm', 'springy', 'loose']) await expect(page.getByTestId(`preset-${id}`)).toHaveAttribute('aria-pressed', 'false');
   });
 
-  test('the outlines are drawn from the move and are gone after it', async ({ page, browserName }) => {
+  test('the exposure is drawn from the move, stays when it ends and is replaced by the next one', async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'One browser is enough to read canvas pixels.');
     await page.goto(PAGE);
+    await title(page).click();
+    expect(await inkOnCanvas(page)).toBe(0);
     await layout(page, 'sheet').click();
     await page.waitForTimeout(160);
     expect(await inkOnCanvas(page)).toBeGreaterThan(200);
     await settled(page);
-    await expect.poll(() => inkOnCanvas(page), { timeout: 4000 }).toBe(0);
+    await page.waitForTimeout(2600);
+    const still = await inkOnCanvas(page);
+    expect(still).toBeGreaterThan(200);
+    await page.waitForTimeout(500);
+    expect(await inkOnCanvas(page)).toBe(still); // Nothing is being drawn once the move has settled.
+    await page.setViewportSize({ width: 1100, height: 800 });
+    await expect.poll(() => inkOnCanvas(page)).toBe(0); // A drawing made at another size is not kept.
+  });
+
+  test('the live readout follows the measured box and matches the dimension line when it lands', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(PAGE);
+    await title(page).click();
+    await layout(page, 'editor').click();
+    await expect(page.getByTestId('live-size')).toHaveAttribute('data-on', '');
+    await settled(page);
+    const box = await note(page).boundingBox();
+    const slot = page.locator('[data-slot="editor"]');
+    await expect(slot.locator('[data-measure="width"]')).toHaveText(String(Math.round(box?.width ?? 0)));
+    await expect(slot.locator('[data-measure="height"]')).toHaveText(String(Math.round(box?.height ?? 0)));
+    await expect(page.getByTestId('live-size')).not.toHaveAttribute('data-on', '');
+  });
+
+  for (const width of [768, 1024, 1280, 1440]) {
+    test(`at ${width} no place on the sheet overlaps another, and no dimension label touches a place or a label`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto(PAGE);
+      await page.waitForTimeout(1200); // The lines draw in.
+      const overlaps = await page.evaluate(() => {
+        const boxes = (selector: string) => [...document.querySelectorAll<HTMLElement>(selector)].map((element) => element.getBoundingClientRect());
+        const hit = (a: DOMRect, b: DOMRect) => a.left < b.right - 0.5 && b.left < a.right - 0.5 && a.top < b.bottom - 0.5 && b.top < a.bottom - 0.5;
+        const slots = boxes('.show-slot');
+        const labels = boxes('.show-dim-text');
+        const plan = (document.querySelector('.show-plan') as HTMLElement).getBoundingClientRect();
+        let count = 0;
+        slots.forEach((a, i) => slots.forEach((b, j) => { if (i < j && hit(a, b)) count += 1; }));
+        labels.forEach((a, i) => labels.forEach((b, j) => { if (i < j && hit(a, b)) count += 1; }));
+        labels.forEach((label) => slots.forEach((slot) => { if (hit(label, slot)) count += 1; }));
+        for (const box of [...slots, ...labels]) if (box.left < plan.left || box.right > plan.right || box.top < plan.top || box.bottom > plan.bottom) count += 1;
+        return { count, slots: slots.length, labels: labels.length };
+      });
+      expect(overlaps).toEqual({ count: 0, slots: 4, labels: 8 });
+    });
+  }
+
+  test('holding the panel sends a request for every move, and letting go lands it where it is aimed', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(PAGE);
+    await page.evaluate(() => { (window as unknown as { held: Element | null }).held = document.querySelector('[data-testid="title"]'); });
+    await title(page).click();
+    await caretToEnd(page);
+    await page.waitForTimeout(800); // The stage arrives with a small rise, and the places are read once it is still.
+    const grip = await page.getByTestId('grip').boundingBox();
+    const sheet = await page.locator('[data-slot="sheet"]').boundingBox();
+    if (!grip || !sheet) throw new Error('The grip and the sheet place must be on the page.');
+    const from = { x: grip.x + grip.width / 2, y: grip.y + grip.height / 2 };
+    const to = { x: sheet.x + sheet.width - 30, y: sheet.y + 120 };
+    await page.mouse.move(from.x, from.y);
+    await page.mouse.down();
+    for (let step = 1; step <= 24; step += 1) {
+      await page.mouse.move(from.x + ((to.x - from.x) * step) / 24, from.y + ((to.y - from.y) * step) / 24);
+      await page.waitForTimeout(16);
+      if (step === 12) await page.keyboard.type(' now');
+    }
+    await expect(note(page)).toHaveAttribute('data-shape', /^hold-/);
+    await expect(page.getByTestId('stage')).toHaveAttribute('data-held', '');
+    await expect(page.locator('[data-slot="sheet"]')).toHaveAttribute('data-aim', 'true');
+    await expect(page.getByTestId('status')).toContainText('one more request');
+    for (const id of ['row', 'card', 'editor', 'sheet']) await expect(layout(page, id)).toHaveAttribute('aria-pressed', 'false');
+    expect(Number((await page.getByTestId('requests').textContent())?.replace(/,/g, ''))).toBeGreaterThan(8);
+    await page.mouse.up();
+    await expect(note(page)).toHaveAttribute('data-shape', 'sheet');
+    await settled(page);
+    await expect(layout(page, 'sheet')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.getByTestId('status')).toContainText(/left your hand at [\d,]+ px a second|hold was \d+ requests/);
+    await expect(title(page)).toHaveValue('Replace the north tide gauge now');
+    await expect(title(page)).toBeFocused();
+    await expect(page.getByTestId('same-node')).toHaveText('Same node');
+    expect(await page.evaluate(() => (window as unknown as { held: Element | null }).held === document.activeElement)).toBe(true);
+    expect(await page.evaluate(() => window.location.search)).toBe('?layout=sheet');
+    const box = await note(page).boundingBox();
+    const place = await page.locator('[data-slot="sheet"]').boundingBox();
+    expect(Math.abs((box?.x ?? 0) - (place?.x ?? -9))).toBeLessThan(1);
+    expect(Math.abs((box?.y ?? 0) - (place?.y ?? -9))).toBeLessThan(1);
+  });
+
+  test('Escape puts a held panel back, and a press with no movement does nothing', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(PAGE);
+    await page.waitForTimeout(800);
+    const grip = await page.getByTestId('grip').boundingBox();
+    if (!grip) throw new Error('The grip must be on the page.');
+    await page.mouse.move(grip.x + 10, grip.y + 20);
+    await page.mouse.down();
+    await page.mouse.up();
+    await expect(note(page)).toHaveAttribute('data-shape', 'card');
+    await expect(page.getByTestId('requests')).toHaveText('0');
+
+    await page.mouse.down();
+    for (let step = 1; step <= 12; step += 1) {
+      await page.mouse.move(grip.x + 10 + step * 30, grip.y + 20 + step * 6);
+      await page.waitForTimeout(16);
+    }
+    await expect(note(page)).toHaveAttribute('data-shape', /^hold-/);
+    await page.keyboard.press('Escape');
+    await expect(note(page)).toHaveAttribute('data-shape', 'card');
+    await page.mouse.up();
+    await settled(page);
+    await expect(note(page)).toHaveAttribute('data-shape', 'card');
+    await expect(page.locator('[data-slot][data-aim]')).toHaveCount(0);
   });
 
   test('reduced motion ends in the same state with nothing animating', async ({ page }) => {
@@ -234,6 +350,7 @@ test.describe('project page', () => {
 
   test('every signature component has a working specimen and a usage example', async ({ page }) => {
     await page.goto(PAGE);
+    await toSpecimens(page);
     for (const name of ['surface', 'inspector', 'timeline', 'actionbar']) {
       const entry = page.getByTestId(`specimen-${name}`);
       await expect(entry.locator('pre')).toContainText(`@qbeka/react/${name}`);
@@ -252,6 +369,7 @@ test.describe('project page', () => {
 
   test('the timer keeps counting while its surface changes shape', async ({ page }) => {
     await page.goto(PAGE);
+    await toSpecimens(page);
     await expect(page.getByTestId('g-digits')).toHaveText('25:00');
     await page.getByTestId('g-timer-toggle').click();
     await page.getByRole('button', { name: 'Bar', exact: true }).click();
@@ -263,6 +381,7 @@ test.describe('project page', () => {
 
   test('typing during a simulated save keeps the specimen inspector open', async ({ page }) => {
     await page.goto(PAGE);
+    await toSpecimens(page);
     const entry = page.getByTestId('specimen-inspector');
     await entry.locator('.q-inspector-trigger').first().click();
     const row = entry.locator('[data-q-surface]').first();
@@ -275,6 +394,7 @@ test.describe('project page', () => {
 
   test('the timeline jumps between markers and the budget follows', async ({ page }) => {
     await page.goto(PAGE);
+    await toSpecimens(page);
     const entry = page.getByTestId('specimen-timeline');
     await expect(entry.getByTestId('g-amount')).toHaveText('$1,266,000');
     await entry.getByRole('button', { name: 'Previous marker' }).click();
@@ -285,18 +405,72 @@ test.describe('project page', () => {
     await expect(entry.getByTestId('g-amount')).toHaveText('$1,221,000');
   });
 
-  test('a recipe restyles the specimen sheet and gives the attributes for it', async ({ page }) => {
+  test('a plate travels over the page, the whole page takes its recipe and theme, and the plate goes home', async ({ page }) => {
     await page.goto(PAGE);
-    const sheet = page.getByTestId('sheet');
-    await expect(sheet).toHaveAttribute('data-q-recipe', 'studio');
-    const light = await sheet.locator('.g-sheet').evaluate((element) => getComputedStyle(element).backgroundColor);
-    await page.getByTestId('skin-editorial-dark').click();
-    await expect(page.getByTestId('skin-editorial-dark')).toHaveAttribute('aria-pressed', 'true');
-    await expect(sheet).toHaveAttribute('data-q-recipe', 'editorial');
-    await expect(sheet).toHaveAttribute('data-q-theme', 'dark');
+    const html = page.locator('html');
+    await expect(html).toHaveAttribute('data-q-recipe', 'studio');
+    await expect(html).toHaveAttribute('data-q-theme', 'light');
+    const paper = await page.locator('body').evaluate((element) => getComputedStyle(element).backgroundColor);
+    const plate = page.getByTestId('skin-editorial-dark');
+    const surface = plate.locator('xpath=ancestor::*[@data-q-surface][1]');
+    await plate.scrollIntoViewIfNeeded();
+    await plate.click();
+    await expect(surface).toHaveAttribute('data-shape', 'page');
+    await expect(html).toHaveAttribute('data-q-theme', 'dark');
+    await expect(html).toHaveAttribute('data-q-recipe', 'editorial');
+    await expect(surface).toHaveAttribute('data-shape', 'plate');
+    await expect(surface).toHaveAttribute('data-phase', 'settled');
+    await expect(plate).toHaveAttribute('aria-pressed', 'true');
     await expect(page.getByTestId('skin-code')).toHaveText('<html data-q-recipe="editorial" data-q-theme="dark">');
-    await expect.poll(() => sheet.locator('.g-sheet').evaluate((element) => getComputedStyle(element).backgroundColor)).not.toBe(light);
-    expect(await sheet.locator('.g-entry-head h3').first().evaluate((element) => getComputedStyle(element).colorScheme)).toBe('dark');
+    expect(await page.locator('body').evaluate((element) => getComputedStyle(element).backgroundColor)).not.toBe(paper);
+    expect(await page.locator('body').evaluate((element) => getComputedStyle(element).colorScheme)).toBe('dark');
+    expect(await page.evaluate(() => window.location.search)).toBe('?skin=editorial-dark');
+    // The stage at the top is on the same page, so it changed too.
+    expect(await page.getByTestId('stage').evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgb(16, 19, 17)');
+    const cell = await plate.locator('xpath=ancestor::*[contains(@class, "plate-cell")][1]').boundingBox();
+    const home = await surface.boundingBox();
+    expect(Math.abs((home?.width ?? 0) - (cell?.width ?? 1))).toBeLessThan(1);
+  });
+
+  test('choosing another plate while one is in flight calls the first back, and only the second is applied', async ({ page }) => {
+    await page.goto(PAGE);
+    const first = page.getByTestId('skin-studio-dark');
+    const second = page.getByTestId('skin-editorial-light');
+    await first.scrollIntoViewIfNeeded();
+    const seen: string[] = [];
+    await page.exposeFunction('sawSkin', (value: string) => { seen.push(value); });
+    await page.evaluate(() => {
+      new MutationObserver(() => (window as unknown as { sawSkin: (value: string) => void }).sawSkin(`${document.documentElement.dataset['qRecipe']}-${document.documentElement.dataset['qTheme']}`)).observe(document.documentElement, { attributes: true, attributeFilter: ['data-q-recipe', 'data-q-theme'] });
+    });
+    await first.click();
+    await second.click({ force: true });
+    await expect(page.locator('html')).toHaveAttribute('data-q-recipe', 'editorial');
+    await expect(page.locator('html')).toHaveAttribute('data-q-theme', 'light');
+    await expect(page.locator('.plate[data-shape="page"]')).toHaveCount(0);
+    await expect(page.locator('.plate[data-phase="moving"]')).toHaveCount(0);
+    expect(seen).not.toContain('studio-dark');
+    await expect(second).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  test('a link carries the skin, and it is on the page before the app starts', async ({ page }) => {
+    await page.addInitScript(() => {
+      document.addEventListener('DOMContentLoaded', () => { (window as unknown as { early: string }).early = `${document.documentElement.dataset['qRecipe']}-${document.documentElement.dataset['qTheme']}`; });
+    });
+    await page.goto(`${PAGE}?skin=editorial-dark&layout=row`);
+    expect(await page.evaluate(() => (window as unknown as { early: string }).early)).toBe('editorial-dark');
+    await expect(page.getByTestId('skin-editorial-dark')).toHaveAttribute('aria-pressed', 'true');
+    await expect(note(page)).toHaveAttribute('data-shape', 'row');
+    await layout(page, 'card').click();
+    await expect.poll(() => page.evaluate(() => window.location.search)).toBe('?skin=editorial-dark');
+  });
+
+  test('reduced motion changes the skin at once, with no plate in flight', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(PAGE);
+    await page.getByTestId('skin-studio-dark').click();
+    await expect(page.locator('html')).toHaveAttribute('data-q-theme', 'dark');
+    await expect(page.locator('.plate[data-shape="page"]')).toHaveCount(0);
+    expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
   });
 
   for (const width of [320, 390, 768, 1024, 1280, 1440]) {
@@ -315,33 +489,185 @@ test.describe('project page', () => {
         return box.left >= plan.left && box.right <= plan.right && box.top >= plan.top && box.bottom <= plan.bottom;
       });
       expect(inside).toBe(true);
+      await toSpecimens(page);
       await page.getByTestId('specimen-actionbar').scrollIntoViewIfNeeded();
+      await page.getByTestId('skin-editorial-dark').scrollIntoViewIfNeeded();
       await page.getByTestId('skin-editorial-dark').click();
+      await expect(page.locator('html')).toHaveAttribute('data-q-theme', 'dark');
+      await expect(page.locator('.plate[data-phase="moving"]')).toHaveCount(0);
       expect(await noSideways(page)).toBe(true);
+      for (const id of ['figure-suite', 'figure-budgets', 'figure-tallies']) {
+        await page.getByTestId(id).scrollIntoViewIfNeeded();
+        expect(await noSideways(page)).toBe(true);
+      }
     });
   }
 
-  test('a link to the details lands on the details', async ({ page }) => {
-    await page.goto(`${PAGE}#details`);
-    await expect(page.getByRole('heading', { level: 2, name: 'Details' })).toBeInViewport();
+  test('on a short phone the sheet shows every row of its checklist', async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 568 });
+    await page.goto(PAGE);
+    await layout(page, 'sheet').click();
+    await settled(page);
+    await page.waitForTimeout(450); // The parts of a layout fade in.
+    const fit = await page.evaluate(() => {
+      const panel = (document.querySelector('[data-testid="note"]') as HTMLElement).getBoundingClientRect();
+      const plan = (document.querySelector('.show-plan') as HTMLElement).getBoundingClientRect();
+      const rows = [...document.querySelectorAll<HTMLElement>('.wo-checks label')].map((row) => row.getBoundingClientRect());
+      return { rows: rows.length, inside: rows.every((row) => row.bottom <= panel.bottom - 8 && row.right <= panel.right), panelInPlan: panel.bottom <= plan.bottom && panel.top >= plan.top };
+    });
+    expect(fit).toEqual({ rows: 3, inside: true, panelInPlan: true });
+    const last = page.getByRole('checkbox', { name: 'Check it against the pier mark' });
+    await last.check();
+    await expect(last).toBeChecked();
+    await expect(page.getByRole('group', { name: 'Checklist' })).toContainText('2 of 3');
   });
 
-  test('passes axe at rest, in every layout and in every recipe', async ({ page, browserName }) => {
-    test.skip(browserName !== 'chromium', 'axe runs in Chromium.');
+  test('a link to the details lands on the details', async ({ page }) => {
+    await page.goto(`${PAGE}#details`);
+    await expect(page.locator('#details h2')).toBeInViewport();
+    await expect(page.locator('#details h2')).toHaveText('Every change of mind is a numbered request, and the panel stays one element through all of them');
+  });
+
+  test('the fixture figure runs the detector on a broken panel and on the library, with the same clicks', async ({ page }) => {
     await page.goto(PAGE);
+    await page.getByTestId('figure-break').scrollIntoViewIfNeeded();
+    const reverse = page.getByTestId('break-reverse');
+    await expect(page.getByTestId('break-left-verdict')).toHaveText('The detector has read nothing yet');
+    for (let press = 0; press < 4; press += 1) {
+      await reverse.click();
+      await page.waitForTimeout(150);
+    }
+    await expect(page.getByTestId('break-left-verdict')).toContainText(/drew the field at \d+ percent of its height/, { timeout: 6000 });
+    await expect(page.getByTestId('break-right-verdict')).toContainText(/The detector found nothing in [\d,]+ frames/, { timeout: 6000 });
+    await page.getByTestId('break-copy').click();
+    await reverse.click();
+    await expect(page.getByTestId('break-left-verdict')).toContainText('two live copies of the field', { timeout: 6000 });
+    await expect(page.getByTestId('break-right-verdict')).toContainText('The detector found nothing', { timeout: 6000 });
+    // The copy fixture starts closed, so that press opened both, and a field in the library's panel can be typed in.
+    const field = page.getByTestId('break-right').getByLabel('Project name');
+    await field.fill('Harbor rebuild, phase two');
+    await reverse.click();
+    await reverse.click();
+    await expect(field).toHaveValue('Harbor rebuild, phase two');
+    await expect(page.getByTestId('break-right-verdict')).toContainText('The detector found nothing', { timeout: 6000 });
+  });
+
+  test('the result figures state the tie and show the three missed budgets', async ({ page }) => {
+    await page.goto(PAGE);
+    const suite = page.getByTestId('figure-suite');
+    await suite.scrollIntoViewIfNeeded();
+    await expect(suite.getByRole('row')).toHaveCount(10);
+    await expect(suite.getByRole('columnheader')).toHaveText(['Scenario', 'Surface', 'Motion, measured height', 'Motion, height auto', 'Motion, layout prop', 'CSS grid track']);
+    await expect(suite.locator('.fig-suite-foot [role="cell"]')).toHaveText(['0 of 40', '0 of 40', '10 of 40', '10 of 40', '8 of 40']);
+    await expect(suite.locator('.fig-tie')).toHaveText('A tie');
+    await expect(suite.getByRole('cell', { name: /^A (jump|stretch) in/ })).toHaveCount(6);
+    await expect(page.locator('#measured h2')).toContainText('A careful Motion version ties it on correctness');
+
+    const sizes = page.getByTestId('figure-size');
+    await expect(sizes.getByRole('listitem')).toHaveText([/Surface.*4\.1 KB/, /Inspector.*6\.7 KB/, /ModalInspector.*29\.8 KB/, /Motion.*layout.*44\.1 KB/, /Motion.*animate.*44\.2 KB/]);
+
+    const budgets = page.getByTestId('figure-budgets');
+    await expect(budgets.getByRole('listitem')).toHaveCount(17);
+    await expect(budgets.locator('li[data-missed]')).toHaveText([/Surface import.*4,245 of 4,096 bytes.*Missed/, /Inspector import.*6,838 of 6,500 bytes.*Missed/, /Layouts in the reversal workload.*163 of 150 layouts.*Missed/]);
+    await expect(budgets).toContainText('14 of 17 met');
+    // A miss is drawn past the limit line, and a hit stops short of it.
+    const widths = await budgets.locator('.fig-budget-track').evaluateAll((tracks) => tracks.map((track) => {
+      const bar = (track.firstElementChild as HTMLElement).getBoundingClientRect().width;
+      return { past: bar > track.getBoundingClientRect().width / 1.2 + 0.5, missed: track.closest('li')?.hasAttribute('data-missed') === true };
+    }));
+    expect(widths.every((row) => row.past === row.missed)).toBe(true);
+    await expect(page.getByTestId('figure-tallies')).toContainText('53 of 55');
+    await expect(page.getByTestId('figure-tallies')).toContainText('5 of 5');
+  });
+
+  test('the page never says it is on npm or that it beats Motion', async ({ page }) => {
+    await page.goto(PAGE);
+    await page.getByTestId('figure-tallies').scrollIntoViewIfNeeded();
+    const text = (await page.locator('main').innerText()).replace(/\s+/g, ' ');
+    expect(text).toContain('The package is not on npm');
+    expect(text).toContain('A careful Motion version ties it on the interruption suite');
+    expect(text).toContain('so it is level and no faster');
+    expect(text).not.toMatch(/npm install @qbeka|faster than Motion|beats Motion|better than Motion/i);
+  });
+
+  test('a question mark opens the list of keys, and typing one in a field does not', async ({ page }) => {
+    await page.goto(PAGE);
+    const keys = page.getByTestId('keys');
+    await title(page).click();
+    await page.keyboard.type('?');
+    await expect(keys).toBeHidden();
+    expect(await title(page).inputValue()).toContain('?');
+    await layout(page, 'row').focus();
+    await page.keyboard.press('?');
+    await expect(keys).toBeVisible();
+    await expect(keys.getByRole('heading', { name: 'Keyboard' })).toBeVisible();
+    await expect(keys.locator('dl > div')).toHaveCount(6);
+    await page.keyboard.press('Escape');
+    await expect(keys).toBeHidden();
+    await page.getByTestId('help').click();
+    await expect(keys).toBeVisible();
+    await keys.getByRole('button', { name: 'Close' }).click();
+    await expect(keys).toBeHidden();
+    await layout(page, 'row').focus();
+    await page.keyboard.press('i');
+    await expect(page.getByTestId('stress')).toHaveAttribute('aria-pressed', 'true');
+    await page.keyboard.press('i');
+    await expect(page.getByTestId('stress')).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  test('the page carries a share card and a tab icon', async ({ page, request }) => {
+    await page.goto(PAGE);
+    const meta = (name: string) => page.locator(`meta[property="${name}"], meta[name="${name}"]`).getAttribute('content');
+    expect(await meta('og:title')).toBe('Qendrim UI');
+    expect(await meta('og:description')).toBe('React components that keep up when you change your mind');
+    expect(await meta('og:url')).toBe('https://www.qendrimbeka.com/projects/qendrim-ui/');
+    expect(await meta('og:image')).toBe('https://www.qendrimbeka.com/projects/qendrim-ui/og.png');
+    expect(await meta('twitter:card')).toBe('summary_large_image');
+    expect(await meta('twitter:image')).toBe('https://www.qendrimbeka.com/projects/qendrim-ui/og.png');
+    const icon = await page.locator('link[rel="icon"]').getAttribute('href');
+    expect((await request.get(icon as string)).headers()['content-type']).toContain('image/svg+xml');
+    const card = await request.get('/og.png');
+    expect(card.ok()).toBe(true);
+    const bytes = await card.body();
+    expect([bytes.readUInt32BE(16), bytes.readUInt32BE(20)]).toEqual([1200, 630]);
+  });
+
+  test('sections below the fold arrive as they are reached, and are simply there with reduced motion', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(PAGE);
+    const limits = page.locator('#limits .limits');
+    await expect(limits).toHaveAttribute('data-reveal', 'wait');
+    await limits.scrollIntoViewIfNeeded();
+    await expect(limits).toHaveAttribute('data-reveal', 'in');
+    await expect(limits).toHaveCSS('opacity', '1');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.reload();
+    await expect(page.locator('#limits .limits')).toHaveAttribute('data-reveal', '');
+    await expect(page.locator('#limits .limits')).toHaveCSS('opacity', '1');
+  });
+
+  test('passes axe at rest, in every layout and in every skin', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'axe runs in Chromium.');
+    test.setTimeout(90_000);
+    await page.emulateMedia({ reducedMotion: 'reduce' }); // Every section is there at once, at full strength.
+    await page.goto(PAGE);
+    for (const id of ['figure-break', 'specimen-actionbar', 'figure-tallies']) await page.getByTestId(id).scrollIntoViewIfNeeded();
+    await page.getByTestId('break-reverse').waitFor();
     await page.getByTestId('specimen-actionbar').waitFor();
     const check = async () => (await new AxeBuilder({ page }).analyze()).violations.map((v) => `${v.id}: ${v.nodes.slice(0, 3).map((n) => n.target.join(' ')).join(' | ')}`);
     expect(await check()).toEqual([]);
     for (const id of ['row', 'editor', 'sheet']) {
       await layout(page, id).click();
       await settled(page);
-      await page.waitForTimeout(450); // The parts of a layout fade in.
       expect(await check()).toEqual([]);
     }
     for (const id of ['studio-dark', 'editorial-light', 'editorial-dark']) {
       await page.getByTestId(`skin-${id}`).click();
-      await page.waitForTimeout(300);
+      await expect(page.getByTestId(`skin-${id}`)).toHaveAttribute('aria-pressed', 'true');
       expect(await check()).toEqual([]);
     }
+    await page.keyboard.press('?');
+    await expect(page.getByTestId('keys')).toBeVisible();
+    expect(await check()).toEqual([]);
   });
 });
