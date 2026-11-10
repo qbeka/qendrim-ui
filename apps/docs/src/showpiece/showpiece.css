@@ -143,8 +143,8 @@
 .show-dim::before, .show-dim::after { content: ''; position: absolute; background: inherit; }
 .show-dim-w { left: 0; right: 0; top: -20px; height: 1px; }
 /* The lines draw themselves once, when the sheet first appears, and never again on a change of size. */
-.show[data-fresh] .show-dim-w { animation: show-dim-w .52s var(--show-ease) .16s backwards; }
-.show[data-fresh] .show-dim-h { animation: show-dim-h .52s var(--show-ease) .22s backwards; }
+.show[data-fresh] .show-dim-w { animation: show-dim-w .5s var(--show-ease) .14s backwards; }
+.show[data-fresh] .show-dim-h { animation: show-dim-h .5s var(--show-ease) .18s backwards; }
 .show-dim-w::before, .show-dim-w::after { top: -5px; width: 1px; height: 17px; }
 .show-dim-w::before { left: 0; }
 .show-dim-w::after { right: 0; }

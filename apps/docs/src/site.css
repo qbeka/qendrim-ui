@@ -189,7 +189,7 @@ th, td { padding: 8px 12px 8px 0; border-block-end: 1px solid var(--q-color-rule
 /* Home */
 .d-home > h1 { animation: d-arrive .52s cubic-bezier(0.2, 0, 0, 1) backwards; }
 .d-home > .d-lede { animation: d-arrive .52s cubic-bezier(0.2, 0, 0, 1) .06s backwards; }
-.d-home > .show { animation: d-arrive .6s cubic-bezier(0.2, 0, 0, 1) .12s backwards; }
+.d-home > .show { animation: d-arrive .56s cubic-bezier(0.2, 0, 0, 1) .12s backwards; }
 @keyframes d-arrive { from { opacity: 0; translate: 0 10px; } }
 .d-home .show { margin-block: 8px 8px; }
 .d-places { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin: 16px 0 0; padding: 0; list-style: none; }
