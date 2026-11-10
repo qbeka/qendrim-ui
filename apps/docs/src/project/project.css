@@ -3,8 +3,8 @@
 html { scroll-behavior: smooth; }
 
 :root {
-  --stage-height: clamp(540px, calc(100svh - 176px), 640px);
-  --plan-height: clamp(380px, calc(100svh - 300px), 460px);
+  --stage-height: clamp(560px, calc(100svh - 176px), 680px);
+  --plan-height: clamp(372px, calc(100svh - 236px), 460px);
   --mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
 
   /* The library's tokens, set to this page's. */
