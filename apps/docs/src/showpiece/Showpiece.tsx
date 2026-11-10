@@ -532,9 +532,17 @@ export function Showpiece({ linked = false, onHelp }: ShowpieceProps) {
 
   // A change of theme changes the ink, so the drawing reads its colors again.
   useEffect(() => {
-    const observer = new MutationObserver(() => trace.current?.resize());
+    // It reads on the next frame, after the browser has laid the new theme out, so the read forces nothing.
+    let frame = 0;
+    const observer = new MutationObserver(() => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => trace.current?.resize());
+    });
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-q-theme', 'data-q-recipe'] });
-    return () => observer.disconnect();
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
   }, []);
 
   // The layout before this one is remembered, so that letting go of a spring setting can go back to it.
