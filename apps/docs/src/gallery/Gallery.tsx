@@ -5,6 +5,7 @@ import { Inspector, useInspector } from '@qbeka/react/inspector';
 import { Surface } from '@qbeka/react/surface';
 import { Timeline } from '@qbeka/react/timeline';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { BUDGETS, SIZES, kilobytes } from '../figures/results';
 import { useCopy } from '../lib/useCopy';
 import { USAGE } from './usage';
 import './gallery.css';
@@ -247,12 +248,46 @@ function Usage({ name, code, more }: { name: string; code: string; more: ReactNo
   );
 }
 
+/** Gzipped bytes for one import, React excluded, from the final run. figures/results.test.ts checks them against the record. */
+const kb = (bytes: number) => `${kilobytes(bytes)} KB`;
+const bytesOf = (id: string) => SIZES.find((size) => size.id === id)?.bytes ?? 0;
+const budgetOf = (name: string) => BUDGETS.find((budget) => budget.name === name)?.value ?? 0;
+
 const ENTRIES = [
-  { slug: 'surface', name: 'Surface', text: 'One element that moves between your CSS layouts, so press another shape before it lands', specimen: <SurfaceSpecimen />, code: USAGE.surface },
-  { slug: 'inspector', name: 'Inspector', text: 'A row that opens into an editor, where a close waiting on a save gives way to newer typing', specimen: <InspectorSpecimen />, code: USAGE.inspector },
-  { slug: 'timeline', name: 'Timeline', text: 'A keyboard transport with markers, for moving through a history', specimen: <TimelineSpecimen />, code: USAGE.timeline },
-  { slug: 'actionbar', name: 'ActionBar', text: 'Actions that appear with a selection and take no layout space, so the list never moves', specimen: <ActionBarSpecimen />, code: USAGE.actionbar },
-];
+  {
+    slug: 'surface', name: 'Surface', product: 'Tempo', scene: 'A focus timer',
+    text: 'One element that moves between your CSS layouts, so press another shape before it lands',
+    spec: [['Size', kb(bytesOf('surface'))], ['Built on', 'Its own spring engine, with no dependency'], ['Keys', 'None of its own']],
+    specimen: <SurfaceSpecimen />, code: USAGE.surface,
+  },
+  {
+    slug: 'inspector', name: 'Inspector', product: 'Roster', scene: 'A crew list',
+    text: 'A row that opens into an editor, where a close waiting on a save gives way to newer typing',
+    spec: [['Size', kb(bytesOf('inspector'))], ['Built on', 'Surface, and no Base UI Dialog'], ['Keys', 'Enter or Space opens, and Escape closes']],
+    specimen: <InspectorSpecimen />, code: USAGE.inspector,
+  },
+  {
+    slug: 'timeline', name: 'Timeline', product: 'Ledger', scene: 'A budget history',
+    text: 'A keyboard transport with markers, for moving through a history',
+    spec: [['Size', kb(budgetOf('Timeline import'))], ['Built on', 'Base UI Slider'], ['Keys', 'Arrows, Home and End, and [ and ] for markers']],
+    specimen: <TimelineSpecimen />, code: USAGE.timeline,
+  },
+  {
+    slug: 'actionbar', name: 'ActionBar', product: 'Receipts', scene: 'An approval queue',
+    text: 'Actions that appear with a selection and take no layout space, so the list never moves',
+    spec: [['Size', kb(budgetOf('ActionBar import'))], ['Built on', 'Base UI Toolbar and Surface'], ['Keys', 'Tab enters once, and arrows move']],
+    specimen: <ActionBarSpecimen />, code: USAGE.actionbar,
+  },
+] as const;
+
+function Product({ entry }: { entry: (typeof ENTRIES)[number] }) {
+  return (
+    <div className="g-product" data-product={entry.slug}>
+      <p className="g-product-bar"><b>{entry.product}</b><span>{entry.scene}</span></p>
+      <div className="g-specimen">{entry.specimen}</div>
+    </div>
+  );
+}
 
 /** One specimen on its own, for the top of a component's page in the docs. */
 export function Specimen({ slug }: { slug: string }) {
@@ -260,28 +295,32 @@ export function Specimen({ slug }: { slug: string }) {
   if (!entry) return null;
   return (
     <div className="g-sheet g-solo" data-testid={`specimen-${entry.slug}`}>
-      <div className="g-specimen">{entry.specimen}</div>
+      <Product entry={entry} />
     </div>
   );
 }
 
 export const hasSpecimen = (slug: string) => ENTRIES.some((item) => item.slug === slug);
 
-/** Four working specimens on one sheet, each above the code that makes it. */
+/** Four working specimens on one sheet, set like a type specimen: a number, the name, what it is made of, and the thing itself in use. */
 export function Gallery({ docsLink }: { docsLink: (slug: string, name: string) => ReactNode }) {
   return (
     <div className="g-sheet">
       <div className="g-grid">
-      {ENTRIES.map((entry) => (
-        <article className="g-entry" key={entry.slug} data-testid={`specimen-${entry.slug}`}>
-          <header className="g-entry-head">
-            <h3>{entry.name}</h3>
-            <p>{entry.text}</p>
-          </header>
-          <div className="g-specimen">{entry.specimen}</div>
-          <Usage name={entry.name} code={entry.code} more={docsLink(entry.slug, entry.name)} />
-        </article>
-      ))}
+        {ENTRIES.map((entry, index) => (
+          <article className="g-entry" key={entry.slug} data-testid={`specimen-${entry.slug}`}>
+            <header className="g-entry-head">
+              <p className="g-entry-no" aria-hidden="true">{String(index + 1).padStart(2, '0')}</p>
+              <h3>{entry.name}</h3>
+              <p className="g-entry-text">{entry.text}</p>
+              <dl className="g-entry-spec">
+                {entry.spec.map(([name, value]) => <div key={name}><dt>{name}</dt><dd>{value}</dd></div>)}
+              </dl>
+            </header>
+            <Product entry={entry} />
+            <Usage name={entry.name} code={entry.code} more={docsLink(entry.slug, entry.name)} />
+          </article>
+        ))}
       </div>
     </div>
   );
