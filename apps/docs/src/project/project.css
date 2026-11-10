@@ -130,10 +130,13 @@ p.passage { margin-block: 28px 0; }
 .near-wait { border-radius: 12px; }
 
 /*
- * Everything under the stage is skipped by the browser until it is about to be seen. The
- * plates are left out, because a plate has to be able to leave its chapter and cover the page.
+ * The heavy pieces under the stage are skipped by the browser until they are about to be seen:
+ * the figures, the specimens and the code. The blocks that hold them are left alone, so that
+ * a block can still be watched for the moment it scrolls into view, and so that a plate can
+ * leave its chapter and cover the page.
  */
-.later { content-visibility: auto; contain-intrinsic-size: auto 1100px; margin-inline: -8px; padding-inline: 8px; }
+.chapter .fig-plate, .g-entry, .steps { content-visibility: auto; contain-intrinsic-size: auto 420px; }
+.g-entry { contain-intrinsic-size: auto 1000px; }
 
 /* Sections arrive as they are reached */
 [data-reveal] { transition: opacity .6s linear, translate .7s var(--ease); }

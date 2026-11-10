@@ -146,7 +146,7 @@ const STAGE_FRAMES = 3;
 
 const Details = memo(function Details() {
   return (
-    <section className="chapter later" id="details" aria-labelledby="details-title">
+    <section className="chapter" id="details" aria-labelledby="details-title">
       <h2 className="statement" id="details-title" data-reveal="">Every change of mind is a numbered request, and the panel stays one element through all of them</h2>
       <div className="columns" data-reveal="">
         <p className="prose">Qendrim UI is a small React library for working panels that get interrupted. You open one, start typing, and reverse it before it lands. Each request gets a number, and work that belongs to an older number cannot touch a newer one, so a save that finishes late does not close a panel you have reopened.</p>
@@ -181,7 +181,7 @@ const Components = memo(function Components({ skin, onSkin }: { skin: Skin; onSk
         <CopyButton text={skinAttributes(skin)} label="Copy" testId="copy-skin" />
       </div>
 
-      <div className="later" data-reveal="" data-testid="sheet">
+      <div data-reveal="" data-testid="sheet">
         <Near height={1500}><Gallery docsLink={(slug, name) => <a href={docs(`/components/${slug}`)}>{name} API and keyboard map</a>} /></Near>
       </div>
       <p className="more"><a href={docs('/components')}>All 12 components</a> and <a href={docs('/guide/theming')}>the token list</a> are in the docs</p>
@@ -191,7 +191,7 @@ const Components = memo(function Components({ skin, onSkin }: { skin: Skin; onSk
 
 const Start = memo(function Start() {
   return (
-    <section className="chapter later" id="start" aria-labelledby="start-title">
+    <section className="chapter" id="start" aria-labelledby="start-title">
       <div className="section-head" data-reveal="">
         <h2 id="start-title">Start</h2>
         <p>The package is not on npm, so the first line installs the 0.1.0 release file from GitHub, and it needs React 18.3 or 19</p>
@@ -213,7 +213,7 @@ const Start = memo(function Start() {
 
 const Measured = memo(function Measured() {
   return (
-    <section className="chapter later" id="measured" aria-labelledby="measured-title">
+    <section className="chapter" id="measured" aria-labelledby="measured-title">
       <h2 className="statement" id="measured-title" data-reveal="">A careful Motion version ties it on correctness, so what this adds is a written contract and a smaller download</h2>
       <div className="columns" data-reveal="">
         <p className="prose">The comparison suite runs 8 interruption scenarios, 5 times each, against five implementations of one panel in Chromium. The plain rules for focus, removal and a late close were given to every baseline, so that the comparison is about geometry.</p>
@@ -258,7 +258,7 @@ const Measured = memo(function Measured() {
 
 const Limits = memo(function Limits() {
   return (
-    <section className="chapter later" id="limits" aria-labelledby="limits-title">
+    <section className="chapter" id="limits" aria-labelledby="limits-title">
       <div className="section-head" data-reveal="">
         <h2 id="limits-title">Limits</h2>
         <p>What this page does not show, and what nobody has checked yet</p>
@@ -270,7 +270,7 @@ const Limits = memo(function Limits() {
 
 const Ending = memo(function Ending() {
   return (
-    <section className="ending later" aria-labelledby="ending-title">
+    <section className="ending" aria-labelledby="ending-title">
       <h2 className="statement" id="ending-title" data-reveal="">Read how it was measured, or go back up and try to break it</h2>
       <ul className="doors" data-reveal="">
         <li><a href={docs('/')}><b>Docs</b><span>All 12 components, the guides and two working apps</span><Arrow /></a></li>
