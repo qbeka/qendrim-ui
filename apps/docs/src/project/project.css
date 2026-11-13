@@ -281,6 +281,11 @@ p.passage { margin-block: 28px 0; }
   .doors span { grid-column: 1; grid-row: 2; }
   .doors svg { grid-row: 1 / span 2; }
   .keys dl > div { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  /* Four ways out do not fit one row on a phone, so they sit in two even rows. */
+  .page-end { display: grid; grid-template-columns: auto auto; justify-content: space-between; row-gap: 0; }
+  .page-end .quiet:nth-child(2) { margin-inline: 0 -8px; justify-self: end; }
+  .page-end .quiet:nth-child(3) { margin-inline-start: -8px; justify-self: start; }
+  .page-end .quiet:nth-child(4) { justify-self: end; }
 }
 @media (max-width: 419px) {
   .plate-face { padding: 12px; }
