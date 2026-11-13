@@ -417,7 +417,7 @@
 /* A phone: the places share the sheet, so only their corners are drawn and one readout names the size. */
 @container show (max-width: 599px) {
   .show-bar { padding: 4px; }
-  .show-bar .show-btn { padding-inline: 9px; }
+  .show-bar .show-btn { padding-inline: 7px; }
   .show-seg { flex: 1 1 auto; }
   .show-seg .show-btn { flex: 1 1 auto; }
   .show-divider { margin-inline: 2px; }
