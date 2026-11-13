@@ -295,6 +295,9 @@ const BACK = (() => {
   return from && /^[a-z0-9-]+$/.test(from) ? `/work/${from}` : '/#work-qendrim-ui';
 })();
 
+/** The story behind the project, on the site. */
+const STORY = '/work/qendrim-ui';
+
 export function Page() {
   const [skin, setSkin] = useState<Skin>(() => readSkin(window.location.search));
   const keys = useRef<HTMLDialogElement>(null);
@@ -384,6 +387,7 @@ export function Page() {
       <header className="topbar">
         <a className="quiet back" href={BACK}><Chevron />Qendrim Beka</a>
         <nav aria-label="More about Qendrim UI">
+          <a className="quiet" href={STORY}>Read the story</a>
           <a className="quiet" href="#details">Details</a>
           <a className="quiet" href={REPO}>GitHub</a>
         </nav>
@@ -405,6 +409,7 @@ export function Page() {
 
         <div className="page-end" hidden={stage < STAGES}>
           <a className="quiet back" href={BACK}><Chevron />Qendrim Beka</a>
+          <a className="quiet" href={STORY}>Read the story</a>
           <button type="button" className="quiet" onClick={() => window.scrollTo({ top: 0 })}>Back to the sheet</button>
           <button type="button" className="quiet" onClick={openKeys}>Keyboard</button>
         </div>
