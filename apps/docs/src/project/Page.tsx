@@ -290,6 +290,12 @@ const Ending = memo(function Ending() {
   );
 });
 
+/** Back goes to the work row, or to the story that linked here with ?from=<its slug>. */
+const BACK = (() => {
+  const from = new URLSearchParams(window.location.search).get('from');
+  return from && /^[a-z0-9-]+$/.test(from) ? `/work/${from}` : '/#work-qendrim-ui';
+})();
+
 export function Page() {
   const [skin, setSkin] = useState<Skin>(() => readSkin(window.location.search));
   const keys = useRef<HTMLDialogElement>(null);
@@ -377,7 +383,7 @@ export function Page() {
   return (
     <div className="shell">
       <header className="topbar">
-        <a className="quiet back" href="https://www.qendrimbeka.com/"><Chevron />Back</a>
+        <a className="quiet back" href={BACK}><Chevron />Back</a>
         <nav aria-label="More about Qendrim UI">
           <a className="quiet" href="#details">Details</a>
           <a className="quiet" href={REPO}>GitHub</a>
@@ -400,7 +406,7 @@ export function Page() {
         {stage >= 5 ? <><Limits /><Ending /></> : null}
 
         <div className="page-end" hidden={stage < STAGES}>
-          <a className="quiet back" href="https://www.qendrimbeka.com/"><Chevron />Back</a>
+          <a className="quiet back" href={BACK}><Chevron />Back</a>
           <button type="button" className="quiet" onClick={() => window.scrollTo({ top: 0 })}>Back to the sheet</button>
           <button type="button" className="quiet" onClick={openKeys}>Keyboard</button>
         </div>
