@@ -18,7 +18,7 @@
 }
 .fig :where(p, ul, dl, dd) { margin: 0; padding: 0; list-style: none; }
 .fig-plate { border: 1px solid var(--fig-line-strong); border-radius: 12px; background: var(--fig-ground); overflow: clip; }
-.fig figcaption { max-width: 680px; margin-block-start: 12px; color: var(--fig-muted); font-size: 13.5px; line-height: 21px; text-wrap: pretty; }
+.fig figcaption { max-width: 680px; margin-block-start: 12px; color: var(--fig-muted); font-size: 14px; line-height: 21px; text-wrap: pretty; }
 .fig figcaption b { margin-inline-end: 8px; color: var(--fig-ink); font-weight: 500; }
 .fig-part-title { margin-block-end: 12px; color: var(--fig-muted); font-size: 12.5px; line-height: 18px; }
 

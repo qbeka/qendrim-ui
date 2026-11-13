@@ -48,7 +48,7 @@
 .brk-box { stroke: color-mix(in srgb, var(--q-color-ink) 26%, transparent); stroke-width: 1; }
 .brk-metric { stroke: var(--q-color-ink); stroke-width: 1.5; stroke-linejoin: round; }
 .brk-lane[data-own] .brk-metric { stroke: var(--q-color-accent); }
-.brk-chart figcaption { margin-block-start: 6px; color: var(--q-color-muted); font-size: 12px; line-height: 16px; }
+.brk-chart figcaption { margin-block-start: 6px; color: var(--q-color-muted); font-size: 14px; line-height: 20px; }
 .brk-verdict { min-height: 44px; padding-block-start: 12px; border-block-start: 1px solid var(--q-color-rule); color: var(--q-color-muted); font: 400 15px/22px var(--q-font-serif); letter-spacing: -0.004em; text-wrap: pretty; }
 .brk-verdict[data-bad] { color: var(--q-color-ink); }
 .brk-lane[data-own] .brk-verdict:not([data-bad]) { color: var(--q-color-accent); }

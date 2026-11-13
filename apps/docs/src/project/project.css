@@ -212,7 +212,7 @@ p.passage { margin-block: 28px 0; }
 .steps li + li { border-block-start: 1px solid var(--line); }
 .step-head { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 4px 6px 4px 16px; border-block-end: 1px solid var(--line); background: var(--raised); }
 .step-head span { font: 500 13px/20px var(--q-font-control, var(--sans)); }
-.step-head > span::before { content: counter(step); display: inline-grid; place-items: center; width: 20px; height: 20px; margin-inline-end: 10px; border: 1px solid var(--line-strong); border-radius: 50%; color: var(--muted); font: 400 11px/1 var(--sans); }
+.step-head > span::before { content: counter(step); display: inline-grid; place-items: center; width: 20px; height: 20px; margin-inline-end: 10px; border: 1px solid var(--line-strong); border-radius: 50%; color: var(--muted); font: 400 12px/1 var(--sans); }
 .step-head .control { margin-inline-start: auto; color: var(--muted); }
 .step-head .control > span { font-weight: 400; }
 .steps pre { margin: 0; padding: 14px 16px; overflow-x: auto; color: var(--ink); font: 13px/21px var(--mono); tab-size: 2; }
