@@ -47,6 +47,7 @@ html { scroll-behavior: smooth; }
 :root[data-q-theme='dark'] {
   color-scheme: dark;
   --paper: #0c0f0d;
+  --page: #0c0f0d;
   --surface: #101311;
   --raised: #171b18;
   --ink: #eeebe4;
@@ -160,7 +161,7 @@ p.passage { margin-block: 28px 0; }
 }
 .plate[data-shape='page'] { position: fixed; z-index: 100; border-radius: 0; border-color: transparent; }
 .plate[data-phase='moving'] { z-index: 100; }
-.plate[data-on] { box-shadow: 0 0 0 1px var(--paper), 0 0 0 3px var(--forest); }
+.plate[data-on] { box-shadow: 0 0 0 1px var(--page), 0 0 0 3px var(--forest); }
 .plate[data-shape='page'], .plate[data-phase='moving'] { box-shadow: none; }
 .plate-face {
   appearance: none; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 10px 8px; box-sizing: border-box; width: var(--plate-width, 100%); height: 130px; margin: 0; padding: 14px 16px;
