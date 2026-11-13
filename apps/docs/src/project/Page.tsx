@@ -394,7 +394,6 @@ export function Page() {
         <header className="title">
           <h1>Qendrim UI</h1>
           <CopyButton text={INSTALL} label="Copy install" testId="copy-install" />
-          <p>React components that keep up when you change your mind</p>
         </header>
 
         <Showpiece linked onHelp={openKeys} />

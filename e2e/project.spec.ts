@@ -25,10 +25,10 @@ const toSpecimens = async (page: Page) => {
 const caretToEnd = (page: Page) => title(page).evaluate((input: HTMLInputElement) => input.setSelectionRange(input.value.length, input.value.length));
 
 test.describe('project page', () => {
-  test('leads with the name, one sentence and the stage, with no metric cards', async ({ page }) => {
+  test('leads with the name and the stage, with no line under the title and no metric cards', async ({ page }) => {
     await page.goto(PAGE);
     await expect(page.getByRole('heading', { level: 1, name: 'Qendrim UI' })).toBeVisible();
-    await expect(page.locator('.title p')).toHaveText('React components that keep up when you change your mind');
+    await expect(page.locator('.title p')).toHaveCount(0);
     for (const name of ['Row', 'Card', 'Editor', 'Sheet']) await expect(page.getByRole('button', { name, exact: true })).toBeVisible();
     await expect(page.getByTestId('stress')).toBeInViewport();
     await expect(note(page)).toBeInViewport();

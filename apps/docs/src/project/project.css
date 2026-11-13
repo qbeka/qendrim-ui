@@ -94,7 +94,6 @@ button.quiet { appearance: none; margin: 0; border: 0; background: none; font-fa
 /* The first second: the name, the sentence and the stage arrive in that order. */
 .title h1 { grid-column: 1; animation: arrive .52s var(--ease) backwards; }
 .title .control { grid-column: 2; grid-row: 1; align-self: center; animation: arrive .52s var(--ease) .1s backwards; }
-.title p { animation: arrive .52s var(--ease) .06s backwards; }
 main > .show { animation: arrive .56s var(--ease) .12s backwards; }
 .topbar { animation: fade .4s linear backwards; }
 @keyframes arrive { from { opacity: 0; translate: 0 10px; } }
