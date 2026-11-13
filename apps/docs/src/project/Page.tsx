@@ -409,9 +409,10 @@ export function Page() {
 
         <div className="page-end" hidden={stage < STAGES}>
           <a className="quiet back" href={BACK}><Chevron />Qendrim Beka</a>
-          <a className="quiet" href={STORY}>Read the story</a>
-          <button type="button" className="quiet" onClick={() => window.scrollTo({ top: 0 })}>Back to the sheet</button>
-          <button type="button" className="quiet" onClick={openKeys}>Keyboard</button>
+          <nav aria-label="Where to read more">
+            <a className="quiet" href={STORY}>Read the story</a>
+            <a className="quiet" href={REPO}>GitHub</a>
+          </nav>
         </div>
       </main>
       <Shortcuts dialog={keys} />
