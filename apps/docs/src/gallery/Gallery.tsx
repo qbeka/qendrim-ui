@@ -312,8 +312,8 @@ export function Gallery({ docsLink }: { docsLink: (slug: string, name: string) =
             <header className="g-entry-head">
               <p className="g-entry-no" aria-hidden="true">{String(index + 1).padStart(2, '0')}</p>
               <h3>{entry.name}</h3>
-              <p className="g-entry-text">{entry.text}</p>
               <dl className="g-entry-spec">
+                <div><dt>Does</dt><dd>{entry.text}</dd></div>
                 {entry.spec.map(([name, value]) => <div key={name}><dt>{name}</dt><dd>{value}</dd></div>)}
               </dl>
             </header>

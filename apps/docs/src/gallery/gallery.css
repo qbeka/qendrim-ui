@@ -26,9 +26,8 @@
 .g-entry-head { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 14px; align-items: baseline; }
 .g-entry-no { color: var(--q-color-muted); font: 400 13px/20px var(--q-font-sans); font-variant-numeric: tabular-nums; }
 .g-entry-head h3 { color: var(--q-color-ink); font: 400 clamp(40px, 9cqi, 60px) / 1 var(--q-font-serif); letter-spacing: -0.04em; }
-.g-entry-text { grid-column: 2; margin-block-start: 12px; max-width: 42ch; color: var(--q-color-body); font: 400 15px/22px var(--q-font-content); text-wrap: pretty; }
 .g-entry-spec { grid-column: 1 / -1; display: grid; margin: 20px 0 0; border-block-start: 1px solid var(--q-color-rule-strong); }
-.g-entry-spec > div { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 12px; padding: 7px 0; border-block-end: 1px solid var(--q-color-rule); font-size: 13px; line-height: 20px; }
+.g-entry-spec > div { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 12px; padding: 7px 0; border-block-end: 1px solid var(--q-color-rule); font-size: 14px; line-height: 21px; }
 .g-entry-spec dt { color: var(--q-color-muted); }
 .g-entry-spec dd { margin: 0; color: var(--q-color-ink); }
 
