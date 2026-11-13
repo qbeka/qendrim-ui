@@ -77,13 +77,13 @@ html, body { transition: background-color .2s; }
 .control { border-radius: var(--q-radius-button, var(--radius-control)); font-family: var(--q-font-control, var(--sans)); transition: background-color .12s, color .12s, border-color .12s, scale .12s var(--ease); }
 .control:active { scale: .97; }
 .control[aria-pressed='true'] { color: var(--on-forest); }
-.control.primary { color: var(--on-ink); }
-.control.primary:active { background: var(--ink-pressed); }
+.control.primary { color: var(--on-forest); }
+.control.primary:active { background: var(--forest-pressed); }
 @media (hover: hover) {
   .control[aria-pressed='true']:hover, .control[aria-pressed='true']:active { color: var(--on-forest); }
   .control.outline:hover { border-color: color-mix(in srgb, var(--ink) 28%, transparent); }
-  .control.primary:hover { background: var(--ink-hover); color: var(--on-ink); }
-  .control.primary:active { background: var(--ink-pressed); color: var(--on-ink); }
+  .control.primary:hover { background: var(--forest-hover); color: var(--on-forest); }
+  .control.primary:active { background: var(--forest-pressed); color: var(--on-forest); }
 }
 [data-q-recipe='editorial']:not(.plate) { --control-height: 40px; }
 @media (pointer: coarse) {
