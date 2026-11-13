@@ -179,8 +179,8 @@ const Components = memo(function Components({ skin, onSkin }: { skin: Skin; onSk
     <section className="chapter" id="components" aria-labelledby="components-title">
       <div className="section-head" data-reveal="" data-block="" data-cold="">
         <h2 id="components-title">Twelve components, and the page they are printed on</h2>
-        <p>Four are this library's own and eight are Base UI primitives with styles, and each plate below changes the tokens for this whole page</p>
       </div>
+      <p className="prose lead-in" data-reveal="" data-block="" data-cold="">Four are this library's own and eight are Base UI primitives with styles. Each plate below changes the tokens for this whole page.</p>
 
       <Plates skin={skin} onSkin={onSkin} />
       <div className="skin-code">
@@ -201,8 +201,8 @@ const Start = memo(function Start() {
     <section className="chapter" id="start" aria-labelledby="start-title">
       <div className="section-head" data-reveal="" data-block="" data-cold="">
         <h2 id="start-title">Start</h2>
-        <p>The package is not on npm, so the first line installs the 0.1.0 release file from GitHub, and it needs React 18.3 or 19</p>
       </div>
+      <p className="prose lead-in" data-reveal="" data-block="" data-cold="">The package is not on npm, so the first line installs the 0.1.0 release file from GitHub. It needs React 18.3 or 19.</p>
       <ol className="steps" data-reveal="" data-block="" data-cold="">
         <li>
           <div className="step-head"><span>Install it</span><CopyButton text={INSTALL} label="Copy" testId="copy-install-step" className="control" /></div>
@@ -268,7 +268,6 @@ const Limits = memo(function Limits() {
     <section className="chapter" id="limits" aria-labelledby="limits-title">
       <div className="section-head" data-reveal="" data-block="" data-cold="">
         <h2 id="limits-title">Limits</h2>
-        <p>What this page does not show, and what nobody has checked yet</p>
       </div>
       <ol className="limits" data-reveal="" data-block="" data-cold="">{LIMITS.map((limit) => <li key={limit}>{limit}</li>)}</ol>
     </section>
