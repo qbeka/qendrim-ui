@@ -24,7 +24,7 @@
 
 /* The head of an entry is set like a line in a type specimen: a number, the name large, then what it is made of. */
 .g-entry-head { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 14px; align-items: baseline; }
-.g-entry-no { color: var(--q-color-muted); font: 400 13px/20px var(--q-font-sans); font-variant-numeric: tabular-nums; }
+.g-entry-no { color: var(--q-color-muted); font: 400 14px/20px var(--q-font-sans); font-variant-numeric: tabular-nums; }
 .g-entry-head h3 { color: var(--q-color-ink); font: 400 clamp(40px, 9cqi, 60px) / 1 var(--q-font-serif); letter-spacing: -0.04em; }
 .g-entry-spec { grid-column: 1 / -1; display: grid; margin: 20px 0 0; border-block-start: 1px solid var(--q-color-rule-strong); }
 .g-entry-spec > div { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 12px; padding: 7px 0; border-block-end: 1px solid var(--q-color-rule); font-size: 14px; line-height: 21px; }
@@ -220,7 +220,7 @@
 .g-copy { flex: none; border-color: var(--q-color-rule-strong); background: var(--q-color-surface); }
 .g-copy > span { grid-area: 1 / 1; visibility: hidden; }
 .g-copy > span[data-on] { visibility: visible; }
-.g-more { color: var(--q-color-muted); font-size: 13px; line-height: 20px; }
+.g-more { color: var(--q-color-muted); font-size: 14px; line-height: 20px; }
 .g-more a { color: inherit; text-decoration: underline; text-decoration-color: var(--q-color-rule-strong); text-underline-offset: 3px; }
 .g-more a:active { text-decoration-color: currentColor; }
 @media (hover: hover) {

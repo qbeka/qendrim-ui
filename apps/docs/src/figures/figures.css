@@ -20,7 +20,7 @@
 .fig-plate { border: 1px solid var(--fig-line-strong); border-radius: 12px; background: var(--fig-ground); overflow: clip; }
 .fig figcaption { max-width: 680px; margin-block-start: 12px; color: var(--fig-muted); font-size: 14px; line-height: 21px; text-wrap: pretty; }
 .fig figcaption b { margin-inline-end: 8px; color: var(--fig-ink); font-weight: 500; }
-.fig-part-title { margin-block-end: 12px; color: var(--fig-muted); font-size: 12.5px; line-height: 18px; }
+.fig-part-title { margin-block-end: 12px; color: var(--fig-muted); font-size: 14px; line-height: 20px; }
 
 /* The suite: one mark for each run */
 .fig-suite { position: relative; display: grid; padding: 8px 0 12px; overflow-x: auto; }
@@ -79,7 +79,7 @@
 .fig-ranges [data-own] .fig-ranges-track b { background: var(--fig-accent); }
 .fig-ranges-value { color: var(--fig-ink); text-align: end; }
 .fig-ranges [data-own] .fig-ranges-value { font-weight: 500; }
-.fig-axis { display: grid; grid-template-columns: repeat(3, 1fr) 0; margin: 4px 52px 0 184px; color: var(--fig-muted); font-size: 11.5px; line-height: 16px; }
+.fig-axis { display: grid; grid-template-columns: repeat(3, 1fr) 0; margin: 4px 52px 0 184px; color: var(--fig-muted); font-size: 12px; line-height: 16px; }
 .fig-axis span { translate: -50% 0; white-space: nowrap; justify-self: start; }
 .fig-axis span:first-child { translate: 0 0; }
 .fig-axis span:last-child { translate: -100% 0; }
@@ -107,10 +107,10 @@
 .fig-tallies { display: grid; grid-template-columns: 1.5fr 1fr 1.3fr; }
 .fig-tallies > div { display: grid; align-content: start; gap: 6px; min-width: 0; padding: 20px; }
 .fig-tallies > div + div { border-inline-start: 1px solid var(--fig-line); }
-.fig-tallies dt { color: var(--fig-muted); font-size: 12.5px; line-height: 18px; }
+.fig-tallies dt { color: var(--fig-muted); font-size: 14px; line-height: 20px; }
 .fig-tallies dd { color: var(--fig-body); font: 400 19px/26px var(--q-font-serif); letter-spacing: -0.012em; }
 .fig-tallies dd b { color: var(--fig-ink); font-weight: 400; }
-.fig-tallies dd.fig-tally-note { color: var(--fig-muted); font: 400 12.5px/18px var(--q-font-control, var(--q-font-sans)); letter-spacing: 0; text-wrap: pretty; }
+.fig-tallies dd.fig-tally-note { color: var(--fig-muted); font: 400 14px/20px var(--q-font-control, var(--q-font-sans)); letter-spacing: 0; text-wrap: pretty; }
 .fig-squares { display: flex; flex-wrap: wrap; gap: 3px; max-width: 250px; padding-block: 4px; }
 .fig-squares i { width: 9px; height: 9px; border-radius: 1.5px; background: var(--fig-accent); }
 .fig-squares i[data-open] { background: none; box-shadow: inset 0 0 0 1.5px var(--fig-ink); }

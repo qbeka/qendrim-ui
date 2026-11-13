@@ -2,11 +2,11 @@
 .brk { --brk-wash: color-mix(in srgb, var(--q-color-ink) 4%, transparent); --brk-wash-strong: color-mix(in srgb, var(--q-color-ink) 9%, transparent); }
 .brk :where(h4, p, figure) { margin: 0; }
 .brk-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 12px; border-block-end: 1px solid var(--q-color-rule); background: var(--q-color-surface); }
-.brk-bar p { margin-inline-start: 4px; color: var(--q-color-muted); font-size: 13px; line-height: 20px; }
+.brk-bar p { margin-inline-start: 4px; color: var(--q-color-muted); font-size: 14px; line-height: 20px; }
 .brk-btn {
   appearance: none; display: inline-flex; align-items: center; justify-content: center; min-height: var(--control-height, 36px); margin: 0; padding: 0 11px;
   border: 1px solid transparent; border-radius: var(--q-radius-button, 7px); background: transparent; color: var(--q-color-ink);
-  font: 400 13px/16px var(--q-font-control, var(--q-font-sans)); white-space: nowrap; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  font: 400 14px/18px var(--q-font-control, var(--q-font-sans)); white-space: nowrap; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   transition: background-color .12s, color .12s, scale .12s;
 }
 .brk-btn:active { background: var(--brk-wash-strong); scale: .97; }
@@ -28,7 +28,7 @@
 .brk-lane { display: grid; grid-template-rows: auto 190px auto auto; gap: 14px; min-width: 0; padding: 20px; }
 .brk-lane + .brk-lane { border-inline-start: 1px solid var(--q-color-rule); }
 .brk-lane h4 { color: var(--q-color-ink); font: 400 19px/26px var(--q-font-serif); letter-spacing: -0.012em; }
-.brk-lane header p { color: var(--q-color-muted); font-size: 12.5px; line-height: 18px; }
+.brk-lane header p { color: var(--q-color-muted); font-size: 14px; line-height: 20px; }
 .brk-stand { min-width: 0; }
 .brk .fx-box, .brk .fx-plain { border-color: var(--q-color-rule-strong); border-radius: 12px; background: var(--q-color-surface); color: var(--q-color-ink); font: 400 14px/20px var(--q-font-control, var(--q-font-sans)); }
 .brk .fx-trigger, .brk .q-inspector-trigger { font-weight: 500; }

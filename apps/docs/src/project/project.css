@@ -211,8 +211,8 @@ p.passage { margin-block: 28px 0; }
 .steps li { counter-increment: step; min-width: 0; }
 .steps li + li { border-block-start: 1px solid var(--line); }
 .step-head { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 4px 6px 4px 16px; border-block-end: 1px solid var(--line); background: var(--raised); }
-.step-head span { font: 500 13px/20px var(--q-font-control, var(--sans)); }
-.step-head > span::before { content: counter(step); display: inline-grid; place-items: center; width: 20px; height: 20px; margin-inline-end: 10px; border: 1px solid var(--line-strong); border-radius: 50%; color: var(--muted); font: 400 12px/1 var(--sans); }
+.step-head span { font: 500 14px/20px var(--q-font-control, var(--sans)); }
+.step-head > span::before { content: counter(step); display: inline-grid; place-items: center; width: 20px; height: 20px; margin-inline-end: 10px; border: 1px solid var(--line-strong); border-radius: 50%; color: var(--muted); font: 400 14px/1 var(--sans); }
 .step-head .control { margin-inline-start: auto; color: var(--muted); }
 .step-head .control > span { font-weight: 400; }
 .steps pre { margin: 0; padding: 14px 16px; overflow-x: auto; color: var(--ink); font: 13px/21px var(--mono); tab-size: 2; }
@@ -229,7 +229,7 @@ p.passage { margin-block: 28px 0; }
   counter-increment: limit; display: grid; grid-template-columns: 28px minmax(0, 1fr); padding: 14px 0 15px; border-block-end: 1px solid var(--line);
   color: var(--body); font: 400 16px/25px var(--serif); letter-spacing: -0.004em; text-wrap: pretty;
 }
-.limits li::before { content: counter(limit); color: var(--muted); font: 400 12px/25px var(--sans); font-variant-numeric: tabular-nums; }
+.limits li::before { content: counter(limit); color: var(--muted); font: 400 14px/25px var(--sans); font-variant-numeric: tabular-nums; }
 
 /* The ending: where to go from here */
 .ending { margin-block-start: 136px; padding-block-start: 56px; border-block-start: 1px solid var(--line-strong); }
@@ -264,7 +264,7 @@ p.passage { margin-block: 28px 0; }
 .keys dl > div + div { border-block-start: 1px solid var(--line); }
 .keys dt { display: flex; flex-wrap: wrap; gap: 4px; }
 .keys dd { margin: 0; color: var(--body); font-size: 14px; line-height: 21px; }
-.keys kbd { display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 6px; border: 1px solid var(--line-strong); border-block-end-width: 2px; border-radius: 6px; background: var(--surface); color: var(--ink); font: 400 12px/1 var(--sans); white-space: nowrap; }
+.keys kbd { display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 6px; border: 1px solid var(--line-strong); border-block-end-width: 2px; border-radius: 6px; background: var(--surface); color: var(--ink); font: 400 14px/1 var(--sans); white-space: nowrap; }
 
 @media (max-width: 899px) {
   .chapter { margin-block-start: 88px; }
