@@ -382,7 +382,7 @@ export function Page() {
   return (
     <div className="shell">
       <header className="topbar">
-        <a className="quiet back" href={BACK}><Chevron />Back</a>
+        <a className="quiet back" href={BACK}><Chevron />Qendrim Beka</a>
         <nav aria-label="More about Qendrim UI">
           <a className="quiet" href="#details">Details</a>
           <a className="quiet" href={REPO}>GitHub</a>
@@ -404,7 +404,7 @@ export function Page() {
         {stage >= 5 ? <><Limits /><Ending /></> : null}
 
         <div className="page-end" hidden={stage < STAGES}>
-          <a className="quiet back" href={BACK}><Chevron />Back</a>
+          <a className="quiet back" href={BACK}><Chevron />Qendrim Beka</a>
           <button type="button" className="quiet" onClick={() => window.scrollTo({ top: 0 })}>Back to the sheet</button>
           <button type="button" className="quiet" onClick={openKeys}>Keyboard</button>
         </div>
