@@ -109,8 +109,8 @@ main > .show { animation: arrive .56s var(--ease) .12s backwards; }
 /* Chapters: a statement or a heading, then prose and figures at two widths */
 .chapter { margin-block-start: 120px; scroll-margin-top: 28px; }
 .statement {
-  max-width: 940px; margin: 0 0 36px; color: var(--ink);
-  font: 400 clamp(30px, 4.3vw, 50px) / 1.08 var(--serif); letter-spacing: -0.035em; text-wrap: balance;
+  max-width: 880px; margin: 0 0 36px; color: var(--ink);
+  font: 400 clamp(30px, 4.3vw, 46px) / 1.08 var(--serif); letter-spacing: -0.03em; text-wrap: balance;
 }
 .columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 56px; max-width: 1012px; }
 .prose { max-width: var(--reading-width); text-wrap: pretty; }
