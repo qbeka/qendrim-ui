@@ -49,7 +49,7 @@
   min-height: var(--show-control); padding: 0 11px; margin: 0;
   border: 1px solid transparent; border-radius: var(--q-radius-button, 7px);
   background: transparent; color: var(--show-ink);
-  font: 400 13px/16px var(--show-sans); letter-spacing: -0.003em; white-space: nowrap;
+  font: 400 14px/18px var(--show-sans); letter-spacing: -0.003em; white-space: nowrap;
   cursor: pointer; user-select: none; -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent; touch-action: manipulation;
   transition: background-color .12s, color .12s, border-color .12s, scale .12s var(--show-ease);
