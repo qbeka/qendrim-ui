@@ -163,7 +163,7 @@
 @keyframes show-dim-w { from { clip-path: inset(-12px 50%); } to { clip-path: inset(-12px -2px); } }
 @keyframes show-dim-h { from { clip-path: inset(50% -12px); } to { clip-path: inset(-2px -12px); } }
 
-.show-legend { position: absolute; left: var(--left); bottom: 16px; display: none; gap: 2px; color: var(--show-muted); font-size: 12px; line-height: 18px; pointer-events: none; }
+.show-legend { position: absolute; left: var(--left); bottom: 16px; display: none; gap: 2px; color: var(--show-muted); font-size: 14px; line-height: 20px; pointer-events: none; }
 .show-legend span { display: flex; align-items: center; gap: 9px; white-space: nowrap; }
 .show-key { flex: none; width: 18px; height: 0; border-block-start: 1px solid color-mix(in srgb, var(--show-accent) 50%, transparent); }
 .show-key-box { height: 9px; border: 1px solid color-mix(in srgb, var(--show-ink) 34%, transparent); border-radius: 3px; }
